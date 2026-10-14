@@ -1,6 +1,8 @@
 import type { QueryClient } from "@tanstack/react-query"
 
 import { TanStackDevtools } from "@tanstack/react-devtools"
+import { hotkeysDevtoolsPlugin } from "@tanstack/react-hotkeys-devtools"
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -59,6 +61,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
             },
+            {
+              name: "TanStack Query",
+              render: <ReactQueryDevtoolsPanel />,
+            },
+            hotkeysDevtoolsPlugin(),
           ]}
         />
         <Scripts />
