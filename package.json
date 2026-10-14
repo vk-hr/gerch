@@ -57,5 +57,10 @@
     "oxlint-tsgolint": "7.0.2004",
     "typescript": "^7.0.2",
     "vite": "^8"
+  },
+  "intent": {
+    "skills": [
+      "@tanstack/*"
+    ]
   }
 }
