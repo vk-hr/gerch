@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "bun --bun vite dev --port 3000",
     "generate-routes": "tsr generate",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\"",
-    "check": "prettier --check \"**/*.{ts,tsx,js,jsx}\"",
+    "build": "bun --bun vite build",
+    "preview": "bun --bun vite preview",
+    "lint": "oxlint",
+    "format": "oxfmt .",
+    "check": "oxlint && oxfmt --check .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -32,16 +32,17 @@
   },
   "devDependencies": {
     "@tanstack/devtools-vite": "latest",
-    "@tanstack/eslint-config": "latest",
     "@tanstack/router-cli": "^1.167.39",
+    "@types/bun": "^1.4.3",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6",
-    "eslint": "^10",
-    "prettier": "^3.9.9",
-    "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "^6.0.2",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
+    "oxlint-plugin-react-doctor": "0.9.18",
+    "oxlint-tsgolint": "7.0.2004",
+    "typescript": "^7.0.2",
     "vite": "^8"
   }
 }
