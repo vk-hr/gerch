@@ -46,10 +46,10 @@ Why these tools:
 
 ## Phase 1 — registry layer (server functions)
 
-- [ ] src/server/registries/npm.ts — search, package doc, unpkg readme fallback; map to a common PackageRecord shape
-- [ ] src/server/registries/crates.ts — search (1 rps queue), crate detail, docs.rs readme (HTML pass-through flag)
-- [ ] src/server/registries/nix.ts — ES query builder (type: package, field weights as on the site), channel + runtime schema-version pin, hard cache, typed failure -> graceful degradation
-- [ ] shared cache helper: respects upstream Cache-Control, in-memory with TTL; single UA constant
+- [x] src/server/registries/npm.ts — search, package doc, unpkg readme fallback; map to a common PackageRecord shape
+- [x] src/server/registries/crates.ts — search (1 rps queue), crate detail, docs.rs readme (HTML pass-through flag)
+- [x] src/server/registries/nix.ts — ES query builder (type: package, field weights as on the site), channel + runtime schema-version pin, hard cache, typed failure -> graceful degradation
+- [x] shared cache helper: respects upstream Cache-Control, in-memory with TTL; single UA constant
 - [ ] verify against live APIs (the live suite), incl. 404/429 paths
 
 ## Phase 2 — search UI
