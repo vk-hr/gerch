@@ -33,7 +33,7 @@ The author. Runs locally or on a personal box; no accounts.
 
 - Routes /:registry/:name are the addressable unit; the tab strip is client state.
 - Sidebar: pinned packages section first, open tabs below; collapsible (Mod+B); opening a pin opens/reuses a tab.
-- Session tabs persist in localStorage. Pins persist server-side (bun:sqlite behind Start server functions).
+- Session tabs persist in localStorage. Pins persist server-side (node:sqlite behind Start server functions — the same API runs on Bun and Node, so the pin store is unit-testable).
 - Detail view: name, version(s), license, links (homepage / repo / docs / issues), rendered readme. Cards show downloads/license only where the registry search payload includes them.
 
 ### Registries (all accessed via Start server functions — one proxy path)
@@ -47,6 +47,11 @@ Identifying User-Agent set once; upstream caching respected; rate queues where r
 ### Readme rendering
 
 @tanstack/markdown with allowHtml + sanitization + urlTransform (bake-off: 15/15 popular readmes acceptable; default escaping degrades ~70%). Sanitization runs server-side in the proxy.
+
+### Quality
+
+- Registry mapping is covered by unit tests against recorded upstream payloads; live contract checks (404/429, schema drift) run on demand and never in CI.
+- The app has an end-to-end smoke test running against the real dev server.
 
 ## Success criteria
 
