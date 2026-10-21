@@ -7,7 +7,7 @@
       },
       "dependents": "216923",
       "updated": "2026-10-21T16:27:59.574Z",
-      "searchScore": 2271.1628,
+      "searchScore": 2271.2478,
       "package": {
         "name": "react",
         "keywords": [
@@ -44,7 +44,7 @@
         }
       },
       "score": {
-        "final": 2271.1628,
+        "final": 2271.2478,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -62,7 +62,7 @@
       },
       "dependents": "4146",
       "updated": "2026-10-21T16:33:52.417Z",
-      "searchScore": 265.25876,
+      "searchScore": 265.2797,
       "package": {
         "name": "react-is",
         "keywords": [
@@ -99,7 +99,7 @@
         }
       },
       "score": {
-        "final": 265.25876,
+        "final": 265.2797,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -117,7 +117,7 @@
       },
       "dependents": "66",
       "updated": "2026-10-19T12:36:37.100Z",
-      "searchScore": 248.97482,
+      "searchScore": 248.98769,
       "package": {
         "name": "react-smooth",
         "keywords": [
@@ -161,7 +161,7 @@
         }
       },
       "score": {
-        "final": 248.97482,
+        "final": 248.98769,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -179,7 +179,7 @@
       },
       "dependents": "8923",
       "updated": "2026-10-19T13:49:37.251Z",
-      "searchScore": 247.28627,
+      "searchScore": 247.30397,
       "package": {
         "name": "react-router",
         "keywords": [
@@ -226,7 +226,7 @@
         }
       },
       "score": {
-        "final": 247.28627,
+        "final": 247.30397,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -244,7 +244,7 @@
       },
       "dependents": "175035",
       "updated": "2026-10-21T16:32:30.746Z",
-      "searchScore": 241.91704,
+      "searchScore": 241.89389,
       "package": {
         "name": "react-dom",
         "keywords": [
@@ -281,7 +281,7 @@
         }
       },
       "score": {
-        "final": 241.91704,
+        "final": 241.89389,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -293,6 +293,6 @@
       }
     }
   ],
-  "total": 551175,
-  "time": "2026-10-21T17:55:48.322Z"
+  "total": 551191,
+  "time": "2026-10-21T18:34:49.763Z"
 }
