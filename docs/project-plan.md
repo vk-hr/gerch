@@ -41,8 +41,7 @@ Why these tools:
 
 ## Phase 0 — foundations
 
-- [ ] env: SERVER_ vars for nix ES creds + UA contact; extend src/env.ts (the UA constant is shared with the fixture recorder)
-- [ ] deps: sanitizer (server-side), nothing else
+- [x] env: SERVER_ vars for nix ES creds + UA contact; extend src/env.ts (the UA constant is shared with the fixture recorder)
 - [ ] data dir (gitignored .data/) + node:sqlite helper module
 
 ## Phase 1 — registry layer (server functions)
@@ -65,6 +64,7 @@ Why these tools:
 
 - [ ] /:registry/:name route, typed registry param
 - [ ] detail assembly: meta, versions (lazy for crates), links block
+- [ ] deps: sanitizer (server-side), nothing else
 - [ ] readme pipeline: fetch (registry -> unpkg fallback / docs.rs HTML) -> server-side sanitize (+ urlTransform) -> @tanstack/markdown allowHtml render; cache per package+version
 
 ## Phase 4 — workspace: tabs & pins
