@@ -24,6 +24,7 @@ export default defineConfig({
           include: ["src/**/__tests__/**/*.live.test.ts"],
           exclude: ["**/node_modules/**"],
           setupFiles: ["test/setup/live.ts"],
+          testTimeout: 15_000,
         },
       },
     ],

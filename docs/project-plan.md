@@ -50,7 +50,7 @@ Why these tools:
 - [x] src/server/registries/crates.ts — search (1 rps queue), crate detail, docs.rs readme (HTML pass-through flag)
 - [x] src/server/registries/nix.ts — ES query builder (type: package, field weights as on the site), channel + runtime schema-version pin, hard cache, typed failure -> graceful degradation
 - [x] shared cache helper: respects upstream Cache-Control, in-memory with TTL; single UA constant
-- [ ] verify against live APIs (the live suite), incl. 404/429 paths
+- [x] verify against live APIs (the live suite), incl. 404/429 paths
 
 ## Phase 2 — search UI
 
