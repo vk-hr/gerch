@@ -9,6 +9,10 @@ export type Fetcher = (url: string, init?: RequestInit) => Promise<Response>
 
 const cache = new Map<string, { body: string; expiresAt: number }>()
 
+export function clearUpstreamCache(): void {
+  cache.clear()
+}
+
 export async function fetchUpstream(
   url: string,
   init?: RequestInit,
