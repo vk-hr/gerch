@@ -25,16 +25,14 @@ const cases: Case[] = [
     name: "npm-doc",
     url: "https://registry.npmjs.org/react",
     trim: (json) => {
-      const doc = json as {
-        "dist-tags": { latest: string }
-        versions: Record<string, unknown>
-        time?: unknown
-      }
-      const latest = doc["dist-tags"].latest
+      if (!isRecord(json) || !isRecord(json["dist-tags"])) return json
+      const latest = json["dist-tags"].latest
+      const versions = isRecord(json.versions) ? json.versions : {}
       return {
-        ...(json as Record<string, unknown>),
+        ...json,
         time: undefined,
-        versions: { [latest]: doc.versions[latest] },
+        versions:
+          typeof latest === "string" ? { [latest]: versions[latest] } : {},
       }
     },
   },
@@ -109,6 +107,10 @@ async function record(testCase: Case): Promise<void> {
   await writeFile(file, body)
 
   console.log(`- recorded ${testCase.name} -> ${file}`)
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null
 }
 
 function basicAuthHeader(testCase: Case): Record<string, string> {

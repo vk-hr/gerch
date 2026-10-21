@@ -3,6 +3,25 @@ import { env } from "@/env"
 export const USER_AGENT =
   env.SERVER_USER_AGENT ?? "gerch (+https://github.com/gerch)"
 
+export class UpstreamError extends Error {
+  constructor(
+    public status: number,
+    message: string
+  ) {
+    super(message)
+    this.name = "UpstreamError"
+  }
+}
+
+export async function ensureOk(
+  response: Response,
+  what: string
+): Promise<void> {
+  if (!response.ok) {
+    throw new UpstreamError(response.status, `${what}: ${response.status}`)
+  }
+}
+
 const DEFAULT_TTL_SECONDS = 300
 
 export type Fetcher = (url: string, init?: RequestInit) => Promise<Response>
