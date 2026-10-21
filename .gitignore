@@ -5,6 +5,7 @@ dist-ssr
 *.local
 .env*
 !.env.example
+!.envrc
 .nitro
 .tanstack
 .wrangler
@@ -15,3 +16,12 @@ todos.json
 
 # typescript
 *.tsbuildinfo
+
+# testing
+coverage
+playwright-report
+test-results
+.data
+
+# nix direnv cache
+/.direnv/
