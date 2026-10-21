@@ -42,7 +42,7 @@ Why these tools:
 ## Phase 0 — foundations
 
 - [x] env: SERVER_ vars for nix ES creds + UA contact; extend src/env.ts (the UA constant is shared with the fixture recorder)
-- [ ] data dir (gitignored .data/) + node:sqlite helper module
+- [x] data dir (gitignored .data/) + node:sqlite helper module
 
 ## Phase 1 — registry layer (server functions)
 
