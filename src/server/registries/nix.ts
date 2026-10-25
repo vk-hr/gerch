@@ -3,6 +3,7 @@ import type { Fetcher } from "@/server/registries/upstream"
 
 import { env } from "@/env"
 import { createServerFn } from "@tanstack/react-start"
+import { LRUCache } from "lru-cache"
 import { z } from "zod"
 
 const SCHEMA_VERSION = "52"
@@ -315,7 +316,11 @@ export function mapNixSearch(json: unknown): PackageRecord[] {
   return parsed.success ? parsed.data : []
 }
 
-const cache = new Map<string, { records: PackageRecord[]; expiresAt: number }>()
+const cache = new LRUCache<string, PackageRecord[]>({
+  max: 200,
+  ttl: CACHE_TTL_MS,
+  perf: { now: () => Date.now() },
+})
 
 export function clearNixCache(): void {
   cache.clear()
@@ -333,8 +338,8 @@ export async function searchNixHandler(
 
   const key = `${channel}:${q}`
   const hit = cache.get(key)
-  if (hit && hit.expiresAt > Date.now()) {
-    return { ok: true, records: hit.records }
+  if (hit) {
+    return { ok: true, records: hit }
   }
 
   const index = `latest-${SCHEMA_VERSION}-${channel}`
@@ -353,7 +358,7 @@ export async function searchNixHandler(
   if (!response?.ok) return { ok: false, reason: "unavailable" }
 
   const records = mapNixSearch(await response.json())
-  cache.set(key, { records, expiresAt: Date.now() + CACHE_TTL_MS })
+  cache.set(key, records)
   return { ok: true, records }
 }
 

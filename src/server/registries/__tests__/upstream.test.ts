@@ -1,5 +1,6 @@
 import {
-  createRateLimiter,
+  clearUpstreamCache,
+  fetchCrates,
   fetchUpstream,
   USER_AGENT,
 } from "@/server/registries/upstream"
@@ -10,6 +11,7 @@ const okJson = (headers = {}) =>
 
 afterEach(() => {
   vi.useRealTimers()
+  clearUpstreamCache()
 })
 
 describe("fetchUpstream", () => {
@@ -42,6 +44,20 @@ describe("fetchUpstream", () => {
     expect(fetcher).toHaveBeenCalledTimes(2)
   })
 
+  it("does not cache no-store or no-cache responses", async () => {
+    const noStore = vi.fn(async () => okJson({ "cache-control": "no-store" }))
+    await fetchUpstream("https://example.test/no-store", {}, noStore)
+    await fetchUpstream("https://example.test/no-store", {}, noStore)
+    expect(noStore).toHaveBeenCalledTimes(2)
+
+    const noCache = vi.fn(async () =>
+      okJson({ "cache-control": "no-cache, max-age=3600" })
+    )
+    await fetchUpstream("https://example.test/no-cache", {}, noCache)
+    await fetchUpstream("https://example.test/no-cache", {}, noCache)
+    expect(noCache).toHaveBeenCalledTimes(2)
+  })
+
   it("does not cache error responses", async () => {
     const fetcher = vi.fn(async () => new Response("nope", { status: 404 }))
     await fetchUpstream("https://example.test/missing", {}, fetcher)
@@ -65,18 +81,17 @@ describe("fetchUpstream", () => {
   })
 })
 
-describe("createRateLimiter", () => {
-  it("spaces requests by the interval", async () => {
+describe("fetchCrates", () => {
+  it("spaces crates.io requests by one second", async () => {
     vi.useFakeTimers()
-    const limit = createRateLimiter(1000)
     const calls: number[] = []
-    const start = () => {
+    const fetcher = vi.fn(async () => {
       calls.push(Date.now())
-      return Promise.resolve(new Response("{}"))
-    }
-    const p1 = limit(start)
-    const p2 = limit(start)
-    const p3 = limit(start)
+      return new Response("{}", { status: 200 })
+    })
+    const p1 = fetchCrates("https://crates.test/a", {}, fetcher)
+    const p2 = fetchCrates("https://crates.test/b", {}, fetcher)
+    const p3 = fetchCrates("https://crates.test/c", {}, fetcher)
     await vi.advanceTimersByTimeAsync(3000)
     await Promise.all([p1, p2, p3])
     expect(calls).toHaveLength(3)
