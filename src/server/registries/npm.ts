@@ -2,6 +2,7 @@ import type { PackageRecord } from "@/server/registries/record"
 
 import {
   ensureOk,
+  fetchJson,
   fetchUpstream,
   type Fetcher,
 } from "@/server/registries/upstream"
@@ -118,26 +119,24 @@ export async function searchNpmHandler(
   q: string,
   fetcher: Fetcher = fetch
 ): Promise<PackageRecord[]> {
-  const response = await fetchUpstream(
+  const json = await fetchJson(
     `${NPM_REGISTRY}/-/v1/search?text=${encodeURIComponent(q)}&size=25`,
     {},
     fetcher
   )
-  await ensureOk(response, "npm search")
-  return mapNpmSearch(await response.json())
+  return mapNpmSearch(json)
 }
 
 export async function npmDetailHandler(
   name: string,
   fetcher: Fetcher = fetch
 ): Promise<NpmPackageDetail> {
-  const response = await fetchUpstream(
+  const json = await fetchJson(
     `${NPM_REGISTRY}/${encodeURIComponent(name)}`,
     {},
     fetcher
   )
-  await ensureOk(response, `npm doc for ${name}`)
-  return mapNpmDoc(await response.json())
+  return mapNpmDoc(json)
 }
 
 export async function npmReadmeHandler(

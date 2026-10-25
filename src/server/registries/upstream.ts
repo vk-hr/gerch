@@ -1,4 +1,5 @@
 import { env } from "@/env"
+import ky, { HTTPError } from "ky"
 import { LRUCache } from "lru-cache"
 import PQueue from "p-queue"
 
@@ -22,6 +23,26 @@ export async function ensureOk(
   if (!response.ok) {
     throw new UpstreamError(response.status, `${what}: ${response.status}`)
   }
+}
+
+export async function fetchJson<T>(
+  url: string,
+  init?: RequestInit,
+  fetcher: Fetcher = fetch
+): Promise<T> {
+  const response = await fetchUpstream(url, init, fetcher)
+  await ensureOk(response, url)
+  return response.json()
+}
+
+export async function fetchCratesJson<T>(
+  url: string,
+  init?: RequestInit,
+  fetcher: Fetcher = fetch
+): Promise<T> {
+  const response = await fetchCrates(url, init, fetcher)
+  await ensureOk(response, url)
+  return response.json()
 }
 
 const DEFAULT_TTL_SECONDS = 300
@@ -53,7 +74,25 @@ export async function fetchUpstream(
 
   const headers = new Headers(init?.headers)
   headers.set("User-Agent", USER_AGENT)
-  const response = await fetcher(url, { ...init, headers })
+  let response: Response
+  try {
+    response = await ky(url, {
+      ...init,
+      headers,
+      fetch: (input: RequestInfo | URL, requestInit?: RequestInit) =>
+        fetcher(input instanceof Request ? input.url : input.toString(), {
+          ...init,
+          ...requestInit,
+          headers:
+            input instanceof Request ? input.headers : requestInit?.headers,
+        }),
+      retry: 0,
+      timeout: false,
+    })
+  } catch (error) {
+    if (error instanceof HTTPError) return error.response
+    throw error
+  }
   if (!response.ok || !cacheable) {
     return response
   }

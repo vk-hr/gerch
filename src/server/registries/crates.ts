@@ -1,8 +1,8 @@
 import type { PackageRecord } from "@/server/registries/record"
 
 import {
+  fetchCratesJson,
   ensureOk,
-  fetchCrates,
   fetchUpstream,
   type Fetcher,
 } from "@/server/registries/upstream"
@@ -130,13 +130,12 @@ export async function searchCratesHandler(
   q: string,
   fetcher: Fetcher = fetch
 ): Promise<PackageRecord[]> {
-  const response = await fetchCrates(
+  const json = await fetchCratesJson(
     `${CRATES_API}?q=${encodeURIComponent(q)}&per_page=25`,
     {},
     fetcher
   )
-  await ensureOk(response, "crates search")
-  return mapCratesSearch(await response.json())
+  return mapCratesSearch(json)
 }
 
 export async function cratesReadmeHandler(
@@ -162,14 +161,12 @@ export async function cratesPackageHandler(
   name: string,
   fetcher: Fetcher = fetch
 ): Promise<CratesPackageDetail> {
-  const detailResponse = await fetchCrates(
-    `${CRATES_API}/${encodeURIComponent(name)}`,
-    {},
-    fetcher
-  )
-  await ensureOk(detailResponse, `crates detail for ${name}`)
   const [record, readmeHtml] = await Promise.all([
-    Promise.resolve(detailResponse.json()).then(mapCratesDetail),
+    fetchCratesJson(
+      `${CRATES_API}/${encodeURIComponent(name)}`,
+      {},
+      fetcher
+    ).then(mapCratesDetail),
     cratesReadmeHandler(name, fetcher),
   ])
   return { record, readmeHtml }
