@@ -24,30 +24,49 @@ const cratesCrateSchema = z.object({
   repository: z.string().nullish(),
 })
 
-const cratesSearchSchema = z.object({
-  crates: z.array(cratesCrateSchema),
-})
+const cratesSearchSchema = z
+  .object({
+    crates: z.array(cratesCrateSchema),
+  })
+  .transform(({ crates }): PackageRecord[] =>
+    crates.map((crate) => ({
+      registry: "crates",
+      name: crate.id,
+      version: crate.max_stable_version ?? crate.newest_version ?? undefined,
+      description: crate.description ?? undefined,
+      links: crateLinks(crate),
+      downloads: crate.recent_downloads
+        ? { recent: crate.recent_downloads }
+        : undefined,
+    }))
+  )
 
-const cratesDetailSchema = z.object({
-  crate: cratesCrateSchema,
-  versions: z
-    .array(z.object({ num: z.string(), license: z.string().nullish() }))
-    .optional(),
-})
+const cratesDetailSchema = z
+  .object({
+    crate: cratesCrateSchema,
+    versions: z
+      .array(z.object({ num: z.string(), license: z.string().nullish() }))
+      .optional(),
+  })
+  .transform(({ crate, versions }): PackageRecord => {
+    const version =
+      crate.max_stable_version ?? crate.newest_version ?? versions?.[0]?.num
+    return {
+      registry: "crates",
+      name: crate.id,
+      version: version ?? undefined,
+      description: crate.description ?? undefined,
+      license: licenseFor(version, versions),
+      links: crateLinks(crate),
+      downloads: crate.recent_downloads
+        ? { recent: crate.recent_downloads }
+        : undefined,
+    }
+  })
 
 export function mapCratesSearch(json: unknown): PackageRecord[] {
   const parsed = cratesSearchSchema.safeParse(json)
-  if (!parsed.success) return []
-  return parsed.data.crates.map((crate) => ({
-    registry: "crates",
-    name: crate.id,
-    version: crate.max_stable_version ?? crate.newest_version ?? undefined,
-    description: crate.description ?? undefined,
-    links: crateLinks(crate),
-    downloads: crate.recent_downloads
-      ? { recent: crate.recent_downloads }
-      : undefined,
-  }))
+  return parsed.success ? parsed.data : []
 }
 
 export function mapCratesDetail(json: unknown): PackageRecord {
@@ -55,20 +74,7 @@ export function mapCratesDetail(json: unknown): PackageRecord {
   if (!parsed.success) {
     throw new Error(`unexpected crates.io response: ${parsed.error.message}`)
   }
-  const { crate, versions } = parsed.data
-  const version =
-    crate.max_stable_version ?? crate.newest_version ?? versions?.[0]?.num
-  return {
-    registry: "crates",
-    name: crate.id,
-    version: version ?? undefined,
-    description: crate.description ?? undefined,
-    license: licenseFor(version, versions),
-    links: crateLinks(crate),
-    downloads: crate.recent_downloads
-      ? { recent: crate.recent_downloads }
-      : undefined,
-  }
+  return parsed.data
 }
 
 type CratesCrate = z.infer<typeof cratesCrateSchema>

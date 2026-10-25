@@ -273,43 +273,46 @@ export function buildNixQuery(q: string): Record<string, unknown> {
   }
 }
 
-const nixHitSchema = z.object({
-  hits: z.object({
-    hits: z.array(
-      z.object({
-        _source: z.object({
-          package_attr_name: z.string(),
-          package_pversion: z.string(),
-          package_description: z.string().nullish(),
-          package_homepage: z.array(z.string()).nullish(),
-          package_license: z
-            .array(
-              z.object({
-                shortName: z.string().optional(),
-                spdxId: z.string().optional(),
-              })
-            )
-            .nullish(),
-        }),
-      })
-    ),
-  }),
-})
+const nixHitSchema = z
+  .object({
+    hits: z.object({
+      hits: z.array(
+        z.object({
+          _source: z.object({
+            package_attr_name: z.string(),
+            package_pversion: z.string(),
+            package_description: z.string().nullish(),
+            package_homepage: z.array(z.string()).nullish(),
+            package_license: z
+              .array(
+                z.object({
+                  shortName: z.string().optional(),
+                  spdxId: z.string().optional(),
+                })
+              )
+              .nullish(),
+          }),
+        })
+      ),
+    }),
+  })
+  .transform(({ hits }): PackageRecord[] =>
+    hits.hits.map((hit) => ({
+      registry: "nix",
+      name: hit._source.package_attr_name,
+      version: hit._source.package_pversion,
+      description: hit._source.package_description ?? undefined,
+      license:
+        hit._source.package_license?.[0]?.shortName ??
+        hit._source.package_license?.[0]?.spdxId ??
+        undefined,
+      links: { homepage: hit._source.package_homepage?.[0] },
+    }))
+  )
 
 export function mapNixSearch(json: unknown): PackageRecord[] {
   const parsed = nixHitSchema.safeParse(json)
-  if (!parsed.success) return []
-  return parsed.data.hits.hits.map((hit) => ({
-    registry: "nix",
-    name: hit._source.package_attr_name,
-    version: hit._source.package_pversion,
-    description: hit._source.package_description ?? undefined,
-    license:
-      hit._source.package_license?.[0]?.shortName ??
-      hit._source.package_license?.[0]?.spdxId ??
-      undefined,
-    links: { homepage: hit._source.package_homepage?.[0] },
-  }))
+  return parsed.success ? parsed.data : []
 }
 
 const cache = new Map<string, { records: PackageRecord[]; expiresAt: number }>()
