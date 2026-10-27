@@ -3,7 +3,7 @@ import {
   fetchCrates,
   fetchUpstream,
   USER_AGENT,
-} from "@/server/registries/upstream"
+} from "@/server/registries/upstream.server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 const okJson = (headers = {}) =>

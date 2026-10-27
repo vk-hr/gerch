@@ -1,4 +1,4 @@
-import { env } from "@/env"
+import { env } from "@/env.server"
 import ky, { HTTPError } from "ky"
 import { LRUCache } from "lru-cache"
 import PQueue from "p-queue"

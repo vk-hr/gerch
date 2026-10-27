@@ -6,7 +6,7 @@ import {
   mapNpmSearch,
   npmPackageHandler,
 } from "@/server/registries/npm"
-import { clearUpstreamCache, UpstreamError } from "@/server/registries/upstream"
+import { clearUpstreamCache, UpstreamError } from "@/server/registries/upstream.server"
 import { afterEach, describe, expect, it } from "vitest"
 
 afterEach(() => {

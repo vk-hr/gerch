@@ -1,7 +1,7 @@
 import type { PackageRecord } from "@/server/registries/record"
-import type { Fetcher } from "@/server/registries/upstream"
+import type { Fetcher } from "@/server/registries/upstream.server"
 
-import { env } from "@/env"
+import { env } from "@/env.server"
 import { createServerFn } from "@tanstack/react-start"
 import { LRUCache } from "lru-cache"
 import { z } from "zod"

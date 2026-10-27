@@ -1,11 +1,11 @@
-import { env } from "@/env"
+import { env } from "@/env.server"
 import {
   cratesPackageHandler,
   searchCratesHandler,
 } from "@/server/registries/crates"
 import { searchNixHandler } from "@/server/registries/nix"
 import { npmPackageHandler, searchNpmHandler } from "@/server/registries/npm"
-import { UpstreamError } from "@/server/registries/upstream"
+import { UpstreamError } from "@/server/registries/upstream.server"
 import { describe, expect, it } from "vitest"
 
 async function captureError(promise: Promise<unknown>): Promise<unknown> {

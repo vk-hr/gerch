@@ -5,7 +5,7 @@ import {
   fetchJson,
   fetchUpstream,
   type Fetcher,
-} from "@/server/registries/upstream"
+} from "@/server/registries/upstream.server"
 import { createServerFn } from "@tanstack/react-start"
 import { z } from "zod"
 

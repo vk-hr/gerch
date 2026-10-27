@@ -1,4 +1,4 @@
-import { USER_AGENT } from "@/server/registries/upstream"
+import { USER_AGENT } from "@/server/registries/upstream.server"
 import { mkdir, writeFile } from "node:fs/promises"
 
 const FIXTURE_DIR = "src/server/registries/__tests__/fixtures"
