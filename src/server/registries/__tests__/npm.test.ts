@@ -5,8 +5,12 @@ import {
   mapNpmDoc,
   mapNpmSearch,
   npmPackageHandler,
+  searchNpmHandler,
 } from "@/server/registries/npm"
-import { clearUpstreamCache, UpstreamError } from "@/server/registries/upstream.server"
+import {
+  clearUpstreamCache,
+  UpstreamError,
+} from "@/server/registries/upstream.server"
 import { afterEach, describe, expect, it } from "vitest"
 
 afterEach(() => {
@@ -14,6 +18,18 @@ afterEach(() => {
 })
 
 const notFoundFetcher = async () => new Response("not found", { status: 404 })
+
+describe("searchNpmHandler", () => {
+  it("passes the offset to the npm search endpoint", async () => {
+    const requested: string[] = []
+    const fetcher = async (url: string) => {
+      requested.push(url)
+      return new Response(JSON.stringify({ objects: [] }), { status: 200 })
+    }
+    await searchNpmHandler("react", 50, fetcher)
+    expect(requested[0]).toContain("from=50")
+  })
+})
 
 describe("mapNpmSearch", () => {
   it("maps search hits to package records", () => {

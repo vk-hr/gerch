@@ -14,51 +14,51 @@ afterEach(() => {
 describe("buildNixQuery", () => {
   it("filters to packages and sorts by score", () => {
     const body = buildNixQuery("rust")
-    const bool = (body.query as { bool: Record<string, unknown> }).bool
 
-    expect(bool.filter).toEqual([{ term: { type: { value: "package" } } }])
+    expect(body.query.bool.filter).toEqual([
+      { term: { type: { value: "package" } } },
+    ])
     expect(body.sort).toEqual([{ _score: "desc" }])
     expect(body.size).toBe(25)
   })
 
+  it("passes the offset as the ES from parameter", () => {
+    expect(buildNixQuery("rust", 50).from).toBe(50)
+  })
+
   it("weights the exact attribute name highest", () => {
-    const body = buildNixQuery("rust")
-    const bool = (body.query as { bool: { should: Record<string, unknown>[] } })
-      .bool
-    const exact = bool.should.find(
-      (clause) =>
-        "term" in clause &&
-        (clause.term as { package_attr_name?: { boost?: number } })
-          .package_attr_name?.boost === 127
-    )
-    expect(exact).toBeDefined()
+    expect(buildNixQuery("rust").query.bool.should).toContainEqual({
+      term: { package_attr_name: { value: "rust", boost: 127 } },
+    })
   })
 
   it("reads popularity from package_repology_repos", () => {
-    const body = buildNixQuery("rust")
-    const bool = (body.query as { bool: { should: Record<string, unknown>[] } })
-      .bool
-    const boosts = bool.should
-      .filter((clause) => "rank_feature" in clause)
-      .map((clause) => (clause.rank_feature as { boost?: number }).boost)
-    expect(boosts).toEqual([328, 5])
+    const should = buildNixQuery("rust").query.bool.should
+    expect(should).toContainEqual({
+      rank_feature: {
+        field: "package_repology_repos",
+        boost: 328,
+        log: { scaling_factor: 5140 },
+      },
+    })
+    expect(should).toContainEqual({
+      rank_feature: {
+        field: "package_repology_repos",
+        boost: 5,
+        saturation: { pivot: 13.5 },
+        _name: "popularity_package_repology_repos",
+      },
+    })
   })
 
   it("glues multi-word queries into dashed attribute names", () => {
-    const body = buildNixQuery("rust server")
-    const bool = (body.query as { bool: { should: Record<string, unknown>[] } })
-      .bool
-    const exact = bool.should.find((clause) => "term" in clause) as {
-      term: { package_attr_name: { value: string } }
-    }
-    expect(exact.term.package_attr_name.value).toBe("rust-server")
+    expect(buildNixQuery("rust server").query.bool.should).toContainEqual({
+      term: { package_attr_name: { value: "rust-server", boost: 127 } },
+    })
   })
 
   it("rescales by attribute name length", () => {
-    const rescore = buildNixQuery("rust").rescore as {
-      query: { rescore_query_weight: number }
-    }
-    expect(rescore.query.rescore_query_weight).toBe(30.3)
+    expect(buildNixQuery("rust").rescore.query.rescore_query_weight).toBe(30.3)
   })
 })
 
@@ -86,7 +86,12 @@ describe("searchNixHandler", () => {
       async () =>
         new Response(JSON.stringify(nixSearchFixture), { status: 200 })
     )
-    const result = await searchNixHandler("php ast", "nixos-unstable", fetcher)
+    const result = await searchNixHandler(
+      "php ast",
+      "nixos-unstable",
+      0,
+      fetcher
+    )
 
     expect(result.ok).toBe(true)
     if (result.ok) expect(result.records.length).toBeGreaterThan(0)
@@ -98,9 +103,9 @@ describe("searchNixHandler", () => {
       async () =>
         new Response(JSON.stringify(nixSearchFixture), { status: 200 })
     )
-    await searchNixHandler("php ast", "nixos-unstable", fetcher)
-    await searchNixHandler("php ast", "nixos-unstable", fetcher)
-    await searchNixHandler("php ast", "nixos-26.05", fetcher)
+    await searchNixHandler("php ast", "nixos-unstable", 0, fetcher)
+    await searchNixHandler("php ast", "nixos-unstable", 0, fetcher)
+    await searchNixHandler("php ast", "nixos-26.05", 0, fetcher)
 
     expect(fetcher).toHaveBeenCalledTimes(2)
   })
@@ -108,21 +113,21 @@ describe("searchNixHandler", () => {
   it("degrades to unavailable on upstream errors", async () => {
     const failing = vi.fn(async () => new Response("boom", { status: 500 }))
     await expect(
-      searchNixHandler("x", "nixos-unstable", failing)
+      searchNixHandler("x", "nixos-unstable", 0, failing)
     ).resolves.toEqual({ ok: false, reason: "unavailable" })
 
     const rejecting = vi.fn(async () => {
       throw new Error("network down")
     })
     await expect(
-      searchNixHandler("x", "nixos-unstable", rejecting)
+      searchNixHandler("x", "nixos-unstable", 0, rejecting)
     ).resolves.toEqual({ ok: false, reason: "unavailable" })
   })
 
   it("returns no records for an empty query without calling upstream", async () => {
     const fetcher = vi.fn()
     await expect(
-      searchNixHandler("   ", "nixos-unstable", fetcher)
+      searchNixHandler("   ", "nixos-unstable", 0, fetcher)
     ).resolves.toEqual({ ok: true, records: [] })
     expect(fetcher).not.toHaveBeenCalled()
   })

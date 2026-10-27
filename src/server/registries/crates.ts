@@ -128,10 +128,12 @@ export function extractDocsRsReadme(html: string): string | undefined {
 
 export async function searchCratesHandler(
   q: string,
+  offset = 0,
   fetcher: Fetcher = fetch
 ): Promise<PackageRecord[]> {
+  const page = Math.floor(offset / 25) + 1
   const json = await fetchCratesJson(
-    `${CRATES_API}?q=${encodeURIComponent(q)}&per_page=25`,
+    `${CRATES_API}?q=${encodeURIComponent(q)}&per_page=25&page=${page}`,
     {},
     fetcher
   )
@@ -173,13 +175,16 @@ export async function cratesPackageHandler(
 }
 
 export const searchCrates = createServerFn({ method: "GET" })
-  .validator((q: unknown) => {
-    if (typeof q !== "string" || q.length === 0) {
-      throw new Error("q must be a non-empty string")
-    }
-    return q
+  .validator((input: unknown) => {
+    const parsed = z
+      .object({
+        q: z.string().min(1),
+        offset: z.number().int().min(0).optional(),
+      })
+      .parse(input)
+    return parsed
   })
-  .handler(async ({ data }) => searchCratesHandler(data))
+  .handler(async ({ data }) => searchCratesHandler(data.q, data.offset))
 
 export const cratesPackage = createServerFn({ method: "GET" })
   .validator((name: unknown) => {

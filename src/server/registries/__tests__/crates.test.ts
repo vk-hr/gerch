@@ -5,6 +5,7 @@ import {
   extractDocsRsReadme,
   mapCratesDetail,
   mapCratesSearch,
+  searchCratesHandler,
 } from "@/server/registries/crates"
 import { clearUpstreamCache } from "@/server/registries/upstream.server"
 import { readFileSync } from "node:fs"
@@ -17,6 +18,18 @@ const docsrsReadmeFixture = readFileSync(
 
 afterEach(() => {
   clearUpstreamCache()
+})
+
+describe("searchCratesHandler", () => {
+  it("maps the offset to a crates.io page number", async () => {
+    const requested: string[] = []
+    const fetcher = async (url: string) => {
+      requested.push(url)
+      return new Response(JSON.stringify({ crates: [] }), { status: 200 })
+    }
+    await searchCratesHandler("serde", 50, fetcher)
+    expect(requested[0]).toContain("page=3")
+  })
 })
 
 describe("mapCratesSearch", () => {

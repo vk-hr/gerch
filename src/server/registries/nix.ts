@@ -21,6 +21,26 @@ export type NixSearchResult =
 
 type Clause = Record<string, unknown>
 
+type NixQueryBody = {
+  from: number
+  size: number
+  sort: { _score: string }[]
+  query: {
+    bool: {
+      filter: Clause[]
+      must: Clause[]
+      should: Clause[]
+    }
+  }
+  rescore: {
+    window_size: number
+    query: {
+      rescore_query: unknown
+      rescore_query_weight: number
+    }
+  }
+}
+
 const whenTyped = (words: string[], derived: string[]): string[] =>
   words.some((word) => word.length > 0) ? derived : []
 
@@ -126,7 +146,7 @@ const disMax = (tieBreaker: number, queries: Clause[]): Clause => ({
   dis_max: { tie_breaker: tieBreaker, queries },
 })
 
-export function buildNixQuery(q: string): Record<string, unknown> {
+export function buildNixQuery(q: string, from = 0): NixQueryBody {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean)
 
   const descriptionPhrase = constantScore(
@@ -205,6 +225,7 @@ export function buildNixQuery(q: string): Record<string, unknown> {
     {
       bool: {
         must: [
+          // oxlint-disable-next-line oxc(approx-constant)
           rankFeature("package_dep_count", undefined, sigmoidFn(7580, 0.434)),
         ],
         should: multiMatchClauses(
@@ -231,7 +252,7 @@ export function buildNixQuery(q: string): Record<string, unknown> {
   )
 
   return {
-    from: 0,
+    from,
     size: SEARCH_SIZE,
     sort: [{ _score: "desc" }],
     query: {
@@ -329,6 +350,7 @@ export function clearNixCache(): void {
 export async function searchNixHandler(
   q: string,
   channel: NixChannel = DEFAULT_CHANNEL,
+  offset = 0,
   fetcher: Fetcher = fetch
 ): Promise<NixSearchResult> {
   if (!q.trim()) return { ok: true, records: [] }
@@ -336,7 +358,7 @@ export async function searchNixHandler(
     return { ok: false, reason: "unavailable" }
   }
 
-  const key = `${channel}:${q}`
+  const key = `${channel}:${q}:${offset}`
   const hit = cache.get(key)
   if (hit) {
     return { ok: true, records: hit }
@@ -351,7 +373,7 @@ export async function searchNixHandler(
         `${env.SERVER_NIX_ES_USERNAME}:${env.SERVER_NIX_ES_PASSWORD}`
       )}`,
     },
-    body: JSON.stringify(buildNixQuery(q)),
+    body: JSON.stringify(buildNixQuery(q, offset)),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   }).catch(() => undefined)
 
@@ -368,8 +390,11 @@ export const searchNix = createServerFn({ method: "GET" })
       .object({
         q: z.string().min(1),
         channel: z.enum(NIX_CHANNELS).optional(),
+        offset: z.number().int().min(0).optional(),
       })
       .parse(input)
     return parsed
   })
-  .handler(async ({ data }) => searchNixHandler(data.q, data.channel))
+  .handler(async ({ data }) =>
+    searchNixHandler(data.q, data.channel, data.offset)
+  )

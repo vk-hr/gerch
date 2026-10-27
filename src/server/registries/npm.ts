@@ -117,10 +117,11 @@ export function mapNpmDoc(json: unknown): NpmPackageDetail {
 
 export async function searchNpmHandler(
   q: string,
+  offset = 0,
   fetcher: Fetcher = fetch
 ): Promise<PackageRecord[]> {
   const json = await fetchJson(
-    `${NPM_REGISTRY}/-/v1/search?text=${encodeURIComponent(q)}&size=25`,
+    `${NPM_REGISTRY}/-/v1/search?text=${encodeURIComponent(q)}&size=25&from=${offset}`,
     {},
     fetcher
   )
@@ -165,13 +166,16 @@ export async function npmPackageHandler(
 }
 
 export const searchNpm = createServerFn({ method: "GET" })
-  .validator((q: unknown) => {
-    if (typeof q !== "string" || q.length === 0) {
-      throw new Error("q must be a non-empty string")
-    }
-    return q
+  .validator((input: unknown) => {
+    const parsed = z
+      .object({
+        q: z.string().min(1),
+        offset: z.number().int().min(0).optional(),
+      })
+      .parse(input)
+    return parsed
   })
-  .handler(async ({ data }) => searchNpmHandler(data))
+  .handler(async ({ data }) => searchNpmHandler(data.q, data.offset))
 
 export const npmPackage = createServerFn({ method: "GET" })
   .validator((name: unknown) => {
