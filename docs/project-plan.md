@@ -54,11 +54,11 @@ Why these tools:
 
 ## Phase 2 — search UI
 
-- [ ] registry tab strip + query box (active-tab-only fetching, debounce, per-registry query keys incl. channel for nix)
-- [ ] results list: virtualized infinite scroll, unified PackageCard (fields per availability)
-- [ ] exact-name detection -> navigate to /:registry/:name
-- [ ] hotkeys: Mod+K, Escape, arrows/Enter
-- [ ] empty / loading / error states per registry (nix degradation banner)
+- [x] registry tab strip + query box (active-tab-only fetching, debounce, per-registry query keys incl. channel for nix)
+- [x] results list: virtualized infinite scroll, unified PackageCard (fields per availability)
+- [x] exact-name detection -> navigate to /:registry/:name
+- [x] hotkeys: Mod+K, Escape, arrows/Enter
+- [x] empty / loading / error states per registry (nix degradation banner)
 
 ## Phase 3 — package route + detail
 
