@@ -15,6 +15,7 @@
     "test:watch": "bun --bun vitest --project=unit",
     "test:live": "bun --bun vitest run --project=live --passWithNoTests",
     "test:e2e": "playwright test",
+    "test:coverage": "bun --bun vitest run --project=unit --coverage",
     "fixtures:record": "bun run scripts/record-fixtures.ts"
   },
   "dependencies": {
@@ -61,6 +62,7 @@
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.2",
     "@vitejs/plugin-react": "^6",
+    "@vitest/coverage-istanbul": "5.0.5",
     "oxc-transform-react": "^0.154.0",
     "oxfmt": "0.73.0",
     "oxlint": "1.88.0",

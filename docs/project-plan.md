@@ -75,10 +75,10 @@ Why these tools:
 
 ## Phase 5 — polish & hardening
 
-- [ ] channel switcher UI, nix channel persisted per session
-- [ ] keyboard pass: full Mod+K/arrow/Enter/Escape flow, focus rings
-- [ ] error boundaries per panel; retry/backoff on 429
-- [ ] CI green (checks + e2e); dev smoke: SSR page, search all three registries, pin across restart
+- [x] channel switcher UI, nix channel persisted per session
+- [x] keyboard pass: full Mod+K/arrow/Enter/Escape flow, focus rings
+- [x] error boundaries per panel; retry/backoff on 429
+- [x] CI green (checks + e2e); dev smoke: SSR page, search all three registries, pin across restart
 
 ## Risks
 

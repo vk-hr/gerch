@@ -5,6 +5,12 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [viteReact({ compiler: true })],
   test: {
+    coverage: {
+      provider: "istanbul",
+      include: ["src/**"],
+      exclude: ["src/**/__tests__/**", "src/routeTree.gen.ts"],
+      reporter: ["text", "html"],
+    },
     projects: [
       {
         extends: true,
