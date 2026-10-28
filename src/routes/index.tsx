@@ -3,6 +3,7 @@ import type { Registry } from "@/server/registries/record"
 
 import { PackageCard } from "@/components/PackageCard"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
+import { useNixChannel } from "@/hooks/useNixChannel"
 import { PAGE_SIZE, REGISTRIES, searchRegistry } from "@/lib/search"
 import { useHotkey } from "@tanstack/react-hotkeys"
 import { useInfiniteQuery } from "@tanstack/react-query"
@@ -10,12 +11,11 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { useEffect, useRef, useState } from "react"
 
-const DEFAULT_NIX_CHANNEL: NixChannel = "nixos-unstable"
-
 export const Route = createFileRoute("/")({ component: SearchPage })
 
 function SearchPage() {
   const [registry, setRegistry] = useState<Registry>("npm")
+  const [channel, setChannel] = useNixChannel()
   const [input, setInput] = useState("")
   const [q, flush] = useDebouncedValue(input, 200)
   const [highlighted, setHighlighted] = useState(0)
@@ -25,18 +25,13 @@ function SearchPage() {
   const navigate = Route.useNavigate()
 
   const search = useInfiniteQuery({
-    queryKey: [
-      "search",
-      registry,
-      q,
-      registry === "nix" ? DEFAULT_NIX_CHANNEL : undefined,
-    ],
+    queryKey: ["search", registry, q, registry === "nix" ? channel : undefined],
     queryFn: ({ pageParam }) =>
       searchRegistry({
         registry,
         q,
         offset: pageParam,
-        channel: DEFAULT_NIX_CHANNEL,
+        channel: channel,
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
@@ -88,7 +83,7 @@ function SearchPage() {
         registry,
         q: trimmed,
         offset: 0,
-        channel: DEFAULT_NIX_CHANNEL,
+        channel: channel,
       })
       const exact = result.records.find(
         (record) => record.name.toLowerCase() === trimmed.toLowerCase()
@@ -144,7 +139,7 @@ function SearchPage() {
                 setHighlighted(0)
                 inputRef.current?.focus()
               }}
-              className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+              className={`rounded-md px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring ${
                 registry === item.id
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-accent"
@@ -153,6 +148,17 @@ function SearchPage() {
               {item.label}
             </button>
           ))}
+          {registry === "nix" && (
+            <select
+              value={channel}
+              onChange={(event) => setChannel(event.target.value as NixChannel)}
+              aria-label="Nix channel"
+              className="ml-auto rounded-md border bg-card px-2 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="nixos-unstable">unstable</option>
+              <option value="nixos-26.05">26.05</option>
+            </select>
+          )}
         </div>
         <input
           ref={inputRef}
