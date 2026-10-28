@@ -1,14 +1,33 @@
 import { PinToggle } from "@/components/PinToggle"
 import { loadPackage } from "@/lib/packages"
 import { openTab } from "@/lib/workspace"
-import { createFileRoute } from "@tanstack/react-router"
+import {
+  createFileRoute,
+  type ErrorComponentProps,
+} from "@tanstack/react-router"
 import { useEffect } from "react"
 
 export const Route = createFileRoute("/$registry/$name")({
   loader: ({ params }) =>
     loadPackage(params.registry, decodeURIComponent(params.name)),
   component: PackagePage,
+  errorComponent: PackageError,
 })
+
+function PackageError({ error, reset }: ErrorComponentProps) {
+  const message = error instanceof Error ? error.message : String(error)
+  return (
+    <div className="p-6">
+      <p role="alert">Could not load this package: {message}</p>
+      <button
+        onClick={reset}
+        className="mt-2 rounded-md border px-3 py-1.5 text-sm hover:bg-accent"
+      >
+        Retry
+      </button>
+    </div>
+  )
+}
 
 function PackagePage() {
   const { record, readmeHtml, versions, degraded } = Route.useLoaderData()

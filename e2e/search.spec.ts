@@ -159,6 +159,27 @@ test("an unavailable nix backend shows the degradation banner", async ({
   )
 })
 
+test("a failed package load shows the error boundary with retry", async ({
+  page,
+}) => {
+  await mockServerFns(page, {
+    searchNpm_createServerFn_handler: [react],
+  })
+  await openSearch(page)
+
+  await page.getByRole("textbox", { name: "Search packages" }).click()
+  await page.keyboard.type("react")
+  await page
+    .locator("a", { hasText: "React is a JavaScript library" })
+    .first()
+    .click()
+
+  await expect(page.getByRole("alert")).toContainText(
+    "Could not load this package"
+  )
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible()
+})
+
 test("no results shows an empty state", async ({ page }) => {
   await mockServerFns(page, {
     searchNpm_createServerFn_handler: [],

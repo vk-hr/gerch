@@ -86,7 +86,12 @@ export async function fetchUpstream(
           headers:
             input instanceof Request ? input.headers : requestInit?.headers,
         }),
-      retry: 0,
+      retry: {
+        limit: 2,
+        statusCodes: [408, 429, 500, 502, 503, 504],
+        afterStatusCodes: [429, 503],
+        backoffLimit: 2000,
+      },
       timeout: false,
     })
   } catch (error) {

@@ -57,7 +57,7 @@ test("pinning and open tabs persist across a reload", async ({ page }) => {
 
   await page.goto("/")
   await page.waitForLoadState("networkidle")
-  await page.getByRole("textbox", { name: "Search packages" }).click()
+  await page.getByRole("textbox", { name: "Search packages" }).focus()
   await page.keyboard.type("react")
   await page
     .locator("a", { hasText: "React is a JavaScript library" })
@@ -81,7 +81,7 @@ test("reopening a package reuses its tab", async ({ page }) => {
 
   await page.goto("/")
   await page.waitForLoadState("networkidle")
-  await page.getByRole("textbox", { name: "Search packages" }).click()
+  await page.getByRole("textbox", { name: "Search packages" }).focus()
   await page.keyboard.type("react")
   await page
     .locator("a", { hasText: "React is a JavaScript library" })
@@ -90,7 +90,7 @@ test("reopening a package reuses its tab", async ({ page }) => {
 
   await page.goto("/")
   await page.waitForLoadState("networkidle")
-  await page.getByRole("textbox", { name: "Search packages" }).click()
+  await page.getByRole("textbox", { name: "Search packages" }).focus()
   await page.keyboard.type("react")
   await page
     .locator("a", { hasText: "React is a JavaScript library" })

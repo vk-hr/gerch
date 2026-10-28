@@ -58,6 +58,23 @@ describe("fetchUpstream", () => {
     expect(noCache).toHaveBeenCalledTimes(2)
   })
 
+  it("retries a 429 response and succeeds on the next attempt", async () => {
+    vi.useFakeTimers()
+    let calls = 0
+    const fetcher = vi.fn(async () => {
+      calls += 1
+      return calls === 1 ? new Response("slow down", { status: 429 }) : okJson()
+    })
+    const response = fetchUpstream(
+      "https://example.test/rate-limited",
+      {},
+      fetcher
+    )
+    await vi.advanceTimersByTimeAsync(2000)
+    expect((await response).ok).toBe(true)
+    expect(fetcher).toHaveBeenCalledTimes(2)
+  })
+
   it("does not cache error responses", async () => {
     const fetcher = vi.fn(async () => new Response("nope", { status: 404 }))
     await fetchUpstream("https://example.test/missing", {}, fetcher)

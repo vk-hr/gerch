@@ -6,6 +6,7 @@ const baseURL = `http://localhost:${PORT}`
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github-actions" : "list",

@@ -7,11 +7,32 @@ import { useNixChannel } from "@/hooks/useNixChannel"
 import { PAGE_SIZE, REGISTRIES, searchRegistry } from "@/lib/search"
 import { useHotkey } from "@tanstack/react-hotkeys"
 import { useInfiniteQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import {
+  createFileRoute,
+  type ErrorComponentProps,
+} from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { useEffect, useRef, useState } from "react"
 
-export const Route = createFileRoute("/")({ component: SearchPage })
+export const Route = createFileRoute("/")({
+  component: SearchPage,
+  errorComponent: SearchError,
+})
+
+function SearchError({ error, reset }: ErrorComponentProps) {
+  const message = error instanceof Error ? error.message : String(error)
+  return (
+    <div className="p-6">
+      <p role="alert">Search failed: {message}</p>
+      <button
+        onClick={reset}
+        className="mt-2 rounded-md border px-3 py-1.5 text-sm hover:bg-accent"
+      >
+        Retry
+      </button>
+    </div>
+  )
+}
 
 function SearchPage() {
   const [registry, setRegistry] = useState<Registry>("npm")
