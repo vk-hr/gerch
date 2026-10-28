@@ -1,4 +1,4 @@
-import { openDb } from "@/server/db"
+import { openDb } from "@/server/db.server"
 import { describe, expect, it } from "vitest"
 
 describe("openDb", () => {
