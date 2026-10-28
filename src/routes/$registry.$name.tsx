@@ -1,5 +1,8 @@
+import { PinToggle } from "@/components/PinToggle"
 import { loadPackage } from "@/lib/packages"
+import { openTab } from "@/lib/workspace"
 import { createFileRoute } from "@tanstack/react-router"
+import { useEffect } from "react"
 
 export const Route = createFileRoute("/$registry/$name")({
   loader: ({ params }) =>
@@ -11,12 +14,17 @@ function PackagePage() {
   const { record, readmeHtml, versions, degraded } = Route.useLoaderData()
   const links = Object.entries(record.links).filter(([, url]) => url)
 
+  useEffect(() => {
+    openTab({ registry: record.registry, name: record.name })
+  }, [record.registry, record.name])
+
   return (
     <div className="mx-auto max-w-3xl p-6">
       <p className="text-xs text-muted-foreground uppercase">
         {record.registry}
       </p>
       <h1 className="mt-1 text-2xl font-semibold break-all">{record.name}</h1>
+      <PinToggle registry={record.registry} name={record.name} />
       {record.version && (
         <p className="text-muted-foreground">{record.version}</p>
       )}

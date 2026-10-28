@@ -10,6 +10,17 @@ function fnExport(url: string): string {
 async function mockServerFns(page: Page, mocks: Record<string, unknown>) {
   await page.route("**/_serverFn/**", (route) => {
     const exportName = fnExport(route.request().url())
+    if (
+      exportName === "listPins_createServerFn_handler" &&
+      !(exportName in mocks)
+    ) {
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        headers: { "x-tss-serialized": "true" },
+        body: JSON.stringify(toCrossJSON({ result: [] })),
+      })
+    }
     if (!(exportName in mocks)) {
       return route.fulfill({
         status: 500,

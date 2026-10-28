@@ -1,5 +1,5 @@
 import { openDb } from "@/server/db.server"
-import { createPinStore } from "@/server/pins.server"
+import { createPinStore } from "@/server/pins"
 import { describe, expect, it } from "vitest"
 
 describe("createPinStore", () => {

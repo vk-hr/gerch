@@ -69,9 +69,9 @@ Why these tools:
 
 ## Phase 4 — workspace: tabs & pins
 
-- [ ] session tabs in localStorage (TanStack Store), tab strip = sidebar section, reuse-on-open
-- [ ] pins: node:sqlite + server functions (list/add/remove); sidebar pins section first; pin toggle on detail
-- [ ] sidebar collapse (Mod+B), restore-on-load ordering
+- [x] session tabs in localStorage (TanStack Store), tab strip = sidebar section, reuse-on-open
+- [x] pins: node:sqlite + server functions (list/add/remove); sidebar pins section first; pin toggle on detail
+- [x] sidebar collapse (Mod+B), restore-on-load ordering
 
 ## Phase 5 — polish & hardening
 

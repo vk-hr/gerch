@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query"
 
+import { Sidebar } from "@/components/Sidebar"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { hotkeysDevtoolsPlugin } from "@tanstack/react-hotkeys-devtools"
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
@@ -51,7 +52,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <div className="flex min-h-svh">
+          <Sidebar />
+          <main className="min-w-0 flex-1">{children}</main>
+        </div>
         <TanStackDevtools
           config={{
             position: "bottom-right",
