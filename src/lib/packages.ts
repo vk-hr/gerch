@@ -9,6 +9,8 @@ const registrySchema = z.enum(["npm", "crates", "nix"])
 
 export type PackageDetail = {
   record: PackageRecord
+  readmeHtml?: string
+  versions?: { num: string; created_at?: string }[]
   degraded?: boolean
 }
 
@@ -20,11 +22,15 @@ export async function loadPackage(
   switch (registry) {
     case "npm": {
       const detail = await npmPackage({ data: name })
-      return { record: detail.record }
+      return { record: detail.record, readmeHtml: detail.readmeHtml }
     }
     case "crates": {
       const detail = await cratesPackage({ data: name })
-      return { record: detail.record }
+      return {
+        record: detail.record,
+        readmeHtml: detail.readmeHtml,
+        versions: detail.record.versions,
+      }
     }
     case "nix": {
       const result = await searchNix({ data: { q: name } })

@@ -62,10 +62,10 @@ Why these tools:
 
 ## Phase 3 — package route + detail
 
-- [ ] /:registry/:name route, typed registry param
-- [ ] detail assembly: meta, versions (lazy for crates), links block
-- [ ] deps: sanitizer (server-side), nothing else
-- [ ] readme pipeline: fetch (registry -> unpkg fallback / docs.rs HTML) -> server-side sanitize (+ urlTransform) -> @tanstack/markdown allowHtml render; cache per package+version
+- [x] /:registry/:name route, typed registry param
+- [x] detail assembly: meta, versions (lazy for crates), links block
+- [x] deps: sanitizer (server-side), nothing else
+- [x] readme pipeline: fetch (registry -> unpkg fallback / docs.rs HTML) -> server-side sanitize (+ urlTransform) -> @tanstack/markdown allowHtml render; cache per package+version
 
 ## Phase 4 — workspace: tabs & pins
 

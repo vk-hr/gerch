@@ -1,5 +1,6 @@
 import type { PackageRecord } from "@/server/registries/record"
 
+import { cachedReadme, renderMarkdownToHtml } from "@/server/readme.server"
 import {
   ensureOk,
   fetchJson,
@@ -65,6 +66,7 @@ export function mapNpmSearch(json: unknown): PackageRecord[] {
 export type NpmPackageDetail = {
   record: PackageRecord
   readmeMarkdown?: string
+  readmeHtml?: string
 }
 
 const npmDocSchema = z
@@ -160,9 +162,21 @@ export async function npmPackageHandler(
   fetcher: Fetcher = fetch
 ): Promise<NpmPackageDetail> {
   const detail = await npmDetailHandler(name, fetcher)
-  if (detail.readmeMarkdown || !detail.record.version) return detail
-  const readme = await npmReadmeHandler(name, detail.record.version, fetcher)
-  return readme ? { ...detail, readmeMarkdown: readme } : detail
+  let readmeMarkdown = detail.readmeMarkdown
+  if (!readmeMarkdown && detail.record.version) {
+    readmeMarkdown = await npmReadmeHandler(
+      name,
+      detail.record.version,
+      fetcher
+    )
+  }
+  const baseUrl = detail.record.links.repository ?? detail.record.links.registry
+  const readmeHtml = readmeMarkdown
+    ? cachedReadme(`npm:${name}:${detail.record.version ?? "latest"}`, () =>
+        renderMarkdownToHtml(readmeMarkdown, baseUrl)
+      )
+    : undefined
+  return { ...detail, readmeMarkdown, readmeHtml }
 }
 
 export const searchNpm = createServerFn({ method: "GET" })

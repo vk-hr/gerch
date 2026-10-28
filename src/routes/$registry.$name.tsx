@@ -8,7 +8,7 @@ export const Route = createFileRoute("/$registry/$name")({
 })
 
 function PackagePage() {
-  const { record, degraded } = Route.useLoaderData()
+  const { record, readmeHtml, versions, degraded } = Route.useLoaderData()
   const links = Object.entries(record.links).filter(([, url]) => url)
 
   return (
@@ -48,6 +48,39 @@ function PackagePage() {
           </div>
         ))}
       </dl>
+
+      {versions && versions.length > 0 && (
+        <details className="mt-6">
+          <summary className="cursor-pointer text-sm text-muted-foreground">
+            {versions.length} version{versions.length === 1 ? "" : "s"}
+          </summary>
+          <ul className="mt-2 space-y-1 text-sm">
+            {versions.map((version) => (
+              <li key={version.num} className="flex gap-3">
+                <span
+                  className={
+                    version.num === record.version ? "font-medium" : ""
+                  }
+                >
+                  {version.num}
+                </span>
+                {version.created_at && (
+                  <span className="text-muted-foreground">
+                    {version.created_at.slice(0, 10)}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+
+      {readmeHtml && (
+        <article
+          className="mt-8 text-sm leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: readmeHtml }}
+        />
+      )}
     </div>
   )
 }

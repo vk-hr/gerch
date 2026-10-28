@@ -1,5 +1,6 @@
 import type { PackageRecord } from "@/server/registries/record"
 
+import { cachedReadme, sanitizeReadmeHtml } from "@/server/readme.server"
 import {
   fetchCratesJson,
   ensureOk,
@@ -45,31 +46,52 @@ const cratesDetailSchema = z
   .object({
     crate: cratesCrateSchema,
     versions: z
-      .array(z.object({ num: z.string(), license: z.string().nullish() }))
+      .array(
+        z.object({
+          num: z.string(),
+          license: z.string().nullish(),
+          created_at: z.string().optional(),
+        })
+      )
       .optional(),
   })
-  .transform(({ crate, versions }): PackageRecord => {
-    const version =
-      crate.max_stable_version ?? crate.newest_version ?? versions?.[0]?.num
-    return {
-      registry: "crates",
-      name: crate.id,
-      version: version ?? undefined,
-      description: crate.description ?? undefined,
-      license: licenseFor(version, versions),
-      links: crateLinks(crate),
-      downloads: crate.recent_downloads
-        ? { recent: crate.recent_downloads }
-        : undefined,
+  .transform(
+    ({
+      crate,
+      versions,
+    }): PackageRecord & {
+      versions?: { num: string; created_at?: string }[]
+    } => {
+      const version =
+        crate.max_stable_version ?? crate.newest_version ?? versions?.[0]?.num
+      return {
+        registry: "crates",
+        name: crate.id,
+        version: version ?? undefined,
+        description: crate.description ?? undefined,
+        license: licenseFor(version, versions),
+        links: crateLinks(crate),
+        downloads: crate.recent_downloads
+          ? { recent: crate.recent_downloads }
+          : undefined,
+        versions: versions?.map((v) => ({
+          num: v.num,
+          created_at: v.created_at,
+        })),
+      }
     }
-  })
+  )
 
 export function mapCratesSearch(json: unknown): PackageRecord[] {
   const parsed = cratesSearchSchema.safeParse(json)
   return parsed.success ? parsed.data : []
 }
 
-export function mapCratesDetail(json: unknown): PackageRecord {
+export type CratesRecord = PackageRecord & {
+  versions?: { num: string; created_at?: string }[]
+}
+
+export function mapCratesDetail(json: unknown): CratesRecord {
   const parsed = cratesDetailSchema.safeParse(json)
   if (!parsed.success) {
     throw new Error(`unexpected crates.io response: ${parsed.error.message}`)
@@ -155,7 +177,7 @@ export async function cratesReadmeHandler(
 }
 
 export type CratesPackageDetail = {
-  record: PackageRecord
+  record: CratesRecord
   readmeHtml?: string
 }
 
@@ -171,7 +193,14 @@ export async function cratesPackageHandler(
     ).then(mapCratesDetail),
     cratesReadmeHandler(name, fetcher),
   ])
-  return { record, readmeHtml }
+  return {
+    record,
+    readmeHtml: readmeHtml
+      ? cachedReadme(`crates:${name}:${record.version ?? "latest"}`, () =>
+          sanitizeReadmeHtml(readmeHtml)
+        )
+      : undefined,
+  }
 }
 
 export const searchCrates = createServerFn({ method: "GET" })
