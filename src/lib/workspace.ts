@@ -60,3 +60,7 @@ export function toggleCollapsed(): void {
     collapsed: !state.collapsed,
   }))
 }
+
+export function setCollapsed(collapsed: boolean): void {
+  workspaceStore.setState((state) => ({ ...state, collapsed }))
+}

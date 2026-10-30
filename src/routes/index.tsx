@@ -1,9 +1,30 @@
 import type { NixChannel } from "@/server/registries/nix"
 import type { Registry } from "@/server/registries/record"
 
-import { PackageCard } from "@/components/PackageCard"
-import { useDebouncedValue } from "@/hooks/useDebouncedValue"
-import { useNixChannel } from "@/hooks/useNixChannel"
+import { PackageCard } from "@/components/package-card"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { useDebouncedValue } from "@/hooks/use-debounced-value"
+import { useNixChannel } from "@/hooks/use-nix-channel"
 import { PAGE_SIZE, REGISTRIES, searchRegistry } from "@/lib/search"
 import { useHotkey } from "@tanstack/react-hotkeys"
 import { useInfiniteQuery } from "@tanstack/react-query"
@@ -12,7 +33,13 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
+import { RotateCcwIcon, SearchIcon, TriangleAlertIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+
+const NIX_CHANNELS: Array<{ value: NixChannel; label: string }> = [
+  { value: "nixos-unstable", label: "unstable" },
+  { value: "nixos-26.05", label: "26.05" },
+]
 
 export const Route = createFileRoute("/")({
   component: SearchPage,
@@ -23,13 +50,20 @@ function SearchError({ error, reset }: ErrorComponentProps) {
   const message = error instanceof Error ? error.message : String(error)
   return (
     <div className="p-6">
-      <p role="alert">Search failed: {message}</p>
-      <button
-        onClick={reset}
-        className="mt-2 rounded-md border px-3 py-1.5 text-sm hover:bg-accent"
-      >
-        Retry
-      </button>
+      <Alert variant="destructive">
+        <TriangleAlertIcon />
+        <AlertTitle>Search failed</AlertTitle>
+        <AlertDescription>{message}</AlertDescription>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={reset}
+          className="self-start"
+        >
+          <RotateCcwIcon data-icon="inline-start" />
+          Retry
+        </Button>
+      </Alert>
     </div>
   )
 }
@@ -147,108 +181,157 @@ function SearchPage() {
   }
 
   return (
-    <div className="mx-auto flex h-svh max-w-3xl flex-col gap-4 p-6">
-      <div className="flex flex-col gap-3">
-        <div className="flex gap-1" role="tablist" aria-label="Registry">
-          {REGISTRIES.map((item) => (
-            <button
-              key={item.id}
-              role="tab"
-              aria-selected={registry === item.id}
-              onClick={() => {
-                setRegistry(item.id)
+    <div className="flex h-svh flex-col p-6">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-1">
+            <ToggleGroup
+              aria-label="Registry"
+              value={[registry]}
+              onValueChange={(groupValue) => {
+                const next = groupValue.at(-1)
+                if (typeof next !== "string") return
+                const match = REGISTRIES.find((item) => item.id === next)
+                if (!match) return
+                setRegistry(match.id)
                 setHighlighted(0)
                 inputRef.current?.focus()
               }}
-              className={`rounded-md px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring ${
-                registry === item.id
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent"
-              }`}
             >
-              {item.label}
-            </button>
-          ))}
-          {registry === "nix" && (
-            <select
-              value={channel}
-              onChange={(event) => setChannel(event.target.value as NixChannel)}
-              aria-label="Nix channel"
-              className="ml-auto rounded-md border bg-card px-2 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-ring"
+              {REGISTRIES.map((item) => (
+                <ToggleGroupItem key={item.id} value={item.id}>
+                  {item.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+            {registry === "nix" && (
+              <Select
+                items={NIX_CHANNELS}
+                value={channel}
+                onValueChange={(value) => {
+                  if (value === null) return
+                  const match = NIX_CHANNELS.find(
+                    (item) => item.value === value
+                  )
+                  if (!match) return
+                  setChannel(match.value)
+                }}
+              >
+                <SelectTrigger aria-label="Nix channel" className="ml-auto">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {NIX_CHANNELS.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+          <Input
+            ref={inputRef}
+            value={input}
+            onChange={(event) => {
+              setInput(event.target.value)
+              setHighlighted(0)
+            }}
+            onKeyDown={onInputKeyDown}
+            placeholder={`Search ${
+              REGISTRIES.find((item) => item.id === registry)?.label
+            } packages`}
+            aria-label="Search packages"
+            autoFocus
+          />
+        </div>
+
+        {degraded && (
+          <Alert role="status">
+            <TriangleAlertIcon />
+            <AlertTitle>nixpkgs search is unavailable right now.</AlertTitle>
+            <AlertDescription>Results may be missing.</AlertDescription>
+          </Alert>
+        )}
+
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
+          {q.trim().length === 0 ? (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <SearchIcon />
+                </EmptyMedia>
+                <EmptyTitle>Search packages</EmptyTitle>
+                <EmptyDescription>
+                  Type to search. Mod+K focuses the search box, Enter opens an
+                  exact match.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          ) : search.isLoading ? (
+            <div className="flex flex-col gap-2" aria-hidden>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : search.isError ? (
+            <Alert variant="destructive">
+              <TriangleAlertIcon />
+              <AlertTitle>Search failed</AlertTitle>
+              <AlertDescription>{search.error.message}</AlertDescription>
+            </Alert>
+          ) : records.length === 0 && !degraded ? (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <SearchIcon />
+                </EmptyMedia>
+                <EmptyTitle>No packages found</EmptyTitle>
+                <EmptyDescription>
+                  No packages found for “{q}”.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          ) : (
+            <div
+              style={{
+                height: virtualizer.getTotalSize(),
+                position: "relative",
+              }}
             >
-              <option value="nixos-unstable">unstable</option>
-              <option value="nixos-26.05">26.05</option>
-            </select>
+              {virtualItems.map((item) => {
+                const record = records[item.index]
+                return (
+                  <div
+                    key={item.key}
+                    data-index={item.index}
+                    ref={virtualizer.measureElement}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      transform: `translateY(${item.start}px)`,
+                    }}
+                  >
+                    <PackageCard
+                      record={record}
+                      highlighted={item.index === highlighted}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          {search.isFetchingNextPage && (
+            <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+              <Spinner />
+              Loading more…
+            </div>
           )}
         </div>
-        <input
-          ref={inputRef}
-          value={input}
-          onChange={(event) => {
-            setInput(event.target.value)
-            setHighlighted(0)
-          }}
-          onKeyDown={onInputKeyDown}
-          placeholder={`Search ${REGISTRIES.find((item) => item.id === registry)?.label} packages`}
-          aria-label="Search packages"
-          autoFocus
-          className="w-full rounded-md border bg-card px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
-        />
-      </div>
-
-      {degraded && (
-        <div role="status" className="rounded-md border px-3 py-2 text-sm">
-          nixpkgs search is unavailable right now. Results may be missing.
-        </div>
-      )}
-
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-        {q.trim().length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Type to search. Mod+K focuses the search box, Enter opens an exact
-            match.
-          </p>
-        ) : search.isLoading ? (
-          <p className="text-sm text-muted-foreground">Searching…</p>
-        ) : search.isError ? (
-          <p role="alert" className="text-sm">
-            Search failed: {search.error.message}
-          </p>
-        ) : records.length === 0 && !degraded ? (
-          <p className="text-sm text-muted-foreground">
-            No packages found for “{q}”.
-          </p>
-        ) : (
-          <div
-            style={{ height: virtualizer.getTotalSize(), position: "relative" }}
-          >
-            {virtualItems.map((item) => {
-              const record = records[item.index]
-              return (
-                <div
-                  key={item.key}
-                  data-index={item.index}
-                  ref={virtualizer.measureElement}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    transform: `translateY(${item.start}px)`,
-                  }}
-                >
-                  <PackageCard
-                    record={record}
-                    highlighted={item.index === highlighted}
-                  />
-                </div>
-              )
-            })}
-          </div>
-        )}
-        {search.isFetchingNextPage && (
-          <p className="py-2 text-sm text-muted-foreground">Loading more…</p>
-        )}
       </div>
     </div>
   )

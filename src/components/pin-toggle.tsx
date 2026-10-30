@@ -1,7 +1,9 @@
 import type { Registry } from "@/server/registries/record"
 
+import { Toggle } from "@/components/ui/toggle"
 import { addPin, listPins, removePin } from "@/server/pins"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { PinIcon, PinOffIcon } from "lucide-react"
 
 export function PinToggle({
   registry,
@@ -26,12 +28,18 @@ export function PinToggle({
   }
 
   return (
-    <button
-      onClick={toggle}
-      aria-pressed={pinned}
-      className="mt-4 rounded-md border px-3 py-1.5 text-sm hover:bg-accent"
+    <Toggle
+      variant="outline"
+      pressed={pinned}
+      onPressedChange={() => void toggle()}
+      className="mt-4"
     >
+      {pinned ? (
+        <PinOffIcon data-icon="inline-start" />
+      ) : (
+        <PinIcon data-icon="inline-start" />
+      )}
       {pinned ? "Unpin" : "Pin"}
-    </button>
+    </Toggle>
   )
 }

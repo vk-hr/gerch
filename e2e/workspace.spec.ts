@@ -65,14 +65,14 @@ test("pinning and open tabs persist across a reload", async ({ page }) => {
     .click()
 
   await page.getByRole("button", { name: "Pin", exact: true }).click()
-  await expect(page.locator("aside")).toContainText("react")
+  await expect(page.locator('[data-slot="sidebar"]')).toContainText("react")
 
   await page.reload()
   await page.waitForLoadState("networkidle")
-  const aside = page.locator("aside")
-  await expect(aside.getByText("Pinned", { exact: true })).toBeVisible()
-  await expect(aside).toContainText("react")
-  await expect(aside.getByText("Open tabs", { exact: true })).toBeVisible()
+  const sidebar = page.locator('[data-slot="sidebar"]')
+  await expect(sidebar.getByText("Pinned", { exact: true })).toBeVisible()
+  await expect(sidebar).toContainText("react")
+  await expect(sidebar.getByText("Open tabs", { exact: true })).toBeVisible()
 })
 
 test("reopening a package reuses its tab", async ({ page }) => {
@@ -97,6 +97,8 @@ test("reopening a package reuses its tab", async ({ page }) => {
     .first()
     .click()
 
-  const tabLinks = page.locator("aside").getByRole("link", { name: "react" })
+  const tabLinks = page
+    .locator('[data-slot="sidebar"]')
+    .getByRole("link", { name: "react" })
   await expect(tabLinks).toHaveCount(1)
 })

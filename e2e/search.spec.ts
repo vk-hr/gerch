@@ -135,7 +135,7 @@ test("switching registry tabs fetches that registry's results", async ({
   })
   await openSearch(page)
 
-  await page.getByRole("tab", { name: "crates.io" }).click()
+  await page.getByRole("button", { name: "crates.io" }).click()
   await page.getByRole("textbox", { name: "Search packages" }).click()
   await page.keyboard.type("serde")
 
@@ -150,7 +150,7 @@ test("an unavailable nix backend shows the degradation banner", async ({
   })
   await openSearch(page)
 
-  await page.getByRole("tab", { name: "nixpkgs" }).click()
+  await page.getByRole("button", { name: "nixpkgs" }).click()
   await page.getByRole("textbox", { name: "Search packages" }).click()
   await page.keyboard.type("ripgrep")
 

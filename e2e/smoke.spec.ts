@@ -9,8 +9,8 @@ test("the search page renders", async ({ page }) => {
   await expect(
     page.getByRole("textbox", { name: "Search packages" })
   ).toBeVisible()
-  await expect(page.getByRole("tab", { name: "npm" })).toBeVisible()
-  await expect(page.getByRole("tab", { name: "crates.io" })).toBeVisible()
-  await expect(page.getByRole("tab", { name: "nixpkgs" })).toBeVisible()
+  await expect(page.getByRole("button", { name: "npm" })).toBeVisible()
+  await expect(page.getByRole("button", { name: "crates.io" })).toBeVisible()
+  await expect(page.getByRole("button", { name: "nixpkgs" })).toBeVisible()
   expect(pageErrors).toEqual([])
 })
