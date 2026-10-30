@@ -15,8 +15,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { pinsQueryOptions } from "@/lib/pins"
 import { closeTab, setCollapsed, workspaceStore } from "@/lib/workspace"
-import { listPins } from "@/server/pins"
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { useStore } from "@tanstack/react-store"
@@ -28,7 +28,7 @@ export function AppSidebar({ children }: { children: ReactNode }) {
   useEffect(() => setMounted(true), [])
 
   const { tabs, collapsed } = useStore(workspaceStore, (state) => state)
-  const pins = useQuery({ queryKey: ["pins"], queryFn: () => listPins() })
+  const pins = useQuery(pinsQueryOptions)
 
   return (
     <TooltipProvider>

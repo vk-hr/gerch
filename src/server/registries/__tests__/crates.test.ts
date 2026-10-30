@@ -6,7 +6,7 @@ import {
   mapCratesDetail,
   mapCratesSearch,
   searchCratesHandler,
-} from "@/server/registries/crates"
+} from "@/server/registries/crates.server"
 import { clearUpstreamCache } from "@/server/registries/upstream.server"
 import { readFileSync } from "node:fs"
 import { afterEach, describe, expect, it } from "vitest"

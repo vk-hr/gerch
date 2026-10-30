@@ -6,7 +6,7 @@ import {
   mapNpmSearch,
   npmPackageHandler,
   searchNpmHandler,
-} from "@/server/registries/npm"
+} from "@/server/registries/npm.server"
 import {
   clearUpstreamCache,
   UpstreamError,

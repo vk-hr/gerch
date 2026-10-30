@@ -75,7 +75,7 @@ async function openSearch(page: Page) {
 
 test("Mod+K focuses the search box and results render", async ({ page }) => {
   await mockServerFns(page, {
-    searchNpm_createServerFn_handler: [react, vue],
+    searchPackages_createServerFn_handler: { records: [react, vue] },
   })
   await openSearch(page)
 
@@ -92,8 +92,8 @@ test("Mod+K focuses the search box and results render", async ({ page }) => {
 
 test("arrows and Enter open the highlighted package", async ({ page }) => {
   await mockServerFns(page, {
-    searchNpm_createServerFn_handler: [react, vue],
-    npmPackage_createServerFn_handler: { record: vue },
+    searchPackages_createServerFn_handler: { records: [react, vue] },
+    getPackage_createServerFn_handler: { record: vue },
   })
   await openSearch(page)
 
@@ -113,8 +113,8 @@ test("Enter on an exact-name match navigates straight to the package", async ({
   page,
 }) => {
   await mockServerFns(page, {
-    searchNpm_createServerFn_handler: [react, vue],
-    npmPackage_createServerFn_handler: { record: react },
+    searchPackages_createServerFn_handler: { records: [react, vue] },
+    getPackage_createServerFn_handler: { record: react },
   })
   await openSearch(page)
 
@@ -131,7 +131,7 @@ test("switching registry tabs fetches that registry's results", async ({
   page,
 }) => {
   await mockServerFns(page, {
-    searchCrates_createServerFn_handler: [serde],
+    searchPackages_createServerFn_handler: { records: [serde] },
   })
   await openSearch(page)
 
@@ -146,7 +146,7 @@ test("an unavailable nix backend shows the degradation banner", async ({
   page,
 }) => {
   await mockServerFns(page, {
-    searchNix_createServerFn_handler: { ok: false, reason: "unavailable" },
+    searchPackages_createServerFn_handler: { records: [], degraded: true },
   })
   await openSearch(page)
 
@@ -163,7 +163,7 @@ test("a failed package load shows the error boundary with retry", async ({
   page,
 }) => {
   await mockServerFns(page, {
-    searchNpm_createServerFn_handler: [react],
+    searchPackages_createServerFn_handler: { records: [react] },
   })
   await openSearch(page)
 
@@ -182,7 +182,7 @@ test("a failed package load shows the error boundary with retry", async ({
 
 test("no results shows an empty state", async ({ page }) => {
   await mockServerFns(page, {
-    searchNpm_createServerFn_handler: [],
+    searchPackages_createServerFn_handler: { records: [] },
   })
   await openSearch(page)
 

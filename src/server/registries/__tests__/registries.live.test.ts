@@ -2,9 +2,12 @@ import { env } from "@/env.server"
 import {
   cratesPackageHandler,
   searchCratesHandler,
-} from "@/server/registries/crates"
-import { searchNixHandler } from "@/server/registries/nix"
-import { npmPackageHandler, searchNpmHandler } from "@/server/registries/npm"
+} from "@/server/registries/crates.server"
+import { searchNixHandler } from "@/server/registries/nix.server"
+import {
+  npmPackageHandler,
+  searchNpmHandler,
+} from "@/server/registries/npm.server"
 import { UpstreamError } from "@/server/registries/upstream.server"
 import { describe, expect, it } from "vitest"
 

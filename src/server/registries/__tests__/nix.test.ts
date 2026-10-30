@@ -4,7 +4,7 @@ import {
   clearNixCache,
   mapNixSearch,
   searchNixHandler,
-} from "@/server/registries/nix"
+} from "@/server/registries/nix.server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 afterEach(() => {

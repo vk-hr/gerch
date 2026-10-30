@@ -1,4 +1,4 @@
-import type { NixChannel } from "@/server/registries/nix"
+import type { NixChannel } from "@/lib/nix-channel"
 import type { Registry } from "@/server/registries/record"
 
 import { PackageCard } from "@/components/package-card"
@@ -25,7 +25,8 @@ import { Spinner } from "@/components/ui/spinner"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { useNixChannel } from "@/hooks/use-nix-channel"
-import { PAGE_SIZE, REGISTRIES, searchRegistry } from "@/lib/search"
+import { PAGE_SIZE, REGISTRIES } from "@/lib/search"
+import { searchPackages } from "@/server/search"
 import { useHotkey } from "@tanstack/react-hotkeys"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import {
@@ -82,11 +83,13 @@ function SearchPage() {
   const search = useInfiniteQuery({
     queryKey: ["search", registry, q, registry === "nix" ? channel : undefined],
     queryFn: ({ pageParam }) =>
-      searchRegistry({
-        registry,
-        q,
-        offset: pageParam,
-        channel: channel,
+      searchPackages({
+        data: {
+          registry,
+          q,
+          offset: pageParam,
+          channel,
+        },
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
@@ -126,19 +129,15 @@ function SearchPage() {
     search.fetchNextPage,
   ])
 
-  useHotkey("Mod+K", (event) => {
-    event.preventDefault()
+  useHotkey("Mod+K", () => {
     inputRef.current?.focus()
   })
 
   async function onEnter() {
     const trimmed = input.trim()
     if (trimmed && !trimmed.includes(" ") && !trimmed.includes(":")) {
-      const result = await searchRegistry({
-        registry,
-        q: trimmed,
-        offset: 0,
-        channel: channel,
+      const result = await searchPackages({
+        data: { registry, q: trimmed, offset: 0, channel },
       })
       const exact = result.records.find(
         (record) => record.name.toLowerCase() === trimmed.toLowerCase()

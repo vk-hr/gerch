@@ -1,7 +1,8 @@
 import type { Registry } from "@/server/registries/record"
 
 import { Toggle } from "@/components/ui/toggle"
-import { addPin, listPins, removePin } from "@/server/pins"
+import { pinsQueryOptions } from "@/lib/pins"
+import { addPin, removePin } from "@/server/pins"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { PinIcon, PinOffIcon } from "lucide-react"
 
@@ -13,7 +14,7 @@ export function PinToggle({
   name: string
 }) {
   const queryClient = useQueryClient()
-  const pins = useQuery({ queryKey: ["pins"], queryFn: () => listPins() })
+  const pins = useQuery(pinsQueryOptions)
   const pinned = (pins.data ?? []).some(
     (pin) => pin.registry === registry && pin.name === name
   )
@@ -24,7 +25,7 @@ export function PinToggle({
     } else {
       await addPin({ data: { registry, name } })
     }
-    await queryClient.invalidateQueries({ queryKey: ["pins"] })
+    await queryClient.invalidateQueries({ queryKey: pinsQueryOptions.queryKey })
   }
 
   return (

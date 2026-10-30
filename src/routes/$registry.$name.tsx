@@ -8,8 +8,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Separator } from "@/components/ui/separator"
-import { loadPackage } from "@/lib/packages"
 import { openTab } from "@/lib/workspace"
+import { getPackage } from "@/server/packages"
 import {
   createFileRoute,
   type ErrorComponentProps,
@@ -19,7 +19,12 @@ import { useEffect } from "react"
 
 export const Route = createFileRoute("/$registry/$name")({
   loader: ({ params }) =>
-    loadPackage(params.registry, decodeURIComponent(params.name)),
+    getPackage({
+      data: {
+        registry: params.registry,
+        name: decodeURIComponent(params.name),
+      },
+    }),
   component: PackagePage,
   errorComponent: PackageError,
 })

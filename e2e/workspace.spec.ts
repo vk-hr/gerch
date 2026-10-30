@@ -28,9 +28,9 @@ async function mockWorkspace(page: Page, pins: unknown[]) {
       })
 
     switch (exportName) {
-      case "searchNpm_createServerFn_handler":
-        return respond([react])
-      case "npmPackage_createServerFn_handler":
+      case "searchPackages_createServerFn_handler":
+        return respond({ records: [react] })
+      case "getPackage_createServerFn_handler":
         return respond({ record: react })
       case "listPins_createServerFn_handler":
         return respond(pins)

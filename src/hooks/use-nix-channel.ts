@@ -1,4 +1,4 @@
-import type { NixChannel } from "@/server/registries/nix"
+import type { NixChannel } from "@/lib/nix-channel"
 
 import { useState } from "react"
 
