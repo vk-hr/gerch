@@ -1,7 +1,9 @@
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -116,6 +118,9 @@ export function AppSidebar({ children }: { children: ReactNode }) {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
+          <SidebarFooter>
+            <ThemeToggle />
+          </SidebarFooter>
         </Sidebar>
         <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>

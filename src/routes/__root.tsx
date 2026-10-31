@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query"
 
 import { AppSidebar } from "@/components/app-sidebar"
+import { getTheme, setTheme } from "@/theme"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { hotkeysDevtoolsPlugin } from "@tanstack/react-hotkeys-devtools"
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
@@ -10,12 +11,14 @@ import {
   Scripts,
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { ThemeProvider } from "start-theme"
 
 import appCss from "../styles.css?url"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
+  loader: () => getTheme(),
   head: () => ({
     meta: [
       {
@@ -46,13 +49,19 @@ export const Route = createRootRouteWithContext<{
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const theme = Route.useLoaderData()
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body>
-        <AppSidebar>{children}</AppSidebar>
+        <ThemeProvider
+          theme={theme}
+          setThemeFn={(next) => setTheme({ data: next })}
+        >
+          <AppSidebar>{children}</AppSidebar>
+        </ThemeProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",

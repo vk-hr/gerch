@@ -43,5 +43,7 @@ export const getPackage = createServerFn({ method: "GET" })
           degraded: !result.ok || !record,
         }
       }
+      default:
+        throw new Error("unknown registry")
     }
   })

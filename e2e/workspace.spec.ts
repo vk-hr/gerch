@@ -28,6 +28,8 @@ async function mockWorkspace(page: Page, pins: unknown[]) {
       })
 
     switch (exportName) {
+      case "getTheme_createServerFn_handler":
+        return respond("system")
       case "searchPackages_createServerFn_handler":
         return respond({ records: [react] })
       case "getPackage_createServerFn_handler":
