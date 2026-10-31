@@ -135,7 +135,7 @@ test("Enter on an exact-name match navigates straight to the package", async ({
 
   await expect(page).toHaveURL(/\/npm\/react$/)
   await expect(page.getByRole("heading", { name: "react" })).toBeVisible()
-  await expect(page.getByText("License: MIT")).toBeVisible()
+  await expect(page.getByText("MIT", { exact: true })).toBeVisible()
 })
 
 test("switching registry tabs fetches that registry's results", async ({
@@ -197,9 +197,9 @@ test("a missing package shows the not-found page", async ({ page }) => {
   })
 
   await page.goto("/npm/definitely-not-real")
-  await expect(page.getByRole("heading", { name: "404" })).toBeVisible()
+  await expect(page.getByText("Package not found")).toBeVisible()
   await expect(
-    page.getByText("The requested page could not be found.")
+    page.getByRole("button", { name: "Back to search" })
   ).toBeVisible()
 })
 

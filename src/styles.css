@@ -133,3 +133,101 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  .readme {
+    font-size: 0.875rem;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+  }
+  .readme h1,
+  .readme h2,
+  .readme h3,
+  .readme h4,
+  .readme h5,
+  .readme h6 {
+    margin: 1.5em 0 0.5em;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .readme h1 {
+    font-size: 1.5rem;
+  }
+  .readme h2 {
+    font-size: 1.25rem;
+  }
+  .readme h3 {
+    font-size: 1.125rem;
+  }
+  .readme p,
+  .readme ul,
+  .readme ol,
+  .readme blockquote {
+    margin: 0.75em 0;
+  }
+  .readme ul,
+  .readme ol {
+    padding-left: 1.5rem;
+  }
+  .readme ul {
+    list-style: disc;
+  }
+  .readme ol {
+    list-style: decimal;
+  }
+  .readme li + li {
+    margin-top: 0.25em;
+  }
+  .readme a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .readme blockquote {
+    border-left: 3px solid var(--border);
+    padding-left: 1rem;
+    color: var(--muted-foreground);
+  }
+  .readme code {
+    border-radius: var(--radius-sm);
+    background: var(--muted);
+    padding: 0.125rem 0.3rem;
+    font-size: 0.85em;
+  }
+  .readme pre {
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: var(--radius-xl);
+    background: var(--muted);
+    padding: 1rem;
+  }
+  .readme pre code {
+    background: transparent;
+    padding: 0;
+  }
+  .readme table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+  }
+  .readme th,
+  .readme td {
+    border: 1px solid var(--border);
+    padding: 0.375rem 0.625rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .readme th {
+    background: var(--muted);
+    font-weight: 600;
+  }
+  .readme img {
+    max-width: 100%;
+    height: auto;
+  }
+  .readme hr {
+    margin: 2rem 0;
+    border-color: var(--border);
+  }
+}

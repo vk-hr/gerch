@@ -329,6 +329,9 @@ export function mapNixSearch(json: unknown): {
       continue
     }
     const source = valid.data._source
+    const licenses = source.package_license
+      ?.map((license) => license.shortName ?? license.spdxId)
+      .filter((license): license is string => Boolean(license))
     records.push({
       registry: "nix",
       name: source.package_attr_name,
@@ -338,6 +341,8 @@ export function mapNixSearch(json: unknown): {
         source.package_license?.[0]?.shortName ??
         source.package_license?.[0]?.spdxId ??
         undefined,
+      licenses: licenses?.length ? licenses : undefined,
+      homepages: source.package_homepage ?? undefined,
       links: { homepage: source.package_homepage?.[0] },
     })
   }

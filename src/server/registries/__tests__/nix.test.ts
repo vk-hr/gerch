@@ -123,6 +123,36 @@ describe("mapNixSearch", () => {
     expect(result.records[0].name).toBe("php84Extensions.ast")
   })
 
+  it("preserves all homepage and license values", () => {
+    const result = mapNixSearch({
+      hits: {
+        hits: [
+          {
+            _source: {
+              package_attr_name: "example",
+              package_pversion: "1.0",
+              package_description: null,
+              package_homepage: [
+                "https://example.com",
+                "https://docs.example.com",
+              ],
+              package_license: [
+                { shortName: "MIT", spdxId: "MIT" },
+                { shortName: "Apache-2.0", spdxId: "Apache-2.0" },
+              ],
+            },
+          },
+        ],
+      },
+    })
+
+    expect(result.records[0].homepages).toEqual([
+      "https://example.com",
+      "https://docs.example.com",
+    ])
+    expect(result.records[0].licenses).toEqual(["MIT", "Apache-2.0"])
+  })
+
   it("marks malformed responses degraded instead of succeeding empty", () => {
     expect(mapNixSearch({ unexpected: true })).toEqual({
       records: [],

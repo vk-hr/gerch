@@ -103,22 +103,22 @@ Acceptance:
 
 Goal: make every package page a useful reference with deliberate sparse and failure states, without adding a new nix backend or changing the search interaction model.
 
-- [ ] shared page hierarchy: identity/actions → installation → metadata/links → collapsible versions → readme. Registry-specific sections appear only where they add value.
-- [ ] copyable installation snippets: `npm install <name>`, `cargo add <name>`, and `nix profile install nixpkgs#<full-attribute-path>`. Never derive nix commands from `pname` or fabricate missing identifiers.
-- [ ] metadata completeness: preserve all nixpkgs homepage/license values; show the selected channel on nix detail; keep downloads only where the registry supplies them.
-- [ ] version presentation: collapsed by default, current/latest marked, bounded scrollable list on expansion; no version analytics.
-- [ ] deliberate route states: pending skeleton, intentional sparse layout, not-found with a path back to search, retryable outage alert, and readme-unavailable note alongside intact metadata.
-- [ ] readme typography: readable headings, lists, tables, links, images, and code blocks in light/dark themes; responsive wide content without page-level horizontal overflow. Keep the existing server-side sanitizer and @tanstack/markdown pipeline.
-- [ ] e2e coverage: channel-aware nix deep links, sparse package pages, readme-unavailable states, and secondary-failure preservation.
-- [ ] final verification: lint, format, typecheck, unit, e2e, and production build.
+- [x] shared page hierarchy: identity/actions → installation → metadata/links → collapsible versions → readme. Registry-specific sections appear only where they add value.
+- [x] copyable installation snippets: `npm install <name>`, `cargo add <name>`, and `nix profile install nixpkgs#<full-attribute-path>`. Never derive nix commands from `pname` or fabricate missing identifiers.
+- [x] metadata completeness: preserve all nixpkgs homepage/license values; show the selected channel on nix detail; keep downloads only where the registry supplies them.
+- [x] version presentation: collapsed by default, current/latest marked, bounded scrollable list on expansion; no version analytics.
+- [x] deliberate route states: pending skeleton, intentional sparse layout, not-found with a path back to search, retryable outage alert, and readme-unavailable note alongside intact metadata.
+- [x] readme typography: readable headings, lists, tables, links, images, and code blocks in light/dark themes; responsive wide content without page-level horizontal overflow. Keep the existing server-side sanitizer and @tanstack/markdown pipeline.
+- [x] e2e coverage: channel-aware nix deep links, sparse package pages, readme-unavailable states, and secondary-failure preservation.
+- [x] final verification: lint, format, typecheck, unit, e2e, and production build.
 
 Acceptance:
 
-- [ ] Every registry detail follows the same hierarchy and offers a correct installation command when its identifier is available.
-- [ ] A channel-specific nix deep link renders the same package on reload and does not silently change channels.
-- [ ] A missing readme never results in a blank page; a missing package never looks like an outage.
-- [ ] Readme content is readable in both themes and wide tables/code/images do not overflow the page.
-- [ ] `docs/prd.md` success criteria are demonstrably covered by unit/e2e checks or documented on-demand live verification.
+- [x] Every registry detail follows the same hierarchy and offers a correct installation command when its identifier is available.
+- [x] A channel-specific nix deep link renders the same package on reload and does not silently change channels.
+- [x] A missing readme never results in a blank page; a missing package never looks like an outage.
+- [x] Readme content is readable in both themes and wide tables/code/images do not overflow the page.
+- [x] `docs/prd.md` success criteria are demonstrably covered by unit/e2e checks or documented on-demand live verification.
 
 ## Risks
 

@@ -33,7 +33,6 @@ export function PinToggle({
       variant="outline"
       pressed={pinned}
       onPressedChange={() => void toggle()}
-      className="mt-4"
     >
       {pinned ? (
         <PinOffIcon data-icon="inline-start" />

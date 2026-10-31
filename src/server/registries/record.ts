@@ -13,6 +13,8 @@ export type PackageRecord = {
   version?: string
   description?: string
   license?: string
+  licenses?: string[]
+  homepages?: string[]
   links: PackageLinks
   downloads?: { monthly?: number; recent?: number }
 }
