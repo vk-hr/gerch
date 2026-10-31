@@ -80,9 +80,49 @@ Why these tools:
 - [x] error boundaries per panel; retry/backoff on 429
 - [x] CI green (checks + e2e); dev smoke: SSR page, search all three registries, pin across restart
 
+## Phase 6 — registry correctness and failure isolation
+
+Goal: make search and detail data trustworthy before enriching the UI. No false empty results, no secondary fetch blanking a valid page, and no silent schema-drift caching.
+
+- [ ] nix mapper: tolerate nullable upstream fields (including `spdxId: null`), parse per hit so valid records survive partial drift, mark dropped-hit responses degraded, and never cache schema-failure outcomes.
+- [ ] realistic nix fixtures: add nullable-license and partial-drift payloads; regression tests prove valid hits survive and degradation/cache behavior is intentional.
+- [ ] failure taxonomy: keep genuine not-found, upstream outage, and schema drift distinct in server handlers and route loaders. A missing package must not become an empty fallback record.
+- [ ] independent detail fallbacks: npm registry metadata survives unpkg failure; crates metadata survives docs.rs failure. Readme failure produces a readme-unavailable result, not a route error.
+- [ ] crates readme correctness: rebase relative links/images against the docs.rs source before sanitization.
+- [ ] channel-correct nix detail: validate optional `?channel=`, use the saved channel as fallback, include channel in loader/query keys, and do not silently substitute unstable.
+- [ ] verification: unit suite plus on-demand live checks. `ripgrep` is the control; `firefox`, `hello`, `vim`, `docker`, and `linux` must map upstream hits to results instead of false empty searches.
+
+Acceptance:
+
+- [ ] Nullable-license and partial-drift fixtures pass, including degradation and cache assertions.
+- [ ] docs.rs/unpkg failure tests prove metadata remains available.
+- [ ] Invalid channel, missing package, and outage paths produce distinct outcomes.
+- [ ] Production build and all routine checks remain green; live suite remains out of CI.
+
+## Phase 7 — package-detail information architecture and presentation
+
+Goal: make every package page a useful reference with deliberate sparse and failure states, without adding a new nix backend or changing the search interaction model.
+
+- [ ] shared page hierarchy: identity/actions → installation → metadata/links → collapsible versions → readme. Registry-specific sections appear only where they add value.
+- [ ] copyable installation snippets: `npm install <name>`, `cargo add <name>`, and `nix profile install nixpkgs#<full-attribute-path>`. Never derive nix commands from `pname` or fabricate missing identifiers.
+- [ ] metadata completeness: preserve all nixpkgs homepage/license values; show the selected channel on nix detail; keep downloads only where the registry supplies them.
+- [ ] version presentation: collapsed by default, current/latest marked, bounded scrollable list on expansion; no version analytics.
+- [ ] deliberate route states: pending skeleton, intentional sparse layout, not-found with a path back to search, retryable outage alert, and readme-unavailable note alongside intact metadata.
+- [ ] readme typography: readable headings, lists, tables, links, images, and code blocks in light/dark themes; responsive wide content without page-level horizontal overflow. Keep the existing server-side sanitizer and @tanstack/markdown pipeline.
+- [ ] e2e coverage: channel-aware nix deep links, sparse package pages, readme-unavailable states, and secondary-failure preservation.
+- [ ] final verification: lint, format, typecheck, unit, e2e, and production build.
+
+Acceptance:
+
+- [ ] Every registry detail follows the same hierarchy and offers a correct installation command when its identifier is available.
+- [ ] A channel-specific nix deep link renders the same package on reload and does not silently change channels.
+- [ ] A missing readme never results in a blank page; a missing package never looks like an outage.
+- [ ] Readme content is readable in both themes and wide tables/code/images do not overflow the page.
+- [ ] `docs/prd.md` success criteria are demonstrably covered by unit/e2e checks or documented on-demand live verification.
+
 ## Risks
 
-- nixos-search schema version bump breaks queries (mitigation: runtime pin + degradation).
+- nixos-search schema version bump breaks queries (mitigation: runtime pin + tolerant per-hit mapping + visible degradation; never cache schema-failure outcomes).
 - crates.io 1 rps under fast typing (mitigation: queue + debounce + cache; per-registry active-tab fetching keeps QPS ~trivial).
 - unpkg availability for readme fallback (mitigation: cache on first success; show meta without readme on failure).
 - npm @playwright/test must stay pinned to 1.64.1 to match the chromium revision in nixpkgs (mitigation: bump the npm package and the nixpkgs lock together).
