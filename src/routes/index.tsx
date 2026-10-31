@@ -146,6 +146,7 @@ function SearchPage() {
         await navigate({
           to: "/$registry/$name",
           params: { registry, name: encodeURIComponent(exact.name) },
+          search: registry === "nix" ? { channel } : undefined,
         })
         return
       }
@@ -160,6 +161,7 @@ function SearchPage() {
           registry: record.registry,
           name: encodeURIComponent(record.name),
         },
+        search: record.registry === "nix" ? { channel } : undefined,
       })
     }
   }
@@ -318,6 +320,7 @@ function SearchPage() {
                     <PackageCard
                       record={record}
                       highlighted={item.index === highlighted}
+                      channel={channel}
                     />
                   </div>
                 )

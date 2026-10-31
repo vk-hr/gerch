@@ -167,7 +167,7 @@ export async function npmPackageHandler(
       name,
       detail.record.version,
       fetcher
-    )
+    ).catch(() => undefined)
   }
   const baseUrl = detail.record.links.repository ?? detail.record.links.registry
   const readmeHtml = readmeMarkdown

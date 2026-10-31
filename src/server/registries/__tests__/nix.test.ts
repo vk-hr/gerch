@@ -64,10 +64,11 @@ describe("buildNixQuery", () => {
 
 describe("mapNixSearch", () => {
   it("maps ES hits to package records", () => {
-    const records = mapNixSearch(nixSearchFixture)
-    expect(records.length).toBeGreaterThan(0)
+    const result = mapNixSearch(nixSearchFixture)
+    expect(result.degraded).toBe(false)
+    expect(result.records.length).toBeGreaterThan(0)
 
-    const first = records[0]
+    const first = result.records[0]
     expect(first.registry).toBe("nix")
     expect(first.name).toBe("php84Extensions.ast")
     expect(first.version).toBe("1.1.3")
@@ -75,8 +76,58 @@ describe("mapNixSearch", () => {
     expect(first.links.homepage).toBe("https://pecl.php.net/package/ast")
   })
 
-  it("returns an empty list for malformed responses", () => {
-    expect(mapNixSearch({ unexpected: true })).toEqual([])
+  it("accepts nullable license fields", () => {
+    const result = mapNixSearch({
+      hits: {
+        hits: [
+          {
+            _source: {
+              package_attr_name: "firefox-bin",
+              package_pversion: "140.0",
+              package_description: "Firefox binary",
+              package_homepage: null,
+              package_license: [{ shortName: null, spdxId: null }],
+            },
+          },
+        ],
+      },
+    })
+
+    expect(result).toEqual({
+      degraded: false,
+      records: [
+        {
+          registry: "nix",
+          name: "firefox-bin",
+          version: "140.0",
+          description: "Firefox binary",
+          license: undefined,
+          links: { homepage: undefined },
+        },
+      ],
+    })
+  })
+
+  it("keeps valid records and marks partial schema drift degraded", () => {
+    const result = mapNixSearch({
+      hits: {
+        hits: [
+          nixSearchFixture.hits.hits[0],
+          { _source: { package_pversion: "1.0" } },
+        ],
+      },
+    })
+
+    expect(result.degraded).toBe(true)
+    expect(result.records).toHaveLength(1)
+    expect(result.records[0].name).toBe("php84Extensions.ast")
+  })
+
+  it("marks malformed responses degraded instead of succeeding empty", () => {
+    expect(mapNixSearch({ unexpected: true })).toEqual({
+      records: [],
+      degraded: true,
+    })
   })
 })
 
@@ -122,6 +173,29 @@ describe("searchNixHandler", () => {
     await expect(
       searchNixHandler("x", "nixos-unstable", 0, rejecting)
     ).resolves.toEqual({ ok: false, reason: "unavailable" })
+  })
+
+  it("does not cache malformed upstream responses", async () => {
+    const fetcher = vi.fn(
+      async () => new Response(JSON.stringify({ unexpected: true }))
+    )
+
+    const first = await searchNixHandler(
+      "firefox",
+      "nixos-unstable",
+      0,
+      fetcher
+    )
+    const second = await searchNixHandler(
+      "firefox",
+      "nixos-unstable",
+      0,
+      fetcher
+    )
+
+    expect(first).toEqual({ ok: true, records: [], degraded: true })
+    expect(second).toEqual(first)
+    expect(fetcher).toHaveBeenCalledTimes(2)
   })
 
   it("returns no records for an empty query without calling upstream", async () => {

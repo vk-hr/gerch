@@ -190,13 +190,16 @@ export async function cratesPackageHandler(
       {},
       fetcher
     ).then(mapCratesDetail),
-    cratesReadmeHandler(name, fetcher),
+    cratesReadmeHandler(name, fetcher).catch(() => undefined),
   ])
   return {
     record,
     readmeHtml: readmeHtml
       ? cachedReadme(`crates:${name}:${record.version ?? "latest"}`, () =>
-          sanitizeReadmeHtml(readmeHtml)
+          sanitizeReadmeHtml(
+            readmeHtml,
+            `${DOCSRS}/${encodeURIComponent(name)}/latest/${encodeURIComponent(name)}/`
+          )
         )
       : undefined,
   }

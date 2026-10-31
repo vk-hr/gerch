@@ -65,4 +65,18 @@ describe("nix (live)", () => {
       expect(result.records[0].registry).toBe("nix")
     }
   })
+
+  it.skipIf(!hasNixCreds)(
+    "maps regression queries that contain nullable upstream fields",
+    async () => {
+      for (const query of ["firefox", "hello", "vim", "docker", "linux"]) {
+        const result = await searchNixHandler(query)
+        expect(result.ok, query).toBe(true)
+        if (result.ok) {
+          expect(result.records.length, query).toBeGreaterThan(0)
+        }
+      }
+    },
+    30_000
+  )
 })

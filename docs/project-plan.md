@@ -84,20 +84,20 @@ Why these tools:
 
 Goal: make search and detail data trustworthy before enriching the UI. No false empty results, no secondary fetch blanking a valid page, and no silent schema-drift caching.
 
-- [ ] nix mapper: tolerate nullable upstream fields (including `spdxId: null`), parse per hit so valid records survive partial drift, mark dropped-hit responses degraded, and never cache schema-failure outcomes.
-- [ ] realistic nix fixtures: add nullable-license and partial-drift payloads; regression tests prove valid hits survive and degradation/cache behavior is intentional.
-- [ ] failure taxonomy: keep genuine not-found, upstream outage, and schema drift distinct in server handlers and route loaders. A missing package must not become an empty fallback record.
-- [ ] independent detail fallbacks: npm registry metadata survives unpkg failure; crates metadata survives docs.rs failure. Readme failure produces a readme-unavailable result, not a route error.
-- [ ] crates readme correctness: rebase relative links/images against the docs.rs source before sanitization.
-- [ ] channel-correct nix detail: validate optional `?channel=`, use the saved channel as fallback, include channel in loader/query keys, and do not silently substitute unstable.
-- [ ] verification: unit suite plus on-demand live checks. `ripgrep` is the control; `firefox`, `hello`, `vim`, `docker`, and `linux` must map upstream hits to results instead of false empty searches.
+- [x] nix mapper: tolerate nullable upstream fields (including `spdxId: null`), parse per hit so valid records survive partial drift, mark dropped-hit responses degraded, and never cache schema-failure outcomes.
+- [x] realistic nix fixtures: add nullable-license and partial-drift payloads; regression tests prove valid hits survive and degradation/cache behavior is intentional.
+- [x] failure taxonomy: keep genuine not-found, upstream outage, and schema drift distinct in server handlers and route loaders. A missing package must not become an empty fallback record.
+- [x] independent detail fallbacks: npm registry metadata survives unpkg failure; crates metadata survives docs.rs failure. Readme failure produces a readme-unavailable result, not a route error.
+- [x] crates readme correctness: rebase relative links/images against the docs.rs source before sanitization.
+- [x] channel-correct nix detail: validate optional `?channel=`, use the saved channel as fallback, include channel in loader/query keys, and do not silently substitute unstable.
+- [x] verification: unit suite plus on-demand live checks. `ripgrep` is the control; `firefox`, `hello`, `vim`, `docker`, and `linux` must map upstream hits to results instead of false empty searches.
 
 Acceptance:
 
-- [ ] Nullable-license and partial-drift fixtures pass, including degradation and cache assertions.
-- [ ] docs.rs/unpkg failure tests prove metadata remains available.
-- [ ] Invalid channel, missing package, and outage paths produce distinct outcomes.
-- [ ] Production build and all routine checks remain green; live suite remains out of CI.
+- [x] Nullable-license and partial-drift fixtures pass, including degradation and cache assertions.
+- [x] docs.rs/unpkg failure tests prove metadata remains available.
+- [x] Invalid channel, missing package, and outage paths produce distinct outcomes.
+- [x] Production build and all routine checks remain green; live suite remains out of CI.
 
 ## Phase 7 — package-detail information architecture and presentation
 

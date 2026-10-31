@@ -64,7 +64,8 @@ const ALLOWED_ATTRIBUTES: sanitizeHtml.IOptions["allowedAttributes"] = {
   th: ["colspan", "rowspan", "align"],
 }
 
-export function sanitizeReadmeHtml(html: string): string {
+export function sanitizeReadmeHtml(html: string, baseUrl?: string): string {
+  const resolve = urlTransform(baseUrl)
   return sanitizeHtml(html, {
     allowedTags: ALLOWED_TAGS,
     allowedAttributes: ALLOWED_ATTRIBUTES,
@@ -74,8 +75,18 @@ export function sanitizeReadmeHtml(html: string): string {
         tagName: "a",
         attribs: {
           ...attribs,
+          ...(attribs.href
+            ? { href: resolve(attribs.href) ?? attribs.href }
+            : {}),
           target: "_blank",
           rel: "noreferrer noopener",
+        },
+      }),
+      img: (_tagName, attribs) => ({
+        tagName: "img",
+        attribs: {
+          ...attribs,
+          ...(attribs.src ? { src: resolve(attribs.src) ?? attribs.src } : {}),
         },
       }),
     },

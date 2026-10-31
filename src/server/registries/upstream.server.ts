@@ -1,20 +1,13 @@
 import { env } from "@/env.server"
+import { UpstreamError } from "@/server/registries/upstream-error"
 import ky, { HTTPError } from "ky"
+
+export { UpstreamError } from "@/server/registries/upstream-error"
 import { LRUCache } from "lru-cache"
 import PQueue from "p-queue"
 
 export const USER_AGENT =
   env.SERVER_USER_AGENT ?? "gerch (+https://github.com/gerch)"
-
-export class UpstreamError extends Error {
-  constructor(
-    public status: number,
-    message: string
-  ) {
-    super(message)
-    this.name = "UpstreamError"
-  }
-}
 
 export async function ensureOk(
   response: Response,

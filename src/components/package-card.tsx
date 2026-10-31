@@ -1,3 +1,4 @@
+import type { NixChannel } from "@/lib/nix-channel"
 import type { PackageRecord } from "@/server/registries/record"
 
 import { Badge } from "@/components/ui/badge"
@@ -21,9 +22,11 @@ function formatDownloads(count: number): string {
 export function PackageCard({
   record,
   highlighted = false,
+  channel,
 }: {
   record: PackageRecord
   highlighted?: boolean
+  channel?: NixChannel
 }) {
   return (
     <Link
@@ -32,6 +35,7 @@ export function PackageCard({
         registry: record.registry,
         name: encodeURIComponent(record.name),
       }}
+      search={record.registry === "nix" && channel ? { channel } : undefined}
       className="block"
     >
       <Card

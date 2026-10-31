@@ -1,8 +1,11 @@
+import type { NixChannel } from "@/lib/nix-channel"
 import type { PackageRecord } from "@/server/registries/record"
 
+import { NIX_CHANNELS } from "@/lib/nix-channel"
 import { cratesPackage } from "@/server/registries/crates"
 import { searchNix } from "@/server/registries/nix"
 import { npmPackage } from "@/server/registries/npm"
+import { UpstreamError } from "@/server/registries/upstream-error"
 import { createServerFn } from "@tanstack/react-start"
 import { z } from "zod"
 
@@ -15,11 +18,17 @@ export type PackageDetail = {
   degraded?: boolean
 }
 
-export const getPackage = createServerFn({ method: "GET" })
-  .validator(z.object({ registry: z.string(), name: z.string().min(1) }))
-  .handler(async ({ data }): Promise<PackageDetail> => {
-    const registry = registrySchema.parse(data.registry)
-    const name = data.name
+export type PackageResult = PackageDetail | { notFound: true }
+
+export async function getPackageHandler(input: {
+  registry: string
+  name: string
+  channel?: NixChannel
+}): Promise<PackageResult> {
+  const registry = registrySchema.parse(input.registry)
+  const name = input.name
+
+  try {
     switch (registry) {
       case "npm": {
         const detail = await npmPackage({ data: name })
@@ -34,16 +43,43 @@ export const getPackage = createServerFn({ method: "GET" })
         }
       }
       case "nix": {
-        const result = await searchNix({ data: { q: name } })
-        const record = result.ok
-          ? result.records.find((candidate) => candidate.name === name)
-          : undefined
-        return {
-          record: record ?? { registry: "nix", name, links: {} },
-          degraded: !result.ok || !record,
+        const result = await searchNix({
+          data: { q: name, channel: input.channel },
+        })
+        if (!result.ok) {
+          throw new UpstreamError(503, "nixpkgs search is unavailable")
         }
+        const record = result.records.find(
+          (candidate) => candidate.name === name
+        )
+        if (!record) {
+          if (result.degraded) {
+            throw new UpstreamError(
+              502,
+              "nixpkgs package metadata has an unsupported schema"
+            )
+          }
+          return { notFound: true }
+        }
+        return { record, degraded: result.degraded }
       }
       default:
         throw new Error("unknown registry")
     }
-  })
+  } catch (error) {
+    if (error instanceof UpstreamError && error.status === 404) {
+      return { notFound: true }
+    }
+    throw error
+  }
+}
+
+export const getPackage = createServerFn({ method: "GET" })
+  .validator(
+    z.object({
+      registry: z.string(),
+      name: z.string().min(1),
+      channel: z.enum(NIX_CHANNELS).optional(),
+    })
+  )
+  .handler(async ({ data }) => getPackageHandler(data))

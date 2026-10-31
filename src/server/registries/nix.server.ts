@@ -13,7 +13,7 @@ const CACHE_TTL_MS = 10 * 60 * 1000
 const TIMEOUT_MS = 5000
 
 export type NixSearchResult =
-  | { ok: true; records: PackageRecord[] }
+  | { ok: true; records: PackageRecord[]; degraded?: boolean }
   | { ok: false; reason: "unavailable" }
 
 type Clause = Record<string, unknown>
@@ -292,46 +292,56 @@ export function buildNixQuery(q: string, from = 0): NixQueryBody {
   }
 }
 
-const nixHitSchema = z
-  .object({
-    hits: z.object({
-      hits: z.array(
-        z.object({
-          _source: z.object({
-            package_attr_name: z.string(),
-            package_pversion: z.string(),
-            package_description: z.string().nullish(),
-            package_homepage: z.array(z.string()).nullish(),
-            package_license: z
-              .array(
-                z.object({
-                  shortName: z.string().optional(),
-                  spdxId: z.string().optional(),
-                })
-              )
-              .nullish(),
-          }),
-        })
-      ),
-    }),
-  })
-  .transform(({ hits }): PackageRecord[] =>
-    hits.hits.map((hit) => ({
-      registry: "nix",
-      name: hit._source.package_attr_name,
-      version: hit._source.package_pversion,
-      description: hit._source.package_description ?? undefined,
-      license:
-        hit._source.package_license?.[0]?.shortName ??
-        hit._source.package_license?.[0]?.spdxId ??
-        undefined,
-      links: { homepage: hit._source.package_homepage?.[0] },
-    }))
-  )
+const nixSourceSchema = z.object({
+  package_attr_name: z.string(),
+  package_pversion: z.string(),
+  package_description: z.string().nullish(),
+  package_homepage: z.array(z.string()).nullish(),
+  package_license: z
+    .array(
+      z.object({
+        shortName: z.string().nullish(),
+        spdxId: z.string().nullish(),
+      })
+    )
+    .nullish(),
+})
 
-export function mapNixSearch(json: unknown): PackageRecord[] {
-  const parsed = nixHitSchema.safeParse(json)
-  return parsed.success ? parsed.data : []
+const nixHitSchema = z.object({ _source: nixSourceSchema })
+
+const nixResponseSchema = z.object({
+  hits: z.object({ hits: z.array(z.unknown()) }),
+})
+
+export function mapNixSearch(json: unknown): {
+  records: PackageRecord[]
+  degraded: boolean
+} {
+  const parsed = nixResponseSchema.safeParse(json)
+  if (!parsed.success) return { records: [], degraded: true }
+
+  const records: PackageRecord[] = []
+  let degraded = false
+  for (const hit of parsed.data.hits.hits) {
+    const valid = nixHitSchema.safeParse(hit)
+    if (!valid.success) {
+      degraded = true
+      continue
+    }
+    const source = valid.data._source
+    records.push({
+      registry: "nix",
+      name: source.package_attr_name,
+      version: source.package_pversion,
+      description: source.package_description ?? undefined,
+      license:
+        source.package_license?.[0]?.shortName ??
+        source.package_license?.[0]?.spdxId ??
+        undefined,
+      links: { homepage: source.package_homepage?.[0] },
+    })
+  }
+  return { records, degraded }
 }
 
 const cache = new LRUCache<string, PackageRecord[]>({
@@ -376,7 +386,7 @@ export async function searchNixHandler(
 
   if (!response?.ok) return { ok: false, reason: "unavailable" }
 
-  const records = mapNixSearch(await response.json())
-  cache.set(key, records)
-  return { ok: true, records }
+  const result = mapNixSearch(await response.json().catch(() => undefined))
+  if (!result.degraded) cache.set(key, result.records)
+  return { ok: true, records: result.records, degraded: result.degraded }
 }

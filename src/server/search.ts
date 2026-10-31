@@ -31,7 +31,7 @@ export const searchPackages = createServerFn({ method: "GET" })
       case "nix": {
         const result = await searchNix({ data: { q, channel, offset } })
         return result.ok
-          ? { records: result.records }
+          ? { records: result.records, degraded: result.degraded }
           : { records: [], degraded: true }
       }
     }

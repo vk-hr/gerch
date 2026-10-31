@@ -191,6 +191,18 @@ test("a failed package load shows the error boundary with retry", async ({
   await expect(page.getByRole("button", { name: "Retry" })).toBeVisible()
 })
 
+test("a missing package shows the not-found page", async ({ page }) => {
+  await mockServerFns(page, {
+    getPackage_createServerFn_handler: { notFound: true },
+  })
+
+  await page.goto("/npm/definitely-not-real")
+  await expect(page.getByRole("heading", { name: "404" })).toBeVisible()
+  await expect(
+    page.getByText("The requested page could not be found.")
+  ).toBeVisible()
+})
+
 test("no results shows an empty state", async ({ page }) => {
   await mockServerFns(page, {
     searchPackages_createServerFn_handler: { records: [] },

@@ -1,3 +1,4 @@
+import { clearReadmeCache } from "@/server/readme.server"
 import cratesDetailFixture from "@/server/registries/__tests__/fixtures/crates-detail.json"
 import cratesSearchFixture from "@/server/registries/__tests__/fixtures/crates-search.json"
 import {
@@ -18,6 +19,7 @@ const docsrsReadmeFixture = readFileSync(
 
 afterEach(() => {
   clearUpstreamCache()
+  clearReadmeCache()
 })
 
 describe("searchCratesHandler", () => {
@@ -93,5 +95,39 @@ describe("cratesPackageHandler", () => {
     expect(detail.readmeHtml).toContain("Serde is a framework")
     expect(requested.some((url) => url.includes("crates.io/api"))).toBe(true)
     expect(requested.some((url) => url.includes("docs.rs"))).toBe(true)
+  })
+
+  it("rebases relative docs.rs links and images", async () => {
+    const html = `<details class="toggle top-doc"><summary>Readme</summary><p><a href="../guide">Guide</a><img src="diagram.png"></p></details>`
+    const detail = await cratesPackageHandler("react", async (url) => {
+      if (url.includes("crates.io")) {
+        return new Response(JSON.stringify(cratesDetailFixture), {
+          status: 200,
+        })
+      }
+      return new Response(html, { status: 200 })
+    })
+
+    expect(detail.readmeHtml).toContain(
+      'href="https://docs.rs/react/latest/guide"'
+    )
+    expect(detail.readmeHtml).toContain(
+      'src="https://docs.rs/react/latest/react/diagram.png"'
+    )
+  })
+
+  it("keeps crate metadata when docs.rs fails", async () => {
+    const detail = await cratesPackageHandler("react", async (url) => {
+      if (url.includes("crates.io")) {
+        return new Response(JSON.stringify(cratesDetailFixture), {
+          status: 200,
+        })
+      }
+      return new Response("unavailable", { status: 503 })
+    })
+
+    expect(detail.record.name).toBe("react")
+    expect(detail.record.license).toBe("GPL-3.0")
+    expect(detail.readmeHtml).toBeUndefined()
   })
 })

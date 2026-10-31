@@ -8,23 +8,35 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Separator } from "@/components/ui/separator"
+import { useNixChannel } from "@/hooks/use-nix-channel"
+import { NIX_CHANNELS } from "@/lib/nix-channel"
 import { openTab } from "@/lib/workspace"
 import { getPackage } from "@/server/packages"
 import {
   createFileRoute,
+  notFound,
   type ErrorComponentProps,
 } from "@tanstack/react-router"
 import { ChevronDownIcon, RotateCcwIcon, TriangleAlertIcon } from "lucide-react"
 import { useEffect } from "react"
+import { z } from "zod"
 
 export const Route = createFileRoute("/$registry/$name")({
-  loader: ({ params }) =>
-    getPackage({
+  validateSearch: z.object({
+    channel: z.enum(NIX_CHANNELS).optional(),
+  }),
+  loaderDeps: ({ search }) => ({ channel: search.channel }),
+  loader: async ({ params, deps }) => {
+    const detail = await getPackage({
       data: {
         registry: params.registry,
         name: decodeURIComponent(params.name),
+        channel: deps.channel,
       },
-    }),
+    })
+    if ("notFound" in detail) throw notFound()
+    return detail
+  },
   component: PackagePage,
   errorComponent: PackageError,
 })
@@ -53,11 +65,32 @@ function PackageError({ error, reset }: ErrorComponentProps) {
 
 function PackagePage() {
   const { record, readmeHtml, versions, degraded } = Route.useLoaderData()
+  const { channel: urlChannel } = Route.useSearch()
+  const [savedChannel] = useNixChannel()
+  const navigate = Route.useNavigate()
   const links = Object.entries(record.links).filter(([, url]) => url)
 
   useEffect(() => {
     openTab({ registry: record.registry, name: record.name })
   }, [record.registry, record.name])
+
+  useEffect(() => {
+    if (
+      record.registry === "nix" &&
+      !urlChannel &&
+      savedChannel !== "nixos-unstable"
+    ) {
+      void navigate({
+        to: "/$registry/$name",
+        params: {
+          registry: record.registry,
+          name: encodeURIComponent(record.name),
+        },
+        search: { channel: savedChannel },
+        replace: true,
+      })
+    }
+  }, [record.registry, record.name, urlChannel, savedChannel, navigate])
 
   return (
     <div className="flex flex-col p-6">

@@ -127,6 +127,19 @@ describe("npmPackageHandler", () => {
     expect(requested).toHaveLength(1)
   })
 
+  it("keeps registry metadata when the unpkg fallback fails", async () => {
+    const detail = await npmPackageHandler("react", async (url) => {
+      if (url.includes("unpkg.com")) {
+        return new Response("unavailable", { status: 503 })
+      }
+      return new Response(JSON.stringify(npmDocFixture), { status: 200 })
+    })
+
+    expect(detail.record.name).toBe("react")
+    expect(detail.record.version).toBe("19.3.1")
+    expect(detail.readmeHtml).toBeUndefined()
+  })
+
   it("throws UpstreamError when the package does not exist", async () => {
     await expect(
       npmPackageHandler("definitely-not-real-xyz", notFoundFetcher)
