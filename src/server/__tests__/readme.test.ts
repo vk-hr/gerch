@@ -41,6 +41,16 @@ describe("renderMarkdownToHtml", () => {
     expect(html).toContain("<div>raw html</div>")
   })
 
+  it("turns bare URLs into links but leaves code spans alone", () => {
+    const html = renderMarkdownToHtml(
+      "See https://react.dev/\n\n`https://example.com`"
+    )
+
+    expect(html).toContain('href="https://react.dev/"')
+    expect(html).toContain(">https://react.dev/</a>")
+    expect(html).toContain("<code>https://example.com</code>")
+  })
+
   it("highlights fenced code with semantic classes and no inline colors", () => {
     const html = renderMarkdownToHtml("```ts\nconst answer: number = 42\n```")
 

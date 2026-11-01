@@ -1,5 +1,5 @@
 import { highlightMarkdownCode } from "@/server/markdown-highlighter.server"
-import { renderHtml } from "@tanstack/markdown"
+import { renderHtml, type InlineNode } from "@tanstack/markdown"
 import { LRUCache } from "lru-cache"
 import sanitizeHtml from "sanitize-html"
 
@@ -95,6 +95,34 @@ export function sanitizeReadmeHtml(html: string, baseUrl?: string): string {
   })
 }
 
+const BARE_URL = /(https?:\/\/[^\s<>"']+)/g
+
+function linkifyText(value: string): InlineNode[] {
+  const nodes: InlineNode[] = []
+  for (const part of value.split(BARE_URL)) {
+    if (!part) continue
+    if (!/^https?:\/\//.test(part)) {
+      nodes.push({ type: "text", value: part })
+      continue
+    }
+    const trailing = part.match(/[.,;:!?]+$/)?.[0] ?? ""
+    const url = part.slice(0, part.length - trailing.length)
+    nodes.push({
+      type: "link",
+      href: url,
+      children: [{ type: "text", value: url }],
+    })
+    if (trailing) nodes.push({ type: "text", value: trailing })
+  }
+  return nodes
+}
+
+function autoLinkInline(nodes: InlineNode[]): InlineNode[] {
+  return nodes.flatMap((node) =>
+    node.type === "text" ? linkifyText(node.value) : [node]
+  )
+}
+
 function urlTransform(baseUrl?: string) {
   return (url: string): string | null => {
     if (/^(javascript|data|vbscript):/i.test(url.trim())) return null
@@ -114,6 +142,7 @@ export function renderMarkdownToHtml(
     allowHtml: true,
     urlTransform: urlTransform(baseUrl),
     highlighter: highlightMarkdownCode,
+    extensions: [{ name: "autolink", transformInline: autoLinkInline }],
   })
   return sanitizeReadmeHtml(html)
 }
