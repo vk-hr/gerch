@@ -31,6 +31,7 @@ export function PinToggle({
   return (
     <Toggle
       variant="outline"
+      size="sm"
       pressed={pinned}
       onPressedChange={() => void toggle()}
       aria-label={pinned ? "Unpin package" : "Pin package"}

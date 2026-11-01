@@ -145,7 +145,7 @@ function MetadataLabel({
 }) {
   return (
     <dt className="flex w-28 shrink-0 items-center gap-2 text-muted-foreground">
-      <Icon className="size-4" />
+      <Icon className="size-4 shrink-0" />
       {children}
     </dt>
   )
