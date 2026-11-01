@@ -168,3 +168,14 @@ test("package detail renders in dark theme", async ({ page }) => {
     page.getByRole("heading", { name: "Readme", exact: true })
   ).toBeVisible()
 })
+
+test("back to search returns to the search page", async ({ page }) => {
+  await mockDetail(page, { record: react })
+
+  await openFromSearch(page, "react")
+  await page.getByRole("button", { name: "Back to search" }).click()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(
+    page.getByRole("textbox", { name: "Search packages" })
+  ).toBeVisible()
+})

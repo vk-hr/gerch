@@ -28,6 +28,7 @@ import {
 } from "@tanstack/react-router"
 import {
   BookOpenIcon,
+  ArrowLeftIcon,
   ChevronDownIcon,
   CircleAlertIcon,
   DownloadIcon,
@@ -196,8 +197,19 @@ function PackagePage() {
   }, [record.registry, record.name, urlChannel, savedChannel, navigate])
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="relative flex flex-col p-6">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          nativeButton={false}
+          render={<Link to="/" />}
+          className="absolute top-4 left-4"
+          aria-label="Back to search"
+          title="Back to search"
+        >
+          <ArrowLeftIcon />
+        </Button>
         <header>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="uppercase">
