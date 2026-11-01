@@ -41,6 +41,16 @@ describe("renderMarkdownToHtml", () => {
     expect(html).toContain("<div>raw html</div>")
   })
 
+  it("highlights fenced code with semantic classes and no inline colors", () => {
+    const html = renderMarkdownToHtml("```ts\nconst answer: number = 42\n```")
+
+    expect(html).toContain("th-keyword")
+    expect(html).toContain('class="tm-code"')
+    expect(html).toContain("const")
+    expect(html).toContain("number")
+    expect(html).not.toContain("style=")
+  })
+
   it("sanitizes the rendered output", () => {
     const html = renderMarkdownToHtml("<script>alert(1)</script>\n\nhello")
     expect(html).not.toContain("<script>")

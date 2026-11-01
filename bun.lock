@@ -10,6 +10,7 @@
         "@fontsource-variable/space-grotesk": "^5.3.0",
         "@t3-oss/env-core": "^0.13.11",
         "@tailwindcss/vite": "^4.3.3",
+        "@tanstack/highlight": "^1.2.0",
         "@tanstack/markdown": "^1.0.0",
         "@tanstack/react-devtools": "latest",
         "@tanstack/react-form": "^1.33.5",
@@ -478,6 +479,8 @@
     "@tanstack/devtools-vite": ["@tanstack/devtools-vite@0.8.6", "", { "dependencies": { "@tanstack/devtools-bundler-core": "0.1.4", "@tanstack/devtools-client": "0.0.8", "@tanstack/devtools-event-bus": "0.4.3", "chalk": "^5.6.2" }, "peerDependencies": { "vite": "^6.0.0 || ^7.0.0 || ^8.0.0" } }, "sha512-CkaVqh3P7cJmQ6mMIxQfEmmR8gwlmgRCcoiWOMLigHaPobrrwTqsZvKqvYRHBybZ3ZT1ZSBj5TwlP7ukJJcRlg=="],
 
     "@tanstack/form-core": ["@tanstack/form-core@1.33.5", "", { "dependencies": { "@tanstack/devtools-event-client": "^0.4.1", "@tanstack/pacer-lite": "^0.1.1", "@tanstack/store": "^0.11.0" } }, "sha512-3dfx9MBP0aq5sXKteikG629X9oviptrQj0IFRk9YGcb+lB7Kv5x8S17oOSk1wUWgjQZ4xVJEMbKwOAODymocgA=="],
+
+    "@tanstack/highlight": ["@tanstack/highlight@1.2.0", "", {}, "sha512-rC9pPLrZXW6Col4ugZlx6EHfIcrx8p6geKkYdTWH1XFAZ2xTYDIIHoxo0QhqZPBEfrWQobkm8dEVrjW0V9r5YA=="],
 
     "@tanstack/history": ["@tanstack/history@1.162.5", "", {}, "sha512-w1+YvwmTkwt5n8yUqEH3IWZ9DsmorCZW/EQ3KYHnqEgIkOZpH54NvW6/Epq3Dzb8H0ifIeYX8PExvrNLIH5FIA=="],
 

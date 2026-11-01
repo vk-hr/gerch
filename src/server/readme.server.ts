@@ -1,3 +1,4 @@
+import { highlightMarkdownCode } from "@/server/markdown-highlighter.server"
 import { renderHtml } from "@tanstack/markdown"
 import { LRUCache } from "lru-cache"
 import sanitizeHtml from "sanitize-html"
@@ -59,6 +60,7 @@ const ALLOWED_ATTRIBUTES: sanitizeHtml.IOptions["allowedAttributes"] = {
   div: ["class", "align"],
   img: ["src", "alt", "title", "width", "height", "align"],
   ol: ["start", "type"],
+  pre: ["class"],
   span: ["class"],
   td: ["colspan", "rowspan", "align"],
   th: ["colspan", "rowspan", "align"],
@@ -111,6 +113,7 @@ export function renderMarkdownToHtml(
   const html = renderHtml(markdown, {
     allowHtml: true,
     urlTransform: urlTransform(baseUrl),
+    highlighter: highlightMarkdownCode,
   })
   return sanitizeReadmeHtml(html)
 }
