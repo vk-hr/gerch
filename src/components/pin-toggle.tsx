@@ -33,13 +33,14 @@ export function PinToggle({
       variant="outline"
       pressed={pinned}
       onPressedChange={() => void toggle()}
+      aria-label={pinned ? "Unpin package" : "Pin package"}
+      title={pinned ? "Unpin package" : "Pin package"}
     >
       {pinned ? (
         <PinOffIcon data-icon="inline-start" />
       ) : (
         <PinIcon data-icon="inline-start" />
       )}
-      {pinned ? "Unpin" : "Pin"}
     </Toggle>
   )
 }

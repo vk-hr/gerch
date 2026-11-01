@@ -73,6 +73,9 @@ test("package detail shows installation, metadata, and readme", async ({
   await expect(page.getByText("License")).toBeVisible()
   await expect(page.getByText("MIT", { exact: true })).toBeVisible()
   await expect(page.getByText("400.0M / month")).toBeVisible()
+  await expect(page.getByRole("button", { name: "Pin package" })).toBeVisible()
+  await expect(page.getByRole("button", { name: "Open project" })).toBeVisible()
+  await expect(page.locator("dt svg").first()).toBeVisible()
   await expect(
     page.getByRole("heading", { name: "Getting started" })
   ).toBeVisible()

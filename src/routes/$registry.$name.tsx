@@ -27,10 +27,20 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router"
 import {
+  BookOpenIcon,
   ChevronDownIcon,
+  CircleAlertIcon,
+  DownloadIcon,
   ExternalLinkIcon,
+  GitBranchIcon,
+  GlobeIcon,
+  HistoryIcon,
+  HouseIcon,
+  LinkIcon,
   RotateCcwIcon,
+  ScaleIcon,
   TriangleAlertIcon,
+  type LucideIcon,
 } from "lucide-react"
 import { useEffect } from "react"
 import { z } from "zod"
@@ -119,6 +129,28 @@ function PackageError({ error, reset }: ErrorComponentProps) {
   )
 }
 
+const linkIcons: Record<string, LucideIcon> = {
+  registry: GlobeIcon,
+  repository: GitBranchIcon,
+  documentation: BookOpenIcon,
+  issues: CircleAlertIcon,
+}
+
+function MetadataLabel({
+  icon: Icon,
+  children,
+}: {
+  icon: LucideIcon
+  children: React.ReactNode
+}) {
+  return (
+    <dt className="flex w-28 shrink-0 items-center gap-2 text-muted-foreground">
+      <Icon className="size-4" />
+      {children}
+    </dt>
+  )
+}
+
 function PackagePage() {
   const { record, readmeHtml, versions, degraded } = Route.useLoaderData()
   const { channel: urlChannel } = Route.useSearch()
@@ -178,28 +210,31 @@ function PackagePage() {
               <Badge variant="outline">{urlChannel ?? savedChannel}</Badge>
             )}
           </div>
-          <h1 className="mt-2 text-2xl font-semibold break-all">
-            {record.name}
-          </h1>
+          <div className="mt-2 flex items-start justify-between gap-4">
+            <h1 className="min-w-0 text-2xl font-semibold break-all">
+              {record.name}
+            </h1>
+            <div className="flex shrink-0 gap-2">
+              <PinToggle registry={record.registry} name={record.name} />
+              {primaryLink && (
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  nativeButton={false}
+                  render={
+                    <a href={primaryLink} target="_blank" rel="noreferrer" />
+                  }
+                  aria-label="Open project"
+                  title="Open project"
+                >
+                  <ExternalLinkIcon data-icon="inline-start" />
+                </Button>
+              )}
+            </div>
+          </div>
           {record.description && (
             <p className="mt-3 text-muted-foreground">{record.description}</p>
           )}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <PinToggle registry={record.registry} name={record.name} />
-            {primaryLink && (
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={
-                  <a href={primaryLink} target="_blank" rel="noreferrer" />
-                }
-              >
-                <ExternalLinkIcon data-icon="inline-start" />
-                Open project
-              </Button>
-            )}
-          </div>
         </header>
 
         {degraded && (
@@ -221,33 +256,25 @@ function PackagePage() {
             <dl className="mt-3 flex flex-col gap-2 text-sm">
               {licenses.length > 0 && (
                 <div className="flex gap-3">
-                  <dt className="w-28 shrink-0 text-muted-foreground">
-                    License
-                  </dt>
+                  <MetadataLabel icon={ScaleIcon}>License</MetadataLabel>
                   <dd>{licenses.join(", ")}</dd>
                 </div>
               )}
               {record.downloads?.monthly !== undefined && (
                 <div className="flex gap-3">
-                  <dt className="w-28 shrink-0 text-muted-foreground">
-                    Downloads
-                  </dt>
+                  <MetadataLabel icon={DownloadIcon}>Downloads</MetadataLabel>
                   <dd>{formatDownloads(record.downloads.monthly)} / month</dd>
                 </div>
               )}
               {record.downloads?.recent !== undefined && (
                 <div className="flex gap-3">
-                  <dt className="w-28 shrink-0 text-muted-foreground">
-                    Recent
-                  </dt>
+                  <MetadataLabel icon={HistoryIcon}>Recent</MetadataLabel>
                   <dd>{formatDownloads(record.downloads.recent)}</dd>
                 </div>
               )}
               {homepages.map((url) => (
                 <div key={url} className="flex gap-3">
-                  <dt className="w-28 shrink-0 text-muted-foreground">
-                    Homepage
-                  </dt>
+                  <MetadataLabel icon={HouseIcon}>Homepage</MetadataLabel>
                   <dd>
                     <a
                       href={url}
@@ -262,9 +289,9 @@ function PackagePage() {
               ))}
               {otherLinks.map(([kind, url]) => (
                 <div key={kind} className="flex gap-3">
-                  <dt className="w-28 shrink-0 text-muted-foreground">
+                  <MetadataLabel icon={linkIcons[kind] ?? LinkIcon}>
                     {kind}
-                  </dt>
+                  </MetadataLabel>
                   <dd>
                     <a
                       href={url}

@@ -66,7 +66,7 @@ test("pinning and open tabs persist across a reload", async ({ page }) => {
     .first()
     .click()
 
-  await page.getByRole("button", { name: "Pin", exact: true }).click()
+  await page.getByRole("button", { name: "Pin package" }).click()
   await expect(page.locator('[data-slot="sidebar"]')).toContainText("react")
 
   await page.reload()
