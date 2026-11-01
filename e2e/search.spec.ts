@@ -225,3 +225,20 @@ test("no results shows an empty state", async ({ page }) => {
 
   await expect(page.getByText(/No packages found for/)).toBeVisible()
 })
+
+test("search block starts centered and slides to the top on query", async ({
+  page,
+}) => {
+  await mockServerFns(page, {
+    searchPackages_createServerFn_handler: { records: [] },
+  })
+  await openSearch(page)
+
+  const layout = page.getByTestId("search-layout")
+  const before = (await layout.boundingBox())!.y
+  await page.getByRole("textbox", { name: "Search packages" }).click()
+  await page.keyboard.type("react")
+  await page.waitForTimeout(400)
+  const after = (await layout.boundingBox())!.y
+  expect(after).toBeLessThan(before)
+})

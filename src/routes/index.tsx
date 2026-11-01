@@ -35,6 +35,7 @@ import {
 } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { RotateCcwIcon, SearchIcon, TriangleAlertIcon } from "lucide-react"
+import { motion } from "motion/react"
 import { useEffect, useRef, useState } from "react"
 
 const NIX_CHANNELS: Array<{ value: NixChannel; label: string }> = [
@@ -183,7 +184,13 @@ function SearchPage() {
 
   return (
     <div className="flex h-svh flex-col p-6">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <motion.div
+        data-testid="search-layout"
+        initial={false}
+        animate={{ y: q.trim().length === 0 ? "25vh" : 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="mx-auto flex w-full max-w-3xl flex-col gap-4"
+      >
         <div className="flex flex-col gap-3">
           <div className="flex gap-1">
             <ToggleGroup
@@ -334,7 +341,7 @@ function SearchPage() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

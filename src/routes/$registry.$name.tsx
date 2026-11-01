@@ -338,23 +338,28 @@ function PackagePage() {
                 <ChevronDownIcon className="transition-transform group-data-[panel-open]:rotate-180" />
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <ul className="mt-3 flex max-h-64 flex-col gap-1 overflow-y-auto text-sm">
+                <ul className="mt-3 flex max-h-64 flex-col gap-1 divide-y divide-border overflow-y-auto pr-3 text-sm">
                   {versions.map((version) => (
-                    <li key={version.num} className="flex items-center gap-3">
-                      <span
-                        className={
-                          version.num === record.version
-                            ? "font-medium"
-                            : undefined
-                        }
-                      >
-                        {version.num}
+                    <li
+                      key={version.num}
+                      className="flex items-center justify-between gap-4 py-1.5 first:pt-0 last:pb-0"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span
+                          className={
+                            version.num === record.version
+                              ? "font-medium"
+                              : undefined
+                          }
+                        >
+                          {version.num}
+                        </span>
+                        {version.num === record.version && (
+                          <Badge variant="secondary">current</Badge>
+                        )}
                       </span>
-                      {version.num === record.version && (
-                        <Badge variant="secondary">current</Badge>
-                      )}
                       {version.created_at && (
-                        <span className="text-muted-foreground">
+                        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                           {version.created_at.slice(0, 10)}
                         </span>
                       )}
