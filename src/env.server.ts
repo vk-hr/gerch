@@ -1,7 +1,11 @@
 import { createEnv } from "@t3-oss/env-core"
+import { loadEnv } from "vite"
 import { z } from "zod"
 
-const runtimeEnv = import.meta.env ?? process.env
+const runtimeEnv = {
+  ...loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), ""),
+  ...process.env,
+}
 
 export const env = createEnv({
   /**

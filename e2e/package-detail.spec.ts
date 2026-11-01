@@ -179,3 +179,36 @@ test("back to search returns to the search page", async ({ page }) => {
     page.getByRole("textbox", { name: "Search packages" })
   ).toBeVisible()
 })
+
+test("back arrow moves right when the sidebar collapses", async ({ page }) => {
+  await mockDetail(page, { record: react })
+  await openFromSearch(page, "react")
+
+  const arrow = page.getByRole("button", { name: "Back to search" })
+  const before = await arrow.evaluate(
+    (element) => getComputedStyle(element.parentElement!).left
+  )
+  expect(Number.parseFloat(before)).toBeGreaterThan(15)
+  expect(Number.parseFloat(before)).toBeLessThan(17)
+  await page
+    .locator('[data-slot="sidebar-header"]')
+    .getByRole("button", { name: "Toggle Sidebar" })
+    .click()
+  await page.waitForTimeout(400)
+  const after = await arrow.evaluate(
+    (element) => getComputedStyle(element.parentElement!).left
+  )
+  expect(Number.parseFloat(after)).toBeGreaterThan(55)
+  expect(Number.parseFloat(after)).toBeLessThan(57)
+
+  await page
+    .locator("main")
+    .getByRole("button", { name: "Toggle Sidebar" })
+    .click()
+  await page.waitForTimeout(400)
+  const finalLeft = await arrow.evaluate(
+    (element) => getComputedStyle(element.parentElement!).left
+  )
+  expect(Number.parseFloat(finalLeft)).toBeGreaterThan(15)
+  expect(Number.parseFloat(finalLeft)).toBeLessThan(17)
+})

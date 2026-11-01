@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -38,7 +39,7 @@ export function AppSidebar({ children }: { children: ReactNode }) {
         open={mounted ? !collapsed : true}
         onOpenChange={(open: boolean) => setCollapsed(!open)}
       >
-        <Sidebar collapsible="icon">
+        <Sidebar variant="inset" collapsible="offcanvas">
           <SidebarHeader>
             <SidebarTrigger />
           </SidebarHeader>
@@ -121,8 +122,16 @@ export function AppSidebar({ children }: { children: ReactNode }) {
           <SidebarFooter>
             <ThemeToggle />
           </SidebarFooter>
+          <SidebarRail />
         </Sidebar>
-        <SidebarInset>{children}</SidebarInset>
+        <SidebarInset>
+          {collapsed && (
+            <div className="absolute top-4 left-4 z-20">
+              <SidebarTrigger />
+            </div>
+          )}
+          {children}
+        </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
   )

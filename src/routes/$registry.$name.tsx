@@ -18,7 +18,7 @@ import {
   packageHomepages,
   packageLicenses,
 } from "@/lib/package-detail"
-import { openTab } from "@/lib/workspace"
+import { openTab, workspaceStore } from "@/lib/workspace"
 import { getPackage } from "@/server/packages"
 import {
   createFileRoute,
@@ -26,6 +26,7 @@ import {
   notFound,
   type ErrorComponentProps,
 } from "@tanstack/react-router"
+import { useStore } from "@tanstack/react-store"
 import {
   BookOpenIcon,
   ArrowLeftIcon,
@@ -43,6 +44,7 @@ import {
   TriangleAlertIcon,
   type LucideIcon,
 } from "lucide-react"
+import { motion } from "motion/react"
 import { useEffect } from "react"
 import { z } from "zod"
 
@@ -157,6 +159,7 @@ function PackagePage() {
   const { channel: urlChannel } = Route.useSearch()
   const [savedChannel] = useNixChannel()
   const navigate = Route.useNavigate()
+  const { collapsed } = useStore(workspaceStore, (state) => state)
   const command = installCommand(record)
   const licenses = packageLicenses(record)
   const homepages = packageHomepages(record)
@@ -199,17 +202,23 @@ function PackagePage() {
   return (
     <div className="relative flex flex-col p-6">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          nativeButton={false}
-          render={<Link to="/" />}
-          className="absolute top-4 left-4"
-          aria-label="Back to search"
-          title="Back to search"
+        <motion.div
+          className="absolute top-4 z-10"
+          initial={false}
+          animate={{ left: collapsed ? 56 : 16 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
         >
-          <ArrowLeftIcon />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            nativeButton={false}
+            render={<Link to="/" />}
+            aria-label="Back to search"
+            title="Back to search"
+          >
+            <ArrowLeftIcon />
+          </Button>
+        </motion.div>
         <header>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="uppercase">
