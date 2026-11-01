@@ -9,6 +9,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Separator } from "@/components/ui/separator"
+import { useSidebar } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useNixChannel } from "@/hooks/use-nix-channel"
 import { NIX_CHANNELS } from "@/lib/nix-channel"
@@ -18,7 +19,7 @@ import {
   packageHomepages,
   packageLicenses,
 } from "@/lib/package-detail"
-import { openTab, workspaceStore } from "@/lib/workspace"
+import { openTab } from "@/lib/workspace"
 import { getPackage } from "@/server/packages"
 import {
   createFileRoute,
@@ -26,7 +27,6 @@ import {
   notFound,
   type ErrorComponentProps,
 } from "@tanstack/react-router"
-import { useStore } from "@tanstack/react-store"
 import {
   BookOpenIcon,
   ArrowLeftIcon,
@@ -159,7 +159,8 @@ function PackagePage() {
   const { channel: urlChannel } = Route.useSearch()
   const [savedChannel] = useNixChannel()
   const navigate = Route.useNavigate()
-  const { collapsed } = useStore(workspaceStore, (state) => state)
+  const { open } = useSidebar()
+  const collapsed = !open
   const command = installCommand(record)
   const licenses = packageLicenses(record)
   const homepages = packageHomepages(record)

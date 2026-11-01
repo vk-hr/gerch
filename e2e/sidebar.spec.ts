@@ -34,3 +34,21 @@ test("collapsed sidebar hides content but keeps a toggle available", async ({
   )
   await expect(page.locator('[data-slot="sidebar-content"]')).toBeVisible()
 })
+
+test("sidebar state is restored from the cookie on initial render", async ({
+  context,
+  page,
+}) => {
+  await context.addCookies([
+    { name: "sidebar_state", value: "false", url: "http://localhost:3100" },
+  ])
+
+  await page.goto("/")
+  await expect(page.locator('[data-slot="sidebar"]')).toHaveAttribute(
+    "data-state",
+    "collapsed"
+  )
+  await expect(
+    page.locator("main").getByRole("button", { name: "Toggle Sidebar" })
+  ).toBeVisible()
+})

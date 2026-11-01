@@ -16,11 +16,13 @@ async function mockDetail(page: Page, detail: unknown, theme = "system") {
         ? detail
         : exportName === "searchPackages_createServerFn_handler"
           ? { records: [record] }
-          : exportName === "getTheme_createServerFn_handler"
-            ? theme
-            : exportName === "listPins_createServerFn_handler"
-              ? []
-              : undefined
+          : exportName === "getSidebarOpenState_createServerFn_handler"
+            ? true
+            : exportName === "getTheme_createServerFn_handler"
+              ? theme
+              : exportName === "listPins_createServerFn_handler"
+                ? []
+                : undefined
     return route.fulfill({
       status: 200,
       contentType: "application/json",

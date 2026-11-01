@@ -6,23 +6,21 @@ export type WorkspaceTab = { registry: Registry; name: string }
 
 type WorkspaceState = {
   tabs: WorkspaceTab[]
-  collapsed: boolean
 }
 
 const STORAGE_KEY = "gerch:workspace"
 
 function load(): WorkspaceState {
-  if (typeof window === "undefined") return { tabs: [], collapsed: false }
+  if (typeof window === "undefined") return { tabs: [] }
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { tabs: [], collapsed: false }
+    if (!raw) return { tabs: [] }
     const parsed = JSON.parse(raw)
     return {
       tabs: Array.isArray(parsed.tabs) ? parsed.tabs : [],
-      collapsed: Boolean(parsed.collapsed),
     }
   } catch {
-    return { tabs: [], collapsed: false }
+    return { tabs: [] }
   }
 }
 
@@ -52,15 +50,4 @@ export function closeTab(tab: WorkspaceTab): void {
         !(existing.registry === tab.registry && existing.name === tab.name)
     ),
   }))
-}
-
-export function toggleCollapsed(): void {
-  workspaceStore.setState((state) => ({
-    ...state,
-    collapsed: !state.collapsed,
-  }))
-}
-
-export function setCollapsed(collapsed: boolean): void {
-  workspaceStore.setState((state) => ({ ...state, collapsed }))
 }

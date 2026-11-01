@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query"
 
 import { AppSidebar } from "@/components/app-sidebar"
+import { getSidebarOpenState } from "@/server/sidebar"
 import { getTheme, setTheme } from "@/theme"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { hotkeysDevtoolsPlugin } from "@tanstack/react-hotkeys-devtools"
@@ -18,7 +19,13 @@ import appCss from "../styles.css?url"
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
-  loader: () => getTheme(),
+  loader: async () => {
+    const [theme, isSidebarOpen] = await Promise.all([
+      getTheme(),
+      getSidebarOpenState(),
+    ])
+    return { theme, isSidebarOpen }
+  },
   head: () => ({
     meta: [
       {
@@ -49,7 +56,7 @@ export const Route = createRootRouteWithContext<{
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const theme = Route.useLoaderData()
+  const { theme, isSidebarOpen } = Route.useLoaderData()
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -60,7 +67,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           theme={theme}
           setThemeFn={(next) => setTheme({ data: next })}
         >
-          <AppSidebar>{children}</AppSidebar>
+          <AppSidebar defaultOpen={isSidebarOpen}>{children}</AppSidebar>
         </ThemeProvider>
         <TanStackDevtools
           config={{

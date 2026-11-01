@@ -28,6 +28,8 @@ async function mockWorkspace(page: Page, pins: unknown[]) {
       })
 
     switch (exportName) {
+      case "getSidebarOpenState_createServerFn_handler":
+        return respond(true)
       case "getTheme_createServerFn_handler":
         return respond("system")
       case "searchPackages_createServerFn_handler":
