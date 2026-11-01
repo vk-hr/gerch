@@ -36,12 +36,9 @@ export function PinToggle({
       onPressedChange={() => void toggle()}
       aria-label={pinned ? "Unpin package" : "Pin package"}
       title={pinned ? "Unpin package" : "Pin package"}
+      className="size-7 px-0"
     >
-      {pinned ? (
-        <PinOffIcon data-icon="inline-start" />
-      ) : (
-        <PinIcon data-icon="inline-start" />
-      )}
+      {pinned ? <PinOffIcon /> : <PinIcon />}
     </Toggle>
   )
 }
