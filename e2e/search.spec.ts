@@ -119,6 +119,53 @@ test("Mod+K focuses the search box and results render", async ({ page }) => {
   ).toBeVisible()
 })
 
+test("only fetches more result pages near the end of the list", async ({
+  page,
+}) => {
+  const records = Array.from({ length: 25 }, (_, index) => ({
+    ...react,
+    name: `react-${index}`,
+  }))
+  let searchRequests = 0
+
+  await mockServerFns(page, {
+    searchPackages_createServerFn_handler: { records },
+  })
+  await page.route("**/_serverFn/**", (route) => {
+    if (
+      fnExport(route.request().url()) ===
+      "searchPackages_createServerFn_handler"
+    ) {
+      searchRequests += 1
+    }
+    return route.fallback()
+  })
+  await openSearch(page)
+
+  await page.getByRole("textbox", { name: "Search packages" }).fill("react")
+  await expect(page.locator("a", { hasText: "react-0" }).first()).toBeVisible()
+  await page.waitForTimeout(500)
+
+  expect(searchRequests).toBe(1)
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollHeight > window.innerHeight
+    )
+  ).toBe(false)
+
+  const results = page.locator("main .overflow-y-auto")
+  await results.evaluate((element) => {
+    element.scrollTop = element.clientHeight * 2
+  })
+  await page.waitForTimeout(100)
+  expect(searchRequests).toBe(1)
+
+  await results.evaluate((element) => {
+    element.scrollTop = element.scrollHeight
+  })
+  await expect.poll(() => searchRequests).toBe(2)
+})
+
 test("arrows and Enter open the highlighted package", async ({ page }) => {
   await mockServerFns(page, {
     searchPackages_createServerFn_handler: { records: [react, vue] },
@@ -243,6 +290,12 @@ test("search block starts centered and slides to the top on query", async ({
 
   const layout = page.getByTestId("search-layout")
   const before = (await layout.boundingBox())!.y
+  await page.waitForTimeout(400)
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollHeight > window.innerHeight
+    )
+  ).toBe(false)
   await page.getByRole("textbox", { name: "Search packages" }).click()
   await page.keyboard.type("react")
   await page.waitForTimeout(400)

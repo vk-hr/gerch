@@ -36,7 +36,7 @@ export function AppSidebar({
 }) {
   return (
     <TooltipProvider>
-      <SidebarProvider defaultOpen={defaultOpen}>
+      <SidebarProvider defaultOpen={defaultOpen} className="h-svh">
         <AppSidebarLayout>{children}</AppSidebarLayout>
       </SidebarProvider>
     </TooltipProvider>
@@ -137,7 +137,7 @@ function AppSidebarLayout({ children }: { children: ReactNode }) {
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset>
+      <SidebarInset className="min-h-0 overflow-y-auto">
         {!open && (
           <div className="absolute top-4 left-4 z-20">
             <SidebarTrigger />

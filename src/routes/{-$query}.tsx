@@ -36,7 +36,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { RotateCcwIcon, SearchIcon, TriangleAlertIcon } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 const NIX_CHANNELS: Array<{ value: NixChannel; label: string }> = [
   { value: "nixos-unstable", label: "unstable" },
@@ -113,23 +113,6 @@ function SearchPage() {
   })
 
   const virtualItems = virtualizer.getVirtualItems()
-  const lastItem = virtualItems[virtualItems.length - 1]
-  useEffect(() => {
-    if (
-      lastItem &&
-      lastItem.index >= records.length - 5 &&
-      search.hasNextPage &&
-      !search.isFetchingNextPage
-    ) {
-      void search.fetchNextPage()
-    }
-  }, [
-    lastItem,
-    records.length,
-    search.hasNextPage,
-    search.isFetchingNextPage,
-    search.fetchNextPage,
-  ])
 
   useHotkey("Mod+K", () => {
     inputRef.current?.focus()
@@ -168,6 +151,19 @@ function SearchPage() {
     }
   }
 
+  function onResultsScroll(event: React.UIEvent<HTMLDivElement>) {
+    const element = event.currentTarget
+    const distanceToEnd =
+      element.scrollHeight - element.scrollTop - element.clientHeight
+    if (
+      distanceToEnd <= 200 &&
+      search.hasNextPage &&
+      !search.isFetchingNextPage
+    ) {
+      void search.fetchNextPage()
+    }
+  }
+
   function onInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Escape") {
       event.currentTarget.blur()
@@ -184,13 +180,13 @@ function SearchPage() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col p-6">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-6 pb-0">
       <motion.div
         data-testid="search-layout"
         initial={false}
         animate={{ y: q.trim().length === 0 ? "25vh" : 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="mx-auto flex w-full max-w-3xl flex-col gap-4"
+        className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-4"
       >
         <div className="flex flex-col gap-3">
           <div className="flex gap-1">
@@ -270,7 +266,11 @@ function SearchPage() {
           </Alert>
         )}
 
-        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
+        <div
+          ref={scrollRef}
+          onScroll={onResultsScroll}
+          className="min-h-0 flex-1 overflow-x-visible overflow-y-auto"
+        >
           {q.trim().length === 0 ? (
             <Empty>
               <EmptyHeader>
@@ -322,7 +322,9 @@ function SearchPage() {
                     key={item.key}
                     data-index={item.index}
                     ref={virtualizer.measureElement}
-                    className="pb-2"
+                    className={
+                      item.index === records.length - 1 ? "pb-6" : "pb-2"
+                    }
                     style={{
                       position: "absolute",
                       top: 0,
