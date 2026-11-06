@@ -203,6 +203,22 @@ test("Enter on an exact-name match navigates straight to the package", async ({
   await expect(page.getByText("MIT", { exact: true })).toBeVisible()
 })
 
+test("Space then R cycles registries and focuses search", async ({ page }) => {
+  await mockServerFns(page, {})
+  await openSearch(page)
+
+  const input = page.getByRole("textbox", { name: "Search packages" })
+  await page.keyboard.press("Escape")
+  await page.keyboard.press("Space")
+  await page.keyboard.press("r")
+
+  await expect(input).toBeFocused()
+  await expect(input).toHaveAttribute(
+    "placeholder",
+    "Search crates.io packages"
+  )
+})
+
 test("switching registry tabs fetches that registry's results", async ({
   page,
 }) => {

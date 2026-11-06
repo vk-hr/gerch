@@ -21,6 +21,7 @@ import {
 } from "@/lib/package-detail"
 import { openTab } from "@/lib/workspace"
 import { getPackage } from "@/server/packages"
+import { useHotkey } from "@tanstack/react-hotkeys"
 import {
   createFileRoute,
   Link,
@@ -45,7 +46,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { z } from "zod"
 
 export const Route = createFileRoute("/$registry/$name")({
@@ -159,6 +160,7 @@ function PackagePage() {
   const { channel: urlChannel } = Route.useSearch()
   const [savedChannel] = useNixChannel()
   const navigate = Route.useNavigate()
+  const primaryLinkRef = useRef<HTMLAnchorElement>(null)
   const { open } = useSidebar()
   const collapsed = !open
   const command = installCommand(record)
@@ -177,6 +179,10 @@ function PackagePage() {
     record.downloads ||
     homepages.length > 0 ||
     otherLinks.length > 0
+
+  useHotkey(["Space", "L"], () => primaryLinkRef.current?.focus(), {
+    enabled: Boolean(primaryLink),
+  })
 
   useEffect(() => {
     openTab({ registry: record.registry, name: record.name })
@@ -244,7 +250,12 @@ function PackagePage() {
                   size="icon-sm"
                   nativeButton={false}
                   render={
-                    <a href={primaryLink} target="_blank" rel="noreferrer" />
+                    <a
+                      ref={primaryLinkRef}
+                      href={primaryLink}
+                      target="_blank"
+                      rel="noreferrer"
+                    />
                   }
                   aria-label="Open project"
                   title="Open project"

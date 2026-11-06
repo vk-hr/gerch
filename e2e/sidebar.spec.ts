@@ -35,6 +35,26 @@ test("collapsed sidebar hides content but keeps a toggle available", async ({
   await expect(page.locator('[data-slot="sidebar-content"]')).toBeVisible()
 })
 
+test("Space then S toggles the sidebar", async ({ page }) => {
+  await page.goto("/")
+  await page.waitForLoadState("networkidle")
+  await page.keyboard.press("Escape")
+
+  await page.keyboard.press("Space")
+  await page.keyboard.press("s")
+  await expect(page.locator('[data-slot="sidebar"]')).toHaveAttribute(
+    "data-state",
+    "collapsed"
+  )
+
+  await page.keyboard.press("Space")
+  await page.keyboard.press("s")
+  await expect(page.locator('[data-slot="sidebar"]')).toHaveAttribute(
+    "data-state",
+    "expanded"
+  )
+})
+
 test("sidebar state is restored from the cookie on initial render", async ({
   context,
   page,

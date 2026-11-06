@@ -21,8 +21,9 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { pinsQueryOptions } from "@/lib/pins"
 import { closeTab, workspaceStore } from "@/lib/workspace"
+import { useHotkey } from "@tanstack/react-hotkeys"
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { useStore } from "@tanstack/react-store"
 import { PinIcon, XIcon } from "lucide-react"
 import { useEffect, useState, type ReactNode } from "react"
@@ -44,11 +45,24 @@ export function AppSidebar({
 }
 
 function AppSidebarLayout({ children }: { children: ReactNode }) {
-  const { open } = useSidebar()
+  const { open, toggleSidebar } = useSidebar()
   const { tabs } = useStore(workspaceStore, (state) => state)
   const pins = useQuery(pinsQueryOptions)
+  const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
+
+  useHotkey(["Space", "S"], toggleSidebar)
+  useHotkey(["Space", "F"], () => {
+    const input = document.querySelector<HTMLInputElement>(
+      'input[aria-label="Search packages"]'
+    )
+    if (input) {
+      input.focus()
+      return
+    }
+    void navigate({ to: "/{-$query}", params: { query: undefined } })
+  })
 
   return (
     <>

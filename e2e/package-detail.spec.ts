@@ -171,6 +171,31 @@ test("package detail renders in dark theme", async ({ page }) => {
   ).toBeVisible()
 })
 
+test("Space then L focuses the project link", async ({ page }) => {
+  await mockDetail(page, { record: react })
+  await openFromSearch(page, "react")
+
+  const projectLink = page.getByRole("button", { name: "Open project" })
+  await expect(projectLink).toBeVisible()
+  await page.keyboard.press("Space")
+  await page.keyboard.press("l")
+
+  await expect(projectLink).toBeFocused()
+})
+
+test("Space then F returns to and focuses search", async ({ page }) => {
+  await mockDetail(page, { record: react })
+  await openFromSearch(page, "react")
+
+  await page.keyboard.press("Space")
+  await page.keyboard.press("f")
+
+  await expect(page).toHaveURL(/\/$/)
+  await expect(
+    page.getByRole("textbox", { name: "Search packages" })
+  ).toBeFocused()
+})
+
 test("back to search returns to the search page", async ({ page }) => {
   await mockDetail(page, { record: react })
 

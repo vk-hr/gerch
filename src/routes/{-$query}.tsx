@@ -117,6 +117,14 @@ function SearchPage() {
   useHotkey("Mod+K", () => {
     inputRef.current?.focus()
   })
+  useHotkey(["Space", "R"], () => {
+    setRegistry((current) => {
+      const index = REGISTRIES.findIndex((item) => item.id === current)
+      return REGISTRIES[(index + 1) % REGISTRIES.length].id
+    })
+    setHighlighted(0)
+    inputRef.current?.focus()
+  })
 
   async function onEnter() {
     const trimmed = input.trim()
@@ -169,10 +177,14 @@ function SearchPage() {
       event.currentTarget.blur()
     } else if (event.key === "ArrowDown") {
       event.preventDefault()
-      setHighlighted((index) => Math.min(index + 1, records.length - 1))
+      const next = Math.min(highlighted + 1, Math.max(records.length - 1, 0))
+      setHighlighted(next)
+      virtualizer.scrollToIndex(next)
     } else if (event.key === "ArrowUp") {
       event.preventDefault()
-      setHighlighted((index) => Math.max(index - 1, 0))
+      const next = Math.max(highlighted - 1, 0)
+      setHighlighted(next)
+      virtualizer.scrollToIndex(next)
     } else if (event.key === "Enter") {
       event.preventDefault()
       void onEnter()
@@ -323,7 +335,9 @@ function SearchPage() {
                     data-index={item.index}
                     ref={virtualizer.measureElement}
                     className={
-                      item.index === records.length - 1 ? "pb-6" : "pb-2"
+                      item.index === records.length - 1
+                        ? "p-1 pb-6"
+                        : "p-1 pb-2"
                     }
                     style={{
                       position: "absolute",

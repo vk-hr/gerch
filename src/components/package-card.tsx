@@ -36,7 +36,7 @@ export function PackageCard({
       <Card
         className={cn(
           "transition-colors [--card-spacing:--spacing(3)]",
-          highlighted && "ring-2 ring-primary"
+          highlighted && "outline-2 outline-primary"
         )}
       >
         <CardHeader>
