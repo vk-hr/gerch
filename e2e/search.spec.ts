@@ -106,10 +106,17 @@ test("Mod+K focuses the search box and results render", async ({ page }) => {
   await expect(input).toBeFocused()
 
   await page.keyboard.type("react")
+  await expect(page).toHaveURL("/react")
   await expect(
     page.locator("a", { hasText: "React is a JavaScript library" })
   ).toBeVisible()
   await expect(page.locator("a", { hasText: "vue" }).first()).toBeVisible()
+
+  await page.reload()
+  await expect(input).toHaveValue("react")
+  await expect(
+    page.locator("a", { hasText: "React is a JavaScript library" })
+  ).toBeVisible()
 })
 
 test("arrows and Enter open the highlighted package", async ({ page }) => {

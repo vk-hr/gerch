@@ -83,7 +83,7 @@ function PackageNotFound() {
           variant="outline"
           size="sm"
           nativeButton={false}
-          render={<Link to="/" />}
+          render={<Link to="/{-$query}" params={{ query: undefined }} />}
           className="self-start"
         >
           Back to search
@@ -213,7 +213,7 @@ function PackagePage() {
             variant="ghost"
             size="icon-sm"
             nativeButton={false}
-            render={<Link to="/" />}
+            render={<Link to="/{-$query}" params={{ query: undefined }} />}
             aria-label="Back to search"
             title="Back to search"
           >

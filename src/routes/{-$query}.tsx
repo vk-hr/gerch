@@ -43,7 +43,7 @@ const NIX_CHANNELS: Array<{ value: NixChannel; label: string }> = [
   { value: "nixos-26.05", label: "26.05" },
 ]
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/{-$query}")({
   component: SearchPage,
   errorComponent: SearchError,
 })
@@ -73,7 +73,8 @@ function SearchError({ error, reset }: ErrorComponentProps) {
 function SearchPage() {
   const [registry, setRegistry] = useState<Registry>("npm")
   const [channel, setChannel] = useNixChannel()
-  const [input, setInput] = useState("")
+  const { query } = Route.useParams()
+  const input = query ?? ""
   const [q, flush] = useDebouncedValue(input, 200)
   const [highlighted, setHighlighted] = useState(0)
 
@@ -244,7 +245,12 @@ function SearchPage() {
             ref={inputRef}
             value={input}
             onChange={(event) => {
-              setInput(event.target.value)
+              const value = event.target.value
+              void navigate({
+                to: "/{-$query}",
+                params: { query: value || undefined },
+                replace: true,
+              })
               setHighlighted(0)
             }}
             onKeyDown={onInputKeyDown}

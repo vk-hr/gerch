@@ -9,12 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as Char123QueryChar125RouteImport } from './routes/{-$query}'
 import { Route as RegistryNameRouteImport } from './routes/$registry.$name'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const Char123QueryChar125Route = Char123QueryChar125RouteImport.update({
+  id: '/{-$query}',
+  path: '/{-$query}',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegistryNameRoute = RegistryNameRouteImport.update({
@@ -24,38 +24,38 @@ const RegistryNameRoute = RegistryNameRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/{-$query}': typeof Char123QueryChar125Route
   '/$registry/$name': typeof RegistryNameRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/{-$query}': typeof Char123QueryChar125Route
   '/$registry/$name': typeof RegistryNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/{-$query}': typeof Char123QueryChar125Route
   '/$registry/$name': typeof RegistryNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$registry/$name'
+  fullPaths: '/{-$query}' | '/$registry/$name'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$registry/$name'
-  id: '__root__' | '/' | '/$registry/$name'
+  to: '/{-$query}' | '/$registry/$name'
+  id: '__root__' | '/{-$query}' | '/$registry/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  Char123QueryChar125Route: typeof Char123QueryChar125Route
   RegistryNameRoute: typeof RegistryNameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/{-$query}': {
+      id: '/{-$query}'
+      path: '/{-$query}'
+      fullPath: '/{-$query}'
+      preLoaderRoute: typeof Char123QueryChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$registry/$name': {
@@ -69,7 +69,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  Char123QueryChar125Route: Char123QueryChar125Route,
   RegistryNameRoute: RegistryNameRoute,
 }
 export const routeTree = rootRouteImport
