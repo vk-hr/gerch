@@ -184,7 +184,7 @@ function SearchPage() {
   }
 
   return (
-    <div className="flex h-svh flex-col p-6">
+    <div className="flex min-h-0 flex-1 flex-col p-6">
       <motion.div
         data-testid="search-layout"
         initial={false}
@@ -322,6 +322,7 @@ function SearchPage() {
                     key={item.key}
                     data-index={item.index}
                     ref={virtualizer.measureElement}
+                    className="pb-2"
                     style={{
                       position: "absolute",
                       top: 0,
