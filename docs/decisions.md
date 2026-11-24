@@ -409,8 +409,8 @@ Decided 2026-11-24. You set up both accounts.
   - Settled in step 3: the `nitro()` Vite plugin (`nitro@3.0.261103-rc`)
     builds Start for Vercel, and `bunVersion: "1.4.x"` in `vercel.json`
     makes Nitro target Vercel's Bun 1.4 runtime. So the Postgres client is
-    `Bun.SQL`, with `prepare: false` for the Supabase transaction pooler, and
-    no client dependency. `bun run dev`, `build` and `preview` run Vite with
+    `Bun.SQL`, with `prepare: false` for the Supabase transaction pooler,
+    wrapped by Drizzle (D22). `bun run dev`, `build` and `preview` run Vite with
     `bun --bun`, so dev and SSR also run on Bun.
 - **Supabase Free, $0/month:** 500 MB database, shared CPU, 500 MB RAM,
   5 GB egress. It pauses after a week without activity (see D12). Pro is
@@ -440,10 +440,35 @@ Neither is needed before step 3.
 ### D21. Database in tests: implemented in step 3
 
 Unit and contract tests use PGlite (`@electric-sql/pglite` 0.6.0), an
-in-process WASM Postgres, with one instance per test file, emptied after
+in-process WASM Postgres, through `drizzle-orm/pglite`, with the real
+`drizzle/` migrations applied, one instance per test file, emptied after
 each test. One instance per test cost 0.6 s each (cache tests 3.8 s); one per
 file brought them to 1.4 s. This matches the CI
 directive's "each shard its own throwaway database" with no service
 container and no setup time. Migrations run on PGlite in tests and on
 Supabase in deploys. A later opt-in test can run the migrations against a real Postgres from the
 Nix dev shell to catch PGlite gaps.
+
+### D22. Drizzle ORM: implemented
+
+Decided 2026-11-24, at your request.
+
+- `drizzle-orm` and `drizzle-kit` pinned at `1.0.0-rc.6`, following Drizzle's
+  agent setup prompt, which targets the rc series only.
+- Agent tooling: the bundled Drizzle skill is copied into
+  `.claude/skills/drizzle/` (hashed in `skills-lock.json`, excluded from
+  `bun fmt`), and `.mcp.json` registers the Drizzle Kit MCP server as
+  `bun run drizzle-kit mcp`. Kit's own `drizzle-kit skills` runs an interactive
+  `bunx skills@latest add`, so the same installer ran directly instead:
+  `bunx skills@1.9.0 add ./node_modules/drizzle-kit/skills -a claude-code -y
+--copy`, with `DISABLE_TELEMETRY=1`.
+- Schema in `src/server/db/schema.ts`; `drizzle.config.ts` at the root.
+  Migrations are generated (`drizzle-kit generate`), reviewed and committed
+  in `drizzle/`, and applied with `bun run migrate` (the Bun.SQL migrator).
+  `push` is for local experiments only, never against Supabase, as the skill
+  recommends for production.
+- The hand-written `src/server/migrations.ts` is gone. Its one table,
+  `cache_entries`, is now migration `20261124202437_cache_entries` with the
+  same columns.
+- `drizzle/` and `drizzle.config.ts` rerun every test, because tests read the
+  migrations from disk, which `bun test --changed` can't see.

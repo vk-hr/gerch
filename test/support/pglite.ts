@@ -1,23 +1,25 @@
 import { PGlite } from "@electric-sql/pglite"
+import { drizzle } from "drizzle-orm/pglite"
+import { migrate } from "drizzle-orm/pglite/migrator"
 
-import type { Db } from "@/server/db.ts"
-import { migrate } from "@/server/migrations.ts"
+import { MIGRATIONS_FOLDER } from "@/server/db/index.ts"
+import { cacheEntries } from "@/server/db/schema.ts"
 
-// A fresh in-process Postgres per test, with the app's migrations applied.
-type TestDb = Db & { close: () => Promise<void> }
-
-async function freshDb(): Promise<TestDb> {
-  const pg = await PGlite.create()
-  const db = {
-    close: async () => pg.close(),
-    query: async (text: string, params: unknown[] = []) => {
-      const result = await pg.query<Record<string, unknown>>(text, params)
-      return result.rows
+// An in-process Postgres with the app's migrations applied.
+async function freshDb() {
+  const client = await PGlite.create()
+  const db = drizzle({ client })
+  await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER })
+  return {
+    close: async () => client.close(),
+    db,
+    empty: async () => {
+      await db.delete(cacheEntries)
     },
   }
-  await migrate(db)
-  return db
 }
+
+type TestDb = Awaited<ReturnType<typeof freshDb>>
 
 export { freshDb }
 export type { TestDb }
