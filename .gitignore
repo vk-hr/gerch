@@ -1,4 +1,7 @@
 node_modules
+.direnv
+.vercel
+coverage
 .DS_Store
 dist
 dist-ssr

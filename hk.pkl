@@ -1,0 +1,46 @@
+amends "package://github.com/jdx/hk/releases/download/v2.13.0/hk@2.13.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.13.0/hk@2.13.0#/Builtins.pkl"
+
+local formatted = List(
+  "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json", "**/*.jsonc",
+  "**/*.css", "**/*.md", "**/*.yaml", "**/*.yml", "**/*.html"
+)
+local linted = List("**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx")
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stage = true
+    stash = "git"
+    steps {
+      ["no-commit-to-main"] = Builtins.no_commit_to_branch
+      ["bun-pin"] {
+        check = "bun scripts/check-bun.ts"
+      }
+      ["fmt"] {
+        depends = "bun-pin"
+        glob = formatted
+        check = "bun fmt --check {{files}}"
+        fix = "bun fmt {{files}}"
+      }
+      ["lint"] {
+        glob = linted
+        depends = "fmt"
+        check = "bun lint {{files}}"
+        fix = "bun lint --fix {{files}}"
+      }
+    }
+  }
+  ["commit-msg"] {
+    steps {
+      ["conventional-commit"] = Builtins.check_conventional_commit
+    }
+  }
+  ["pre-push"] {
+    steps {
+      ["verify"] {
+        check = "bun run verify"
+      }
+    }
+  }
+}
