@@ -25,7 +25,10 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 
 - `src/routes/`: TanStack Start file routes and `/api/*` server routes.
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
-- `scripts/`: Bun scripts (`check-bun.ts`, `verify.ts`).
+- `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
+  budgets), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
+  `check-test-files.ts`, `check-commits.ts`).
+- `.github/`: CI workflow and the setup action.
 - `test/`: tests and recorded fixtures (`test/fixtures/`).
 - `docs/spec.md`, `docs/decisions.md`: scope and decisions.
 - `docs/directives/`: binding directives. Ask before changing them.
