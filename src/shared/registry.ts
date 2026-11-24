@@ -1,0 +1,33 @@
+// Types shared by the server and the browser. Runtime validation lives in
+// src/server/schema.ts so zod stays out of the client bundle.
+const REGISTRIES = ["npm", "crate", "nix"] as const
+
+type Registry = (typeof REGISTRIES)[number]
+
+interface PackageSummary {
+  registry: Registry
+  // For nix, the attribute path, e.g. "ripgrep".
+  name: string
+  version: string
+  // ISO 8601; null where the registry has no release date (nix).
+  releasedAt: string | null
+  license: string | null
+  downloads: { count: number; window: "week" | "90d" } | null
+  description: string | null
+  repository: string | null
+  homepage: string | null
+  install: string
+}
+
+interface SearchResponse {
+  registry: Registry
+  query: string
+  results: PackageSummary[]
+}
+
+function isRegistry(value: string): value is Registry {
+  return REGISTRIES.some((registry) => registry === value)
+}
+
+export { isRegistry, REGISTRIES }
+export type { PackageSummary, Registry, SearchResponse }

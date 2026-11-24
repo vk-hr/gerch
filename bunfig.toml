@@ -1,4 +1,5 @@
 [test]
+preload = ["./test/setup/no-network.ts"]
 randomize = true
 restoreMocks = true
 clearMocks = true

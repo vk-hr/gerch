@@ -1,0 +1,1004 @@
+{
+  "body": {
+    "objects": [
+      {
+        "downloads": {
+          "monthly": 1945690434,
+          "weekly": 468631616
+        },
+        "dependents": "157130",
+        "updated": "2026-11-24T10:11:53.953Z",
+        "searchScore": 2437.1611,
+        "package": {
+          "name": "zod",
+          "keywords": [
+            "typescript",
+            "schema",
+            "validation",
+            "type",
+            "inference"
+          ],
+          "version": "4.6.7",
+          "description": "TypeScript-first schema declaration and validation library with static type inference",
+          "sanitized_name": "zod",
+          "publisher": {
+            "actor": {
+              "name": "colinhacks",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "2c623b3d-2ab5-41e7-98ff-d422dea31fec",
+              "id": "github"
+            },
+            "approver": {
+              "name": "colinhacks"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "colinhacks"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-10-12T16:29:37.778Z",
+          "links": {
+            "homepage": "https://zod.dev",
+            "repository": "git+https://github.com/colinhacks/zod.git",
+            "bugs": "https://github.com/colinhacks/zod/issues",
+            "npm": "https://www.npmjs.com/package/zod"
+          }
+        },
+        "score": {
+          "final": 2437.1611,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 403248701,
+          "weekly": 101903038
+        },
+        "dependents": "5411",
+        "updated": "2026-11-24T10:05:35.043Z",
+        "searchScore": 530.698,
+        "package": {
+          "name": "zod-to-json-schema",
+          "keywords": ["zod", "json", "schema", "open", "api", "conversion"],
+          "version": "3.25.2",
+          "description": "Converts Zod schemas to Json Schemas",
+          "sanitized_name": "zod-to-json-schema",
+          "publisher": {
+            "actor": {
+              "name": "stefan-terdell",
+              "type": "user"
+            },
+            "username": "stefan-terdell"
+          },
+          "maintainers": [
+            {
+              "username": "stefan-terdell"
+            }
+          ],
+          "license": "ISC",
+          "date": "2026-03-27T07:09:39.645Z",
+          "links": {
+            "homepage": "https://github.com/StefanTerdell/zod-to-json-schema#readme",
+            "repository": "git+https://github.com/StefanTerdell/zod-to-json-schema.git",
+            "bugs": "https://github.com/StefanTerdell/zod-to-json-schema/issues",
+            "npm": "https://www.npmjs.com/package/zod-to-json-schema"
+          }
+        },
+        "score": {
+          "final": 530.698,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 327091969,
+          "weekly": 81901789
+        },
+        "dependents": "780",
+        "updated": "2026-11-24T10:05:05.572Z",
+        "searchScore": 509.5118,
+        "package": {
+          "name": "zod-validation-error",
+          "keywords": ["zod", "error", "validation"],
+          "version": "5.0.0",
+          "description": "Wrap zod validation errors in user-friendly readable messages",
+          "sanitized_name": "zod-validation-error",
+          "publisher": {
+            "actor": {
+              "name": "jmike",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:819d1f39-c456-4785-92e6-318638fe245c",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "jmike"
+            },
+            {
+              "username": "nikoskalogridis"
+            },
+            {
+              "username": "thanoskrg"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-11-03T11:11:53.484Z",
+          "links": {
+            "homepage": "https://github.com/causaly/zod-validation-error#readme",
+            "repository": "git://github.com/causaly/zod-validation-error.git",
+            "bugs": "https://github.com/causaly/zod-validation-error/issues",
+            "npm": "https://www.npmjs.com/package/zod-validation-error"
+          }
+        },
+        "score": {
+          "final": 509.5118,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 33299668,
+          "weekly": 8523637
+        },
+        "dependents": "424",
+        "updated": "2026-11-24T10:07:45.416Z",
+        "searchScore": 486.8384,
+        "package": {
+          "name": "@hono/zod-validator",
+          "keywords": [],
+          "version": "0.9.1",
+          "description": "Validator middleware using Zod",
+          "sanitized_name": "@hono/zod-validator",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:26f9f858-d50a-4335-9abc-21b1d5852eac",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "yusukebe"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-08-31T11:40:36.400Z",
+          "links": {
+            "homepage": "https://github.com/honojs/middleware",
+            "repository": "git+https://github.com/honojs/middleware.git",
+            "bugs": "https://github.com/honojs/middleware/issues",
+            "npm": "https://www.npmjs.com/package/@hono/zod-validator"
+          }
+        },
+        "score": {
+          "final": 486.8384,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 33261587,
+          "weekly": 8944709
+        },
+        "dependents": "314",
+        "updated": "2026-11-24T10:04:48.580Z",
+        "searchScore": 485.49182,
+        "package": {
+          "name": "@asteasolutions/zod-to-openapi",
+          "keywords": ["typescript", "schema", "type", "openapi", "zod"],
+          "version": "9.1.0",
+          "description": "Builds OpenAPI schemas from Zod schemas",
+          "sanitized_name": "@asteasolutions/zod-to-openapi",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:d12c8a98-f98d-4dde-8935-cb3cbee623be",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "georgyangelov"
+            },
+            {
+              "username": "zod-to-openapi-ci"
+            },
+            {
+              "username": "agalabov"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-07-19T10:59:33.312Z",
+          "links": {
+            "homepage": "https://github.com/asteasolutions/zod-to-openapi",
+            "repository": "git+https://github.com/asteasolutions/zod-to-openapi.git",
+            "bugs": "https://github.com/asteasolutions/zod-to-openapi/issues",
+            "npm": "https://www.npmjs.com/package/@asteasolutions/zod-to-openapi"
+          }
+        },
+        "score": {
+          "final": 485.49182,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 13493712,
+          "weekly": 3576432
+        },
+        "dependents": "15",
+        "updated": "2026-11-24T17:15:49.328Z",
+        "searchScore": 474.07736,
+        "package": {
+          "name": "@remotion/zod-types",
+          "keywords": ["zod", "color", "remotion"],
+          "version": "4.0.547",
+          "description": "Zod types for Remotion",
+          "sanitized_name": "@remotion/zod-types",
+          "publisher": {
+            "actor": {
+              "name": "jonny",
+              "type": "user"
+            },
+            "username": "jonny"
+          },
+          "maintainers": [
+            {
+              "username": "jonny"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-24T16:52:53.599Z",
+          "links": {
+            "homepage": "https://www.remotion.dev/docs/zod-types",
+            "repository": "https://github.com/remotion-dev/remotion/tree/main/packages/zod-types",
+            "bugs": "https://github.com/remotion-dev/remotion/issues",
+            "npm": "https://www.npmjs.com/package/@remotion/zod-types"
+          }
+        },
+        "score": {
+          "final": 474.07736,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 20286465,
+          "weekly": 4960723
+        },
+        "dependents": "225",
+        "updated": "2026-11-24T10:07:31.782Z",
+        "searchScore": 465.72516,
+        "package": {
+          "name": "drizzle-zod",
+          "keywords": [
+            "zod",
+            "validate",
+            "validation",
+            "schema",
+            "drizzle",
+            "orm",
+            "pg",
+            "mysql",
+            "postgresql",
+            "postgres",
+            "sqlite",
+            "database",
+            "sql",
+            "typescript",
+            "ts"
+          ],
+          "version": "0.8.3",
+          "description": "Generate Zod schemas from Drizzle ORM schemas",
+          "sanitized_name": "drizzle-zod",
+          "publisher": {
+            "username": "dankochetov"
+          },
+          "maintainers": [
+            {
+              "username": "dankochetov"
+            },
+            {
+              "username": "sheriman"
+            },
+            {
+              "username": "alexblokh"
+            },
+            {
+              "username": "kyrylo_usichenko"
+            }
+          ],
+          "license": "Apache-2.0",
+          "date": "2025-08-06T08:03:58.355Z",
+          "links": {
+            "homepage": "https://github.com/drizzle-team/drizzle-orm#readme",
+            "repository": "git+https://github.com/drizzle-team/drizzle-orm.git",
+            "bugs": "https://github.com/drizzle-team/drizzle-orm/issues",
+            "npm": "https://www.npmjs.com/package/drizzle-zod"
+          }
+        },
+        "score": {
+          "final": 465.72516,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 8402650,
+          "weekly": 1953430
+        },
+        "dependents": "48",
+        "updated": "2026-11-24T10:12:30.738Z",
+        "searchScore": 464.34598,
+        "package": {
+          "name": "nestjs-zod",
+          "keywords": [],
+          "version": "5.6.0",
+          "description": "All NestJS + Zod utilities you need",
+          "sanitized_name": "nestjs-zod",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "bdc912ed-7ae0-419d-8537-232fde837c9d",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "benlorantfy"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-08T18:31:39.128Z",
+          "links": {
+            "homepage": "https://github.com/BenLorantfy/nestjs-zod#readme",
+            "repository": "git+ssh://git@github.com/BenLorantfy/nestjs-zod.git",
+            "bugs": "https://github.com/BenLorantfy/nestjs-zod/issues",
+            "npm": "https://www.npmjs.com/package/nestjs-zod"
+          }
+        },
+        "score": {
+          "final": 464.34598,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 3980367,
+          "weekly": 1033239
+        },
+        "dependents": "72",
+        "updated": "2026-11-24T10:05:26.746Z",
+        "searchScore": 435.2007,
+        "package": {
+          "name": "@anatine/zod-openapi",
+          "keywords": ["zod", "openapi", "swagger"],
+          "version": "2.2.8",
+          "description": "Zod to OpenAPI converter",
+          "sanitized_name": "@anatine/zod-openapi",
+          "publisher": {
+            "username": "anatidae"
+          },
+          "maintainers": [
+            {
+              "username": "anatidae"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-04-04T15:42:37.246Z",
+          "links": {
+            "homepage": "https://github.com/anatine/zod-plugins/tree/main/packages/zod-openapi",
+            "repository": "git+https://github.com/anatine/zod-plugins.git",
+            "bugs": "https://github.com/anatine/zod-plugins/issues",
+            "npm": "https://www.npmjs.com/package/@anatine/zod-openapi"
+          }
+        },
+        "score": {
+          "final": 435.2007,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 8666487,
+          "weekly": 2413945
+        },
+        "dependents": "155",
+        "updated": "2026-11-24T10:05:40.620Z",
+        "searchScore": 433.36594,
+        "package": {
+          "name": "zod-openapi",
+          "keywords": [
+            "typescript",
+            "json-schema",
+            "swagger",
+            "openapi",
+            "openapi3",
+            "zod",
+            "zod-openapi"
+          ],
+          "version": "6.0.2",
+          "description": "Convert Zod Schemas to OpenAPI v3.x documentation",
+          "sanitized_name": "zod-openapi",
+          "publisher": {
+            "actor": {
+              "name": "samchungy",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:325017ea-2113-4c59-9449-918a72db451d",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "samchungy"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-08-31T08:08:59.842Z",
+          "links": {
+            "homepage": "https://github.com/samchungy/zod-openapi#readme",
+            "repository": "git+ssh://git@github.com/samchungy/zod-openapi.git",
+            "bugs": "https://github.com/samchungy/zod-openapi/issues",
+            "npm": "https://www.npmjs.com/package/zod-openapi"
+          }
+        },
+        "score": {
+          "final": 433.36594,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 8902689,
+          "weekly": 2229324
+        },
+        "dependents": "207",
+        "updated": "2026-11-24T10:13:15.696Z",
+        "searchScore": 430.25507,
+        "package": {
+          "name": "fastify-type-provider-zod",
+          "keywords": ["fastify", "zod", "type", "provider"],
+          "version": "7.0.0",
+          "description": "Zod Type Provider for Fastify@5",
+          "sanitized_name": "fastify-type-provider-zod",
+          "publisher": {
+            "actor": {
+              "name": "kibertoad",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:a6ba7d94-fe82-4275-9d51-2e29a6f22369",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "kibertoad"
+            },
+            {
+              "username": "turkerd"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-06-24T00:27:25.196Z",
+          "links": {
+            "homepage": "https://github.com/turkerdev/fastify-type-provider-zod",
+            "repository": "git+https://github.com/turkerdev/fastify-type-provider-zod.git",
+            "bugs": "https://github.com/turkerdev/fastify-type-provider-zod/issues",
+            "npm": "https://www.npmjs.com/package/fastify-type-provider-zod"
+          }
+        },
+        "score": {
+          "final": 430.25507,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 18446448,
+          "weekly": 4987482
+        },
+        "dependents": "51",
+        "updated": "2026-11-24T10:05:37.088Z",
+        "searchScore": 429.41797,
+        "package": {
+          "name": "zod-from-json-schema",
+          "keywords": [
+            "zod",
+            "json-schema",
+            "validation",
+            "typescript",
+            "schema"
+          ],
+          "version": "0.5.6",
+          "description": "Creates Zod types from JSON Schema at runtime",
+          "sanitized_name": "zod-from-json-schema",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:39005b4e-aedf-417f-af9d-8ef5d596bf04",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "mark.probst"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-07-16T16:18:39.996Z",
+          "links": {
+            "homepage": "https://github.com/glideapps/zod-from-json-schema#readme",
+            "repository": "git+https://github.com/glideapps/zod-from-json-schema.git",
+            "bugs": "https://github.com/glideapps/zod-from-json-schema/issues",
+            "npm": "https://www.npmjs.com/package/zod-from-json-schema"
+          }
+        },
+        "score": {
+          "final": 429.41797,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 10352613,
+          "weekly": 2552806
+        },
+        "dependents": "102",
+        "updated": "2026-11-24T10:15:57.820Z",
+        "searchScore": 426.14563,
+        "package": {
+          "name": "zod-to-ts",
+          "keywords": ["zod", "typescript", "generator"],
+          "version": "2.1.0",
+          "description": "generate TypeScript types from your Zod schema",
+          "sanitized_name": "zod-to-ts",
+          "publisher": {
+            "username": "sachinraja"
+          },
+          "maintainers": [
+            {
+              "username": "sachinraja"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-06-06T17:31:16.017Z",
+          "links": {
+            "homepage": "https://github.com/sachinraja/zod-to-ts#readme",
+            "repository": "git+https://github.com/sachinraja/zod-to-ts.git",
+            "bugs": "https://github.com/sachinraja/zod-to-ts/issues",
+            "npm": "https://www.npmjs.com/package/zod-to-ts"
+          }
+        },
+        "score": {
+          "final": 426.14563,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 16441194,
+          "weekly": 4567632
+        },
+        "dependents": "187",
+        "updated": "2026-11-24T10:05:48.054Z",
+        "searchScore": 422.95697,
+        "package": {
+          "name": "json-schema-to-zod",
+          "keywords": ["zod", "json", "schema", "converter", "cli"],
+          "version": "2.8.1",
+          "description": "Converts JSON schema objects or files into Zod schemas",
+          "sanitized_name": "json-schema-to-zod",
+          "publisher": {
+            "username": "stefan-terdell"
+          },
+          "maintainers": [
+            {
+              "username": "stefan-terdell"
+            }
+          ],
+          "license": "ISC",
+          "date": "2026-04-01T18:15:20.633Z",
+          "links": {
+            "homepage": "https://github.com/StefanTerdell/json-schema-to-zod#readme",
+            "repository": "git+https://github.com/StefanTerdell/json-schema-to-zod.git",
+            "bugs": "https://github.com/StefanTerdell/json-schema-to-zod/issues",
+            "npm": "https://www.npmjs.com/package/json-schema-to-zod"
+          }
+        },
+        "score": {
+          "final": 422.95697,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 964918,
+          "weekly": 272504
+        },
+        "dependents": "11",
+        "updated": "2026-11-24T10:14:34.449Z",
+        "searchScore": 398.65652,
+        "package": {
+          "name": "@anatine/zod-nestjs",
+          "keywords": ["zod", "openapi", "swagger", "nestjs"],
+          "version": "2.0.12",
+          "description": "Zod helper methods for NestJS",
+          "sanitized_name": "@anatine/zod-nestjs",
+          "publisher": {
+            "username": "anatidae"
+          },
+          "maintainers": [
+            {
+              "username": "anatidae"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-04-05T16:41:10.168Z",
+          "links": {
+            "homepage": "https://github.com/anatine/zod-plugins/tree/main/packages/zod-nestjs",
+            "repository": "git+https://github.com/anatine/zod-plugins.git",
+            "bugs": "https://github.com/anatine/zod-plugins/issues",
+            "npm": "https://www.npmjs.com/package/@anatine/zod-nestjs"
+          }
+        },
+        "score": {
+          "final": 398.65652,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 2230685,
+          "weekly": 489856
+        },
+        "dependents": "39",
+        "updated": "2026-11-24T10:14:37.490Z",
+        "searchScore": 394.13153,
+        "package": {
+          "name": "zod-error",
+          "keywords": ["zod", "error", "validation", "nodejs", "typescript"],
+          "version": "2.0.0",
+          "description": "Utilities to format and customize Zod error messages",
+          "sanitized_name": "zod-error",
+          "publisher": {
+            "username": "andrewvo89"
+          },
+          "maintainers": [
+            {
+              "username": "andrewvo89"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-10-18T04:35:48.407Z",
+          "links": {
+            "homepage": "https://github.com/andrewvo89/zod-error",
+            "repository": "git+https://github.com/andrewvo89/zod-error.git",
+            "bugs": "https://github.com/andrewvo89/zod-error/issues",
+            "npm": "https://www.npmjs.com/package/zod-error"
+          }
+        },
+        "score": {
+          "final": 394.13153,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 1771952,
+          "weekly": 420008
+        },
+        "dependents": "134",
+        "updated": "2026-11-24T10:03:51.881Z",
+        "searchScore": 387.68668,
+        "package": {
+          "name": "@vee-validate/zod",
+          "keywords": [
+            "VueJS",
+            "Vue",
+            "validation",
+            "validator",
+            "inputs",
+            "form"
+          ],
+          "version": "4.15.1",
+          "description": "vee-validate integration with zod schema validation",
+          "sanitized_name": "@vee-validate/zod",
+          "publisher": {
+            "username": "logaretm"
+          },
+          "maintainers": [
+            {
+              "username": "logaretm"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-06-07T13:36:43.988Z",
+          "links": {
+            "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
+            "repository": "git+https://github.com/logaretm/vee-validate.git",
+            "bugs": "https://github.com/logaretm/vee-validate/issues",
+            "npm": "https://www.npmjs.com/package/@vee-validate/zod"
+          }
+        },
+        "score": {
+          "final": 387.68668,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 1800914,
+          "weekly": 513714
+        },
+        "dependents": "86",
+        "updated": "2026-11-24T10:06:27.531Z",
+        "searchScore": 386.0229,
+        "package": {
+          "name": "ts-to-zod",
+          "keywords": ["zod", "typescript", "generator", "oclif"],
+          "version": "5.1.0",
+          "description": "Generate zod schemas from typescript types/interfaces",
+          "sanitized_name": "ts-to-zod",
+          "publisher": {
+            "username": "fabien0102"
+          },
+          "maintainers": [
+            {
+              "username": "fabien0102"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-11-23T08:34:57.338Z",
+          "links": {
+            "homepage": "https://github.com/fabien0102/ts-to-zod",
+            "repository": "git+https://github.com/fabien0102/ts-to-zod.git",
+            "bugs": "https://github.com/fabien0102/ts-to-zod/issues",
+            "npm": "https://www.npmjs.com/package/ts-to-zod"
+          }
+        },
+        "score": {
+          "final": 386.0229,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 258346,
+          "weekly": 75371
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T10:05:55.041Z",
+        "searchScore": 382.6593,
+        "package": {
+          "name": "zod-geojson",
+          "keywords": ["zod", "geojson", "schema", "validation"],
+          "version": "1.7.1",
+          "description": "Zod schemas for GeoJSON",
+          "sanitized_name": "zod-geojson",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:30e548b2-c135-4321-995c-f657af59d4e7",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "reilem"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-08-28T05:58:48.068Z",
+          "links": {
+            "homepage": "https://github.com/reilem/zod-geojson#readme",
+            "repository": "git+https://github.com/reilem/zod-geojson.git",
+            "bugs": "https://github.com/reilem/zod-geojson/issues",
+            "npm": "https://www.npmjs.com/package/zod-geojson"
+          }
+        },
+        "score": {
+          "final": 382.6593,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 1248869,
+          "weekly": 408584
+        },
+        "dependents": "3",
+        "updated": "2026-11-24T10:28:18.633Z",
+        "searchScore": 381.1531,
+        "package": {
+          "name": "@eslint-zod/utils",
+          "keywords": ["eslint", "eslint-plugin", "utils", "zod"],
+          "version": "7.0.0",
+          "description": "Shared utilities for eslint-zod plugins",
+          "sanitized_name": "@eslint-zod/utils",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "477bdc22-4006-45b1-8882-c75b7d7ca6ee",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "marcalexiei"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-14T18:21:05.857Z",
+          "links": {
+            "homepage": "https://github.com/marcalexiei/eslint-zod#readme",
+            "repository": "https://github.com/marcalexiei/eslint-zod",
+            "bugs": "https://github.com/marcalexiei/eslint-zod/issues",
+            "npm": "https://www.npmjs.com/package/@eslint-zod/utils"
+          }
+        },
+        "score": {
+          "final": 381.1531,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      }
+    ],
+    "total": 24553,
+    "time": "2026-11-24T20:03:34.387Z"
+  },
+  "status": 200,
+  "url": "https://registry.npmjs.org/-/v1/search?text=zod&size=20"
+}
