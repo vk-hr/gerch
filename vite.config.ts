@@ -5,5 +5,9 @@ import { defineConfig } from "vite"
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
-  plugins: [tanstackStart(), tailwindcss(), viteReact()],
+  plugins: [
+    tanstackStart({ router: { quoteStyle: "double", semicolons: false } }),
+    tailwindcss(),
+    viteReact(),
+  ],
 })

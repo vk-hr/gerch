@@ -158,6 +158,14 @@ TanStack devtools packages and `@types/node`; added `@types/bun`. `.prettierrc`
 stays as `bun fmt`'s config (D5). No non-bun lockfile existed. Renamed the PWA
 manifest entries.
 
+Also removed `@tanstack/router-cli`, its `generate-routes` script and
+`tsr.config.json`. Its output drops Start's `Register` block, so it is wrong
+for a Start app. The Start plugin generates `src/routeTree.gen.ts` with
+`quoteStyle: "double"` and `semicolons: false`, so a build leaves the file
+byte-identical and `bun fmt --check` passes after a build. Tailwind's
+automatic source detection also scanned `docs/` and `scripts/`, so
+`src/styles.css` now sets `source(".")`.
+
 TanStack Start stays (D10). Router and Query devtools can come back later
 behind a dev-only lazy import, if needed.
 
