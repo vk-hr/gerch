@@ -1,0 +1,3 @@
+# Vendored agent skills, installed by `bunx skills add` and hashed in
+# skills-lock.json. Formatting them would break the hash.
+.claude/skills/
