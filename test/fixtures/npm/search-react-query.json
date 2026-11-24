@@ -1,0 +1,1127 @@
+{
+  "body": {
+    "objects": [
+      {
+        "downloads": {
+          "monthly": 7806049,
+          "weekly": 1864330
+        },
+        "dependents": "22",
+        "updated": "2026-11-24T19:31:41.570Z",
+        "searchScore": 504.6327,
+        "package": {
+          "name": "@trpc/tanstack-react-query",
+          "keywords": ["tanstack-intent"],
+          "version": "11.31.3",
+          "description": "TanStack React Query Integration for tRPC",
+          "sanitized_name": "@trpc/tanstack-react-query",
+          "publisher": {
+            "actor": {
+              "name": "katt",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "49cac4fc-0b22-47b9-85d4-54cb5d41bc3c",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "katt"
+            },
+            {
+              "username": "juliusmarminge"
+            },
+            {
+              "username": "nick-lucas"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-24T19:31:04.465Z",
+          "links": {
+            "homepage": "https://trpc.io/docs/client/tanstack-react-query/setup",
+            "repository": "git+https://github.com/trpc/trpc.git",
+            "bugs": "https://github.com/trpc/trpc/issues",
+            "npm": "https://www.npmjs.com/package/@trpc/tanstack-react-query"
+          }
+        },
+        "score": {
+          "final": 504.6327,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 3552379,
+          "weekly": 945539
+        },
+        "dependents": "28",
+        "updated": "2026-11-24T10:07:59.788Z",
+        "searchScore": 425.52563,
+        "package": {
+          "name": "openapi-react-query",
+          "keywords": [
+            "openapi",
+            "swagger",
+            "rest",
+            "api",
+            "oapi_3",
+            "oapi_3_1",
+            "typescript",
+            "fetch",
+            "react",
+            "react-query",
+            "tanstack"
+          ],
+          "version": "0.5.4",
+          "description": "Fast, type-safe @tanstack/react-query client to work with your OpenAPI schema.",
+          "sanitized_name": "openapi-react-query",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:464b1423-5167-453a-9349-d39ac21a5c3c",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "drewpowers"
+            },
+            {
+              "username": "mpaucot"
+            },
+            {
+              "username": "gzm0"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-02-11T16:02:20.863Z",
+          "links": {
+            "homepage": "https://openapi-ts.dev",
+            "repository": "git+https://github.com/openapi-ts/openapi-typescript.git",
+            "bugs": "https://github.com/openapi-ts/openapi-typescript/issues",
+            "npm": "https://www.npmjs.com/package/openapi-react-query"
+          }
+        },
+        "score": {
+          "final": 425.52563,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 276604,
+          "weekly": 59228
+        },
+        "dependents": "2",
+        "updated": "2026-11-24T10:14:15.227Z",
+        "searchScore": 424.10583,
+        "package": {
+          "name": "@7nohe/openapi-react-query-codegen",
+          "keywords": [
+            "codegen",
+            "react-query",
+            "react",
+            "openapi",
+            "swagger",
+            "typescript",
+            "openapi-typescript-codegen",
+            "@hey-api/openapi-ts"
+          ],
+          "version": "3.2.1",
+          "description": "OpenAPI React Query Codegen",
+          "sanitized_name": "@7nohe/openapi-react-query-codegen",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "8783d58e-fc93-47bb-bafa-6c532d23d129",
+              "id": "github"
+            },
+            "approver": {
+              "name": "7nohe"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "7nohe"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-12T13:09:35.883Z",
+          "links": {
+            "homepage": "https://github.com/7nohe/openapi-react-query-codegen",
+            "repository": "git+https://github.com/7nohe/openapi-react-query-codegen.git",
+            "bugs": "https://github.com/7nohe/openapi-react-query-codegen/issues",
+            "npm": "https://www.npmjs.com/package/@7nohe/openapi-react-query-codegen"
+          }
+        },
+        "score": {
+          "final": 424.10583,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 71747128,
+          "weekly": 18087226
+        },
+        "dependents": "540",
+        "updated": "2026-11-24T10:04:32.832Z",
+        "searchScore": 415.76602,
+        "package": {
+          "name": "@tanstack/react-query-devtools",
+          "keywords": [],
+          "version": "5.108.4",
+          "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
+          "sanitized_name": "@tanstack/react-query-devtools",
+          "publisher": {
+            "actor": {
+              "name": "tannerlinsley",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "aa85f470-ef9a-4936-b800-c7c2bbc26d20",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "tannerlinsley"
+            },
+            {
+              "username": "alemtuzlak"
+            },
+            {
+              "username": "kevinvandy"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-23T13:19:14.638Z",
+          "links": {
+            "homepage": "https://tanstack.com/query",
+            "repository": "git+https://github.com/TanStack/query.git",
+            "bugs": "https://github.com/TanStack/query/issues",
+            "npm": "https://www.npmjs.com/package/@tanstack/react-query-devtools"
+          }
+        },
+        "score": {
+          "final": 415.76602,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 119568,
+          "weekly": 22026
+        },
+        "dependents": "0",
+        "updated": "2026-11-24T10:15:26.039Z",
+        "searchScore": 398.56735,
+        "package": {
+          "name": "reactotron-react-query",
+          "keywords": ["reactotron", "react-query", "tanstack-query"],
+          "version": "2.0.2",
+          "description": "Reactotron plugin for React Query",
+          "sanitized_name": "reactotron-react-query",
+          "publisher": {
+            "actor": {
+              "name": "demirjs",
+              "type": "user"
+            },
+            "username": "demirjs"
+          },
+          "maintainers": [
+            {
+              "username": "demirjs"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-06-24T18:22:42.457Z",
+          "links": {
+            "homepage": "https://github.com/hsndmr/reactotron-react-query#readme",
+            "repository": "git+https://github.com/hsndmr/reactotron-react-query.git",
+            "bugs": "https://github.com/hsndmr/reactotron-react-query/issues",
+            "npm": "https://www.npmjs.com/package/reactotron-react-query"
+          }
+        },
+        "score": {
+          "final": 398.56735,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 21374453,
+          "weekly": 5281206
+        },
+        "dependents": "188",
+        "updated": "2026-11-24T10:11:52.104Z",
+        "searchScore": 393.2842,
+        "package": {
+          "name": "@tanstack/react-query-persist-client",
+          "keywords": [],
+          "version": "5.108.4",
+          "description": "React bindings to work with persisters in TanStack/react-query",
+          "sanitized_name": "@tanstack/react-query-persist-client",
+          "publisher": {
+            "actor": {
+              "name": "tannerlinsley",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "774b75a7-2cd0-4f72-97b5-452945c22ea0",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "tannerlinsley"
+            },
+            {
+              "username": "alemtuzlak"
+            },
+            {
+              "username": "kevinvandy"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-23T13:18:03.062Z",
+          "links": {
+            "homepage": "https://tanstack.com/query",
+            "repository": "git+https://github.com/TanStack/query.git",
+            "bugs": "https://github.com/TanStack/query/issues",
+            "npm": "https://www.npmjs.com/package/@tanstack/react-query-persist-client"
+          }
+        },
+        "score": {
+          "final": 393.2842,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 71406,
+          "weekly": 13692
+        },
+        "dependents": "24",
+        "updated": "2026-11-24T10:13:18.920Z",
+        "searchScore": 379.1285,
+        "package": {
+          "name": "react-query-devtools",
+          "keywords": [],
+          "version": "2.6.3",
+          "description": "Devtools for React Query",
+          "sanitized_name": "react-query-devtools",
+          "publisher": {
+            "username": "tannerlinsley"
+          },
+          "maintainers": [
+            {
+              "username": "tannerlinsley"
+            }
+          ],
+          "license": "MIT",
+          "date": "2020-11-05T22:48:49.801Z",
+          "links": {
+            "homepage": "https://github.com/tannerlinsley/react-query-devtools#readme",
+            "repository": "git+https://github.com/tannerlinsley/react-query-devtools.git",
+            "bugs": "https://github.com/tannerlinsley/react-query-devtools/issues",
+            "npm": "https://www.npmjs.com/package/react-query-devtools"
+          }
+        },
+        "score": {
+          "final": 379.1285,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 1167202,
+          "weekly": 266429
+        },
+        "dependents": "7",
+        "updated": "2026-11-24T10:07:26.903Z",
+        "searchScore": 376.89142,
+        "package": {
+          "name": "@ts-rest/react-query",
+          "keywords": [
+            "rpc",
+            "rest",
+            "typescript",
+            "typescript-rest",
+            "react-query",
+            "nestjs",
+            "http",
+            "api",
+            "type safe"
+          ],
+          "version": "3.52.1",
+          "description": "react-query client integration for @ts-rest",
+          "sanitized_name": "@ts-rest/react-query",
+          "publisher": {
+            "username": "oliverbutler"
+          },
+          "maintainers": [
+            {
+              "username": "oliverbutler"
+            },
+            {
+              "username": "gabrola"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-03-04T09:00:58.158Z",
+          "links": {
+            "homepage": "https://github.com/ts-rest/ts-rest#readme",
+            "repository": "git+https://github.com/ts-rest/ts-rest.git",
+            "bugs": "https://github.com/ts-rest/ts-rest/issues",
+            "npm": "https://www.npmjs.com/package/@ts-rest/react-query"
+          }
+        },
+        "score": {
+          "final": 376.89142,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 154500,
+          "weekly": 33330
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T10:14:04.471Z",
+        "searchScore": 364.1975,
+        "package": {
+          "name": "react-native-react-query-devtools",
+          "keywords": [
+            "react-query",
+            "tanstack",
+            "state management",
+            "dev tools",
+            "react native",
+            "QA",
+            "debugging"
+          ],
+          "version": "1.5.1",
+          "description": "React Query Dev Tools for React Native",
+          "sanitized_name": "react-native-react-query-devtools",
+          "publisher": {
+            "username": "lovesworking"
+          },
+          "maintainers": [
+            {
+              "username": "lovesworking"
+            }
+          ],
+          "date": "2025-07-17T16:17:59.391Z",
+          "links": {
+            "homepage": "https://github.com/LovesWorking/react-native-react-query-devtools#readme",
+            "repository": "git+https://github.com/LovesWorking/react-native-react-query-devtools.git",
+            "bugs": "https://github.com/LovesWorking/react-native-react-query-devtools/issues",
+            "npm": "https://www.npmjs.com/package/react-native-react-query-devtools"
+          }
+        },
+        "score": {
+          "final": 364.1975,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 40569,
+          "weekly": 13053
+        },
+        "dependents": 0,
+        "updated": "2026-11-24T10:03:38.672Z",
+        "searchScore": 352.5055,
+        "package": {
+          "name": "@suspensive/react-query",
+          "keywords": ["suspensive", "react", "react-query"],
+          "version": "3.21.4",
+          "description": "Suspensive interfaces for @tanstack/react-query",
+          "sanitized_name": "@suspensive/react-query",
+          "publisher": {
+            "actor": {
+              "name": "manudeli",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:cb5d33cb-02e8-47e4-a3cd-14b98178fe68",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "manudeli"
+            },
+            {
+              "username": "kangju2000"
+            },
+            {
+              "username": "gwansikk"
+            },
+            {
+              "username": "bigsaigon333"
+            },
+            {
+              "username": "marshallku"
+            },
+            {
+              "username": "toss-public"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-09-05T01:57:45.183Z",
+          "links": {
+            "homepage": "https://suspensive.org",
+            "repository": "git+https://github.com/toss/suspensive.git",
+            "bugs": "https://github.com/toss/suspensive/issues",
+            "npm": "https://www.npmjs.com/package/@suspensive/react-query"
+          }
+        },
+        "score": {
+          "final": 352.5055,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 265980,
+          "weekly": 128433
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T10:14:02.852Z",
+        "searchScore": 351.71088,
+        "package": {
+          "name": "react-query-external-sync",
+          "keywords": [
+            "expo",
+            "devtools",
+            "tanstack",
+            "query",
+            "react-query",
+            "react-native",
+            "expo-react-native",
+            "expo-react-native-tanstack-query-devtools",
+            "tanstack-query",
+            "tanstack-query-devtools",
+            "tanstack-query-devtools-expo",
+            "tanstack-query-devtools-expo-react-native",
+            "tanstack-query-devtools-expo-plugin",
+            "tanstack-query-devtools-expo-plugin-react-native",
+            "tanstack-query-devtools-expo-plugin-webui",
+            "tanstack-query-devtools-expo-plugin-webui-react-native",
+            "React-Query-Dev-Tools"
+          ],
+          "version": "2.2.3",
+          "description": "A tool for syncing React Query state to an external Dev Tools",
+          "sanitized_name": "react-query-external-sync",
+          "publisher": {
+            "actor": {
+              "name": "lovesworking",
+              "type": "user"
+            },
+            "username": "lovesworking"
+          },
+          "maintainers": [
+            {
+              "username": "lovesworking"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-06-18T16:23:49.592Z",
+          "links": {
+            "homepage": "https://github.com/LovesWorking/react-query-external-sync#readme",
+            "repository": "git+https://github.com/LovesWorking/react-query-external-sync.git",
+            "bugs": "https://github.com/LovesWorking/react-query-external-sync/issues",
+            "npm": "https://www.npmjs.com/package/react-query-external-sync"
+          }
+        },
+        "score": {
+          "final": 351.71088,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 42586,
+          "weekly": 11177
+        },
+        "dependents": "2",
+        "updated": "2026-11-24T10:10:58.865Z",
+        "searchScore": 349.4474,
+        "package": {
+          "name": "react-query-auth",
+          "keywords": [],
+          "version": "2.4.3",
+          "description": "[![NPM](https://img.shields.io/npm/v/react-query-auth.svg)](https://www.npmjs.com/package/react-query-auth)",
+          "sanitized_name": "react-query-auth",
+          "publisher": {
+            "username": "alan2207"
+          },
+          "maintainers": [
+            {
+              "username": "alan2207"
+            }
+          ],
+          "license": "MIT",
+          "date": "2024-12-08T12:57:57.234Z",
+          "links": {
+            "homepage": "https://github.com/alan2207/react-query-auth#readme",
+            "repository": "git+https://github.com/alan2207/react-query-auth.git",
+            "bugs": "https://github.com/alan2207/react-query-auth/issues",
+            "npm": "https://www.npmjs.com/package/react-query-auth"
+          }
+        },
+        "score": {
+          "final": 349.4474,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 610253,
+          "weekly": 142380
+        },
+        "dependents": "6",
+        "updated": "2026-11-24T19:20:28.478Z",
+        "searchScore": 327.72025,
+        "package": {
+          "name": "@kubb/plugin-react-query",
+          "keywords": [
+            "code-generation",
+            "codegen",
+            "data-fetching",
+            "hooks",
+            "kubb",
+            "meta-framework",
+            "react",
+            "react-query",
+            "tanstack",
+            "tanstack-query",
+            "typescript",
+            "use-mutation",
+            "use-query"
+          ],
+          "version": "5.13.2",
+          "description": "Generate type-safe TanStack Query (React Query) hooks with Kubb. Covers useQuery, useMutation, useInfiniteQuery, and queryOptions with full TypeScript support.",
+          "sanitized_name": "@kubb/plugin-react-query",
+          "publisher": {
+            "actor": {
+              "name": "stijnvanhulle",
+              "type": "user"
+            },
+            "approver": {
+              "name": "stijnvanhulle"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "86907231-eabb-4ead-b60f-ffccb1b8965f",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "stijnvanhulle"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-24T11:50:28.461Z",
+          "links": {
+            "homepage": "https://kubb.dev/extensions/kubb-labs/plugin-react-query",
+            "repository": "git+https://github.com/kubb-labs/plugins.git",
+            "bugs": "https://github.com/kubb-labs/kubb/issues",
+            "npm": "https://www.npmjs.com/package/@kubb/plugin-react-query"
+          }
+        },
+        "score": {
+          "final": 327.72025,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 121089,
+          "weekly": 29984
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T10:07:47.291Z",
+        "searchScore": 323.32965,
+        "package": {
+          "name": "@supabase-cache-helpers/postgrest-react-query",
+          "keywords": [
+            "Cache",
+            "PostgREST",
+            "React Query",
+            "Supabase",
+            "Tanstack Query"
+          ],
+          "version": "1.13.9",
+          "description": "A collection of React Query utilities for working with Supabase.",
+          "sanitized_name": "@supabase-cache-helpers/postgrest-react-query",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:63ce35b2-5b2e-46ab-bf22-6fa21c22cb4f",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "psteinroe"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-03-12T17:26:51.424Z",
+          "links": {
+            "homepage": "https://psteinroe.github.io/supabase-cache-helpers/",
+            "repository": "git+https://github.com/psteinroe/supabase-cache-helpers.git",
+            "bugs": "https://github.com/psteinroe/supabase-cache-helpers/issues",
+            "npm": "https://www.npmjs.com/package/@supabase-cache-helpers/postgrest-react-query"
+          }
+        },
+        "score": {
+          "final": 323.32965,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 101696,
+          "weekly": 20894
+        },
+        "dependents": "2",
+        "updated": "2026-11-24T10:11:19.963Z",
+        "searchScore": 317.853,
+        "package": {
+          "name": "@normy/react-query",
+          "keywords": ["normalization", "react-query"],
+          "version": "0.21.0",
+          "description": "react-query addon for normy - automatic normalization and data updates for data fetching libraries",
+          "sanitized_name": "@normy/react-query",
+          "publisher": {
+            "actor": {
+              "name": "klis87",
+              "type": "user"
+            },
+            "username": "klis87"
+          },
+          "maintainers": [
+            {
+              "username": "klis87"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-10-05T22:16:45.674Z",
+          "links": {
+            "homepage": "https://github.com/klis87/normy",
+            "repository": "git+ssh://git@github.com/klis87/normy.git",
+            "bugs": "https://github.com/klis87/normy/issues",
+            "npm": "https://www.npmjs.com/package/@normy/react-query"
+          }
+        },
+        "score": {
+          "final": 317.853,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 16425,
+          "weekly": 4556
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T10:12:48.525Z",
+        "searchScore": 309.7477,
+        "package": {
+          "name": "@seamapi/react-query",
+          "keywords": ["node"],
+          "version": "0.2.4",
+          "description": "React Query for the Seam API.",
+          "sanitized_name": "@seamapi/react-query",
+          "publisher": {
+            "actor": {
+              "name": "seambot",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "a7ead48b-7cc3-40d6-b9ea-8a5f859fdc39",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "sybohy"
+            },
+            {
+              "username": "dawnho"
+            },
+            {
+              "username": "seambot"
+            },
+            {
+              "username": "razorx"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-10-24T06:31:58.460Z",
+          "links": {
+            "homepage": "https://github.com/seamapi/react-query",
+            "repository": "git+https://github.com/seamapi/react-query.git",
+            "bugs": "https://github.com/seamapi/react-query/issues",
+            "npm": "https://www.npmjs.com/package/@seamapi/react-query"
+          }
+        },
+        "score": {
+          "final": 309.7477,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 50625,
+          "weekly": 9913
+        },
+        "dependents": "4",
+        "updated": "2026-11-24T10:14:06.386Z",
+        "searchScore": 305.45786,
+        "package": {
+          "name": "@harnessio/oats-plugin-react-query-harness",
+          "keywords": [],
+          "version": "2.2.0",
+          "description": "![@harnessio/oats-plugin-react-query-harness](https://img.shields.io/npm/v/@harnessio/oats-plugin-react-query-harness.svg?style=flat-square)",
+          "sanitized_name": "@harnessio/oats-plugin-react-query-harness",
+          "publisher": {
+            "username": "mayankvermaharness"
+          },
+          "maintainers": [
+            {
+              "username": "knagurski"
+            },
+            {
+              "username": "abhinavrastogi"
+            },
+            {
+              "username": "enverbisevac"
+            },
+            {
+              "username": "shaurya-harness"
+            },
+            {
+              "username": "srdjan"
+            },
+            {
+              "username": "moogi-harness"
+            },
+            {
+              "username": "mayankvermaharness"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-08-20T13:43:44.776Z",
+          "links": {
+            "homepage": "https://github.com/harness/oats#readme",
+            "repository": "git+https://github.com/harness/oats.git",
+            "bugs": "https://github.com/harness/oats/issues",
+            "npm": "https://www.npmjs.com/package/@harnessio/oats-plugin-react-query-harness"
+          }
+        },
+        "score": {
+          "final": 305.45786,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 11055,
+          "weekly": 2337
+        },
+        "dependents": 0,
+        "updated": "2026-11-23T22:11:20.189Z",
+        "searchScore": 304.49106,
+        "package": {
+          "name": "react-query-native-devtools",
+          "keywords": [],
+          "version": "4.0.0",
+          "description": "Flipper client plug-in for [React Query](https://github.com/tannerlinsley/react-query)",
+          "sanitized_name": "react-query-native-devtools",
+          "publisher": {
+            "username": "bgaleotti"
+          },
+          "maintainers": [
+            {
+              "username": "bgaleotti"
+            }
+          ],
+          "license": "MIT",
+          "date": "2022-01-23T14:49:06.371Z",
+          "links": {
+            "npm": "https://www.npmjs.com/package/react-query-native-devtools"
+          }
+        },
+        "score": {
+          "final": 304.49106,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 518294,
+          "weekly": 144495
+        },
+        "dependents": "26",
+        "updated": "2026-11-24T10:04:11.004Z",
+        "searchScore": 304.26498,
+        "package": {
+          "name": "@tanstack/react-query-next-experimental",
+          "keywords": [],
+          "version": "5.108.4",
+          "description": "Hydration utils for React Query in the NextJs app directory",
+          "sanitized_name": "@tanstack/react-query-next-experimental",
+          "publisher": {
+            "actor": {
+              "name": "tannerlinsley",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "893bfb95-80fd-4091-88a5-e5b2a97c9f62",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "tannerlinsley"
+            },
+            {
+              "username": "alemtuzlak"
+            },
+            {
+              "username": "kevinvandy"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-23T13:19:44.300Z",
+          "links": {
+            "homepage": "https://tanstack.com/query",
+            "repository": "git+https://github.com/TanStack/query.git",
+            "bugs": "https://github.com/TanStack/query/issues",
+            "npm": "https://www.npmjs.com/package/@tanstack/react-query-next-experimental"
+          }
+        },
+        "score": {
+          "final": 304.26498,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 75598,
+          "weekly": 16627
+        },
+        "dependents": "2",
+        "updated": "2026-11-24T10:03:30.719Z",
+        "searchScore": 299.04993,
+        "package": {
+          "name": "@suspensive/react-query-5",
+          "keywords": ["suspensive", "react", "react-query", "tanstack-intent"],
+          "version": "3.21.4",
+          "description": "Suspensive interfaces for @tanstack/react-query@5",
+          "sanitized_name": "@suspensive/react-query-5",
+          "publisher": {
+            "actor": {
+              "name": "manudeli",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "oidc:88ab8e9a-fa64-4d4b-aa65-9ab98c779772",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "manudeli"
+            },
+            {
+              "username": "kangju2000"
+            },
+            {
+              "username": "gwansikk"
+            },
+            {
+              "username": "bigsaigon333"
+            },
+            {
+              "username": "marshallku"
+            },
+            {
+              "username": "toss-public"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-09-05T01:55:35.144Z",
+          "links": {
+            "homepage": "https://suspensive.org",
+            "repository": "git+https://github.com/toss/suspensive.git",
+            "bugs": "https://github.com/toss/suspensive/issues",
+            "npm": "https://www.npmjs.com/package/@suspensive/react-query-5"
+          }
+        },
+        "score": {
+          "final": 299.04993,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      }
+    ],
+    "total": 637342,
+    "time": "2026-11-24T20:03:34.952Z"
+  },
+  "status": 200,
+  "url": "https://registry.npmjs.org/-/v1/search?text=react%20query&size=20"
+}

@@ -117,15 +117,16 @@ skipped silently, measured). The first run flagged 99
 problems on template code. Code was fixed where the finding was real.
 Rules were turned off only for these reasons:
 
-| Reason                                 | Rules off                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Bans a language feature the stack uses | `eslint/no-undefined`, `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`, `eslint/no-ternary`                                                                                                                                                                                                                                                                                                                     |
-| Contradicts another enabled rule       | `vitest/prefer-describe-function-title` (vs `vitest/valid-title` and the `bun:test` types); `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`)                                                                               |
-| Contradicts a directive                | `vitest/no-importing-vitest-globals` (test files keep their `vitest` imports); `vitest/require-test-timeout` (no per-test timeouts)                                                                                                                                                                                                                                                                                                               |
-| Doesn't fit the stack                  | `react/react-in-jsx-scope` (automatic JSX runtime); `react/forbid-component-props` (Tailwind `className`); `react/jsx-no-literals` (no i18n); `typescript/explicit-function-return-type`, `typescript/explicit-module-boundary-types` (Router and Query rely on inferred types); `typescript/prefer-readonly-parameter-types` (library prop types aren't deep-readonly); `unicorn/text-encoding-identifier-case` (HTML `charSet` must be `utf-8`) |
-| Template had it off                    | `eslint/sort-keys`, `eslint/sort-imports`                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Reason                                 | Rules off                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Bans a language feature the stack uses | `unicorn/no-null` (the API's JSON contract uses `null`), `eslint/no-undefined`, `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`, `eslint/no-ternary`                                                                                                                                                                                                                                                                                                                                                                                               |
+| Contradicts another enabled rule       | `unicorn/no-array-reduce` (vs `eslint/no-await-in-loop`: no allowed way to run async steps in order); `typescript/require-await` (same as `eslint/require-await`); `vitest/no-hooks` (vs `vitest/require-hook`); `vitest/prefer-describe-function-title` (vs `vitest/valid-title` and the `bun:test` types); `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`) |
+| Contradicts a directive                | `vitest/no-importing-vitest-globals` (test files keep their `vitest` imports); `vitest/require-test-timeout` (no per-test timeouts)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Doesn't fit the stack                  | `react/react-in-jsx-scope` (automatic JSX runtime); `react/forbid-component-props` (Tailwind `className`); `react/jsx-no-literals` (no i18n); `typescript/explicit-function-return-type`, `typescript/explicit-module-boundary-types` (Router and Query rely on inferred types); `typescript/prefer-readonly-parameter-types` (library prop types aren't deep-readonly); `unicorn/text-encoding-identifier-case` (HTML `charSet` must be `utf-8`)                                                                                                                                    |
+| Template had it off                    | `eslint/sort-keys`, `eslint/sort-imports`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
-Configured rather than turned off: `func-style` (declarations, arrows
+Configured rather than turned off: `no-console` (allows `console.error` and
+`console.warn` for Vercel logs), `func-style` (declarations, arrows
 allowed), `one-var` (`never`), `no-use-before-define` (hoisted functions
 allowed), `no-magic-numbers` (ignores -1, 0, 1), `jsx-max-depth` (5),
 `jsx-filename-extension` (`.tsx`), `capitalized-comments` (consecutive lines
@@ -134,8 +135,11 @@ allowed), `no-duplicate-imports` (separate `import type` allowed),
 (console, `process.exit`, sync calls, top-level await, `process.env`), `*.config.ts`
 (default export), `src/components/ui/**` (shadcn prop spreading and variant
 exports), `src/routes/**` (`only-export-components`; the Start plugin handles
-route HMR), tests (magic numbers, parent imports), `test/fixtures/**`
-(`require-hook`), `*.d.ts` (`import/unambiguous`).
+route HMR), tests (magic numbers, parent imports, function length and statement count,
+`no-confusing-void-expression`, which `bun:test`'s `void`-typed `.resolves`
+matchers trip); the vitest plugin runs on test files only, `test/fixtures/**`
+(`require-hook`), `*.d.ts` (`import/unambiguous`), `src/server/env.ts` (the one place that
+reads `process.env`), `test/setup/**` (the preload reads `GERCH_LIVE`).
 
 `typescript/ban-ts-comment` bans `@ts-expect-error`, `@ts-ignore` and
 `@ts-nocheck` outright (the template allowed `@ts-expect-error`).
@@ -231,8 +235,8 @@ of the estimate.
 Decided 2026-11-24. The repo stays on the personal account, with no
 organization and no merge queue.
 
-The closest equivalent is a ruleset on `main`, proposed in step 2 and applied
-only after your approval:
+The closest equivalent is a ruleset on `main` (id `28017666`), applied
+2026-11-24 after your approval:
 
 - Require a PR, and allow squash merges only, so the PR title (checked for
   Conventional Commits) becomes the commit on `main`. PR #1 landed as a merge
@@ -402,9 +406,12 @@ Decided 2026-11-24. You set up both accounts.
     with Vercel choosing the patch. Production therefore can't run the pinned
     canary. Server code must only use APIs that stable Bun 1.4 has; CI tests
     on the canary.
-  - Step 3 checks whether Start's Vercel output can target the Bun runtime.
-    If it can't, functions run on Node, and the Postgres client is
-    `postgres@4.1.1` instead of `Bun.SQL`.
+  - Settled in step 3: the `nitro()` Vite plugin (`nitro@3.0.261103-rc`)
+    builds Start for Vercel, and `bunVersion: "1.4.x"` in `vercel.json`
+    makes Nitro target Vercel's Bun 1.4 runtime. So the Postgres client is
+    `Bun.SQL`, with `prepare: false` for the Supabase transaction pooler, and
+    no client dependency. `bun run dev`, `build` and `preview` run Vite with
+    `bun --bun`, so dev and SSR also run on Bun.
 - **Supabase Free, $0/month:** 500 MB database, shared CPU, 500 MB RAM,
   5 GB egress. It pauses after a week without activity (see D12). Pro is
   $25/month if the nix index or traffic outgrows Free.
@@ -430,11 +437,13 @@ Secrets, set by you:
 
 Neither is needed before step 3.
 
-### D21. Database in tests: proposed
+### D21. Database in tests: implemented in step 3
 
-Unit and contract tests use PGlite (`@electric-sql/pglite`), an in-process
-WASM Postgres, with a fresh instance per test file. This matches the CI
+Unit and contract tests use PGlite (`@electric-sql/pglite` 0.6.0), an
+in-process WASM Postgres, with one instance per test file, emptied after
+each test. One instance per test cost 0.6 s each (cache tests 3.8 s); one per
+file brought them to 1.4 s. This matches the CI
 directive's "each shard its own throwaway database" with no service
 container and no setup time. Migrations run on PGlite in tests and on
-Supabase in deploys. One opt-in test runs the migrations against a real
-Postgres from the Nix dev shell to catch PGlite gaps.
+Supabase in deploys. A later opt-in test can run the migrations against a real Postgres from the
+Nix dev shell to catch PGlite gaps.

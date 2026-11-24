@@ -8,8 +8,7 @@
     "react-perf",
     "jsx-a11y",
     "promise",
-    "node",
-    "vitest"
+    "node"
   ],
   "jsPlugins": ["@stylistic/eslint-plugin"],
   "categories": {
@@ -184,15 +183,6 @@
     "oxc/no-async-await": "off",
     "oxc/no-optional-chaining": "off",
     "eslint/no-ternary": "off",
-    "vitest/require-test-timeout": "off",
-    "vitest/no-importing-vitest-globals": "off",
-    "vitest/consistent-test-it": [
-      "error",
-      {
-        "fn": "test",
-        "withinDescribe": "test"
-      }
-    ],
     "eslint/capitalized-comments": [
       "error",
       "always",
@@ -202,7 +192,15 @@
     ],
     "eslint/require-await": "off",
     "eslint/no-undefined": "off",
-    "vitest/prefer-describe-function-title": "off"
+    "unicorn/no-null": "off",
+    "typescript/require-await": "off",
+    "unicorn/no-array-reduce": "off",
+    "eslint/no-console": [
+      "error",
+      {
+        "allow": ["error", "warn"]
+      }
+    ]
   },
   "ignorePatterns": ["src/routeTree.gen.ts"],
   "overrides": [
@@ -239,18 +237,47 @@
       "files": ["test/**", "**/*.test.ts", "**/*.test.tsx"],
       "rules": {
         "eslint/no-magic-numbers": "off",
-        "import/no-relative-parent-imports": "off"
-      }
+        "import/no-relative-parent-imports": "off",
+        "vitest/require-test-timeout": "off",
+        "vitest/no-importing-vitest-globals": "off",
+        "vitest/consistent-test-it": [
+          "error",
+          {
+            "fn": "test",
+            "withinDescribe": "test"
+          }
+        ],
+        "vitest/prefer-describe-function-title": "off",
+        "vitest/no-hooks": "off",
+        "eslint/max-lines-per-function": "off",
+        "eslint/max-statements": "off",
+        "typescript/no-confusing-void-expression": "off"
+      },
+      "plugins": ["vitest"]
     },
     {
       "files": ["test/fixtures/**"],
       "rules": {
         "vitest/require-hook": "off"
-      }
+      },
+      "plugins": ["vitest"]
     },
     {
       "files": ["**/*.d.ts"],
       "rules": {
+        "import/unambiguous": "off"
+      }
+    },
+    {
+      "files": ["src/server/env.ts"],
+      "rules": {
+        "node/no-process-env": "off"
+      }
+    },
+    {
+      "files": ["test/setup/**"],
+      "rules": {
+        "node/no-process-env": "off",
         "import/unambiguous": "off"
       }
     }

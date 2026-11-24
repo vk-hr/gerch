@@ -1,0 +1,1151 @@
+{
+  "body": {
+    "objects": [
+      {
+        "downloads": {
+          "monthly": 2053015117,
+          "weekly": 526097755
+        },
+        "dependents": "5147",
+        "updated": "2026-11-24T10:03:28.428Z",
+        "searchScore": 63.235104,
+        "package": {
+          "name": "undici-types",
+          "keywords": [],
+          "version": "8.13.1",
+          "description": "A stand-alone types package for Undici",
+          "sanitized_name": "undici-types",
+          "publisher": {
+            "actor": {
+              "name": "matteo.collina",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "0b1ab44e-19b2-4f76-910c-216621332b3d",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "matteo.collina"
+            },
+            {
+              "username": "ethan_arrowood"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-20T21:01:47.557Z",
+          "links": {
+            "homepage": "https://undici.nodejs.org",
+            "repository": "git+https://github.com/nodejs/undici.git",
+            "bugs": "https://github.com/nodejs/undici/issues",
+            "npm": "https://www.npmjs.com/package/undici-types"
+          }
+        },
+        "score": {
+          "final": 63.235104,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 39347497,
+          "weekly": 10384285
+        },
+        "dependents": "106",
+        "updated": "2026-11-24T10:14:35.590Z",
+        "searchScore": 59.020805,
+        "package": {
+          "name": "@earendil-works/pi-telemetry",
+          "keywords": ["telemetry", "tracing", "observability"],
+          "version": "1.6.0",
+          "description": "Vendor-neutral telemetry contracts and typed schema utilities for pi",
+          "sanitized_name": "@earendil-works/pi-telemetry",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "ba700089-f70a-498f-9937-b92a7210819c",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "mitsuhiko"
+            },
+            {
+              "username": "badlogic"
+            },
+            {
+              "username": "rwachtler"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-20T11:05:05.724Z",
+          "links": {
+            "homepage": "https://github.com/earendil-works/pi#readme",
+            "repository": "git+https://github.com/earendil-works/pi.git",
+            "bugs": "https://github.com/earendil-works/pi/issues",
+            "npm": "https://www.npmjs.com/package/@earendil-works/pi-telemetry"
+          }
+        },
+        "score": {
+          "final": 59.020805,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 273913768,
+          "weekly": 68962894
+        },
+        "dependents": "13",
+        "updated": "2026-11-24T10:08:21.473Z",
+        "searchScore": 57.143803,
+        "package": {
+          "name": "tagged-tag",
+          "keywords": ["tagged", "tag", "unique", "symbol", "type-fest"],
+          "version": "1.0.0",
+          "description": "Unique tag for use in the type-fest Tagged type",
+          "sanitized_name": "tagged-tag",
+          "publisher": {
+            "username": "sindresorhus"
+          },
+          "maintainers": [
+            {
+              "username": "sindresorhus"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-05-12T05:23:55.484Z",
+          "links": {
+            "homepage": "https://github.com/sindresorhus/tagged-tag#readme",
+            "repository": "git+https://github.com/sindresorhus/tagged-tag.git",
+            "bugs": "https://github.com/sindresorhus/tagged-tag/issues",
+            "npm": "https://www.npmjs.com/package/tagged-tag"
+          }
+        },
+        "score": {
+          "final": 57.143803,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 95674890,
+          "weekly": 22938162
+        },
+        "dependents": "1545",
+        "updated": "2026-11-24T10:12:34.745Z",
+        "searchScore": 57.081757,
+        "package": {
+          "name": "envinfo",
+          "keywords": [
+            "development",
+            "env",
+            "environment",
+            "info",
+            "issues",
+            "reporting",
+            "diagnostics"
+          ],
+          "version": "7.21.0",
+          "description": "Info about your dev environment for debugging purposes",
+          "sanitized_name": "envinfo",
+          "publisher": {
+            "username": "tabrindle"
+          },
+          "maintainers": [
+            {
+              "username": "tabrindle"
+            },
+            {
+              "username": "gantman"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-11-27T01:01:30.403Z",
+          "links": {
+            "homepage": "https://github.com/tabrindle/envinfo#readme",
+            "repository": "git+https://github.com/tabrindle/envinfo.git",
+            "bugs": "https://github.com/tabrindle/envinfo/issues",
+            "npm": "https://www.npmjs.com/package/envinfo"
+          }
+        },
+        "score": {
+          "final": 57.081757,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 365997280,
+          "weekly": 89811508
+        },
+        "dependents": "1110",
+        "updated": "2026-11-24T10:12:46.766Z",
+        "searchScore": 56.560097,
+        "package": {
+          "name": "setimmediate",
+          "keywords": [],
+          "version": "1.0.5",
+          "description": "A shim for the setImmediate efficient script yielding API",
+          "sanitized_name": "setimmediate",
+          "publisher": {
+            "username": "domenic"
+          },
+          "maintainers": [
+            {
+              "username": "domenic"
+            }
+          ],
+          "license": "MIT",
+          "date": "2016-09-12T00:59:56.656Z",
+          "links": {
+            "homepage": "https://github.com/yuzujs/setImmediate#readme",
+            "repository": "git+https://github.com/yuzujs/setImmediate.git",
+            "bugs": "https://github.com/yuzujs/setImmediate/issues",
+            "npm": "https://www.npmjs.com/package/setimmediate"
+          }
+        },
+        "score": {
+          "final": 56.560097,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 35212772,
+          "weekly": 9048664
+        },
+        "dependents": "157",
+        "updated": "2026-11-24T10:02:32.576Z",
+        "searchScore": 55.190353,
+        "package": {
+          "name": "@lexical/plain-text",
+          "keywords": ["lexical", "editor", "plain-text"],
+          "version": "0.53.0",
+          "description": "This package contains plain text helpers for Lexical.",
+          "sanitized_name": "@lexical/plain-text",
+          "publisher": {
+            "actor": {
+              "name": "zurfyx",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "ca55e60d-199c-4533-bd19-acc624bf4a1d",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "fantactuka"
+            },
+            {
+              "username": "zurfyx"
+            },
+            {
+              "username": "acywatson"
+            },
+            {
+              "username": "ipavlov001"
+            },
+            {
+              "username": "trueadm"
+            },
+            {
+              "username": "etrepum"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-10-28T15:51:20.263Z",
+          "links": {
+            "homepage": "https://github.com/facebook/lexical#readme",
+            "repository": "git+https://github.com/facebook/lexical.git",
+            "bugs": "https://github.com/facebook/lexical/issues",
+            "npm": "https://www.npmjs.com/package/@lexical/plain-text"
+          }
+        },
+        "score": {
+          "final": 55.190353,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 34772764,
+          "weekly": 9023838
+        },
+        "dependents": "552",
+        "updated": "2026-11-24T10:04:02.056Z",
+        "searchScore": 55.048794,
+        "package": {
+          "name": "@lexical/rich-text",
+          "keywords": ["lexical", "editor", "rich-text"],
+          "version": "0.53.0",
+          "description": "This package contains rich text helpers for Lexical.",
+          "sanitized_name": "@lexical/rich-text",
+          "publisher": {
+            "actor": {
+              "name": "zurfyx",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "d3b90a50-232c-4176-8cf1-3a22d191a69b",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "fantactuka"
+            },
+            {
+              "username": "zurfyx"
+            },
+            {
+              "username": "acywatson"
+            },
+            {
+              "username": "ipavlov001"
+            },
+            {
+              "username": "trueadm"
+            },
+            {
+              "username": "etrepum"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-10-28T15:54:42.041Z",
+          "links": {
+            "homepage": "https://github.com/facebook/lexical#readme",
+            "repository": "git+https://github.com/facebook/lexical.git",
+            "bugs": "https://github.com/facebook/lexical/issues",
+            "npm": "https://www.npmjs.com/package/@lexical/rich-text"
+          }
+        },
+        "score": {
+          "final": 55.048794,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 81812092,
+          "weekly": 18905905
+        },
+        "dependents": "348",
+        "updated": "2026-11-24T10:11:45.343Z",
+        "searchScore": 54.589756,
+        "package": {
+          "name": "wide-align",
+          "keywords": ["wide", "double", "unicode", "cjkv", "pad", "align"],
+          "version": "1.1.5",
+          "description": "A wide-character aware text alignment function for use on the console or with fixed width fonts.",
+          "sanitized_name": "wide-align",
+          "publisher": {
+            "username": "iarna"
+          },
+          "maintainers": [
+            {
+              "username": "iarna"
+            }
+          ],
+          "license": "ISC",
+          "date": "2021-10-15T14:17:01.529Z",
+          "links": {
+            "homepage": "https://github.com/iarna/wide-align#readme",
+            "repository": "git+https://github.com/iarna/wide-align.git",
+            "bugs": "https://github.com/iarna/wide-align/issues",
+            "npm": "https://www.npmjs.com/package/wide-align"
+          }
+        },
+        "score": {
+          "final": 54.589756,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 213593673,
+          "weekly": 53031572
+        },
+        "dependents": "228",
+        "updated": "2026-11-24T10:14:20.122Z",
+        "searchScore": 52.620728,
+        "package": {
+          "name": "stdin-discarder",
+          "keywords": [
+            "stdin",
+            "process",
+            "standard",
+            "discard",
+            "ignore",
+            "input"
+          ],
+          "version": "0.3.2",
+          "description": "Discard stdin input except for Ctrl+C",
+          "sanitized_name": "stdin-discarder",
+          "publisher": {
+            "username": "sindresorhus"
+          },
+          "maintainers": [
+            {
+              "username": "sindresorhus"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-04-14T07:35:35.513Z",
+          "links": {
+            "homepage": "https://github.com/sindresorhus/stdin-discarder#readme",
+            "repository": "git+https://github.com/sindresorhus/stdin-discarder.git",
+            "bugs": "https://github.com/sindresorhus/stdin-discarder/issues",
+            "npm": "https://www.npmjs.com/package/stdin-discarder"
+          }
+        },
+        "score": {
+          "final": 52.620728,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 1179364,
+          "weekly": 295825
+        },
+        "dependents": "25",
+        "updated": "2026-11-24T19:48:17.881Z",
+        "searchScore": 51.96852,
+        "package": {
+          "name": "@aws-sdk/client-codeartifact",
+          "keywords": [],
+          "version": "3.1177.0",
+          "description": "AWS SDK for JavaScript Codeartifact Client for Node.js, Browser and React Native",
+          "sanitized_name": "@aws-sdk/client-codeartifact",
+          "publisher": {
+            "actor": {
+              "name": "aws-sdk-bot",
+              "type": "user"
+            },
+            "username": "aws-sdk-bot"
+          },
+          "maintainers": [
+            {
+              "username": "amzn-oss"
+            },
+            {
+              "username": "aws-sdk-bot"
+            }
+          ],
+          "license": "Apache-2.0",
+          "date": "2026-11-24T19:47:45.830Z",
+          "links": {
+            "homepage": "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-codeartifact",
+            "repository": "git+https://github.com/aws/aws-sdk-js-v3.git",
+            "bugs": "https://github.com/aws/aws-sdk-js-v3/issues",
+            "npm": "https://www.npmjs.com/package/@aws-sdk/client-codeartifact"
+          }
+        },
+        "score": {
+          "final": 51.96852,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 3723674,
+          "weekly": 796793
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T10:12:33.796Z",
+        "searchScore": 51.40668,
+        "package": {
+          "name": "@vercel/cli-support",
+          "keywords": [],
+          "version": "66.6.0",
+          "description": "The JavaScript Vercel CLI, installed by vercel to run where its native binary can't",
+          "sanitized_name": "@vercel/cli-support",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "df155211-74f8-4bf1-821d-d6c3817497c8",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "matheuss"
+            },
+            {
+              "username": "matt.straka"
+            },
+            {
+              "username": "vercel-release-bot"
+            },
+            {
+              "username": "zeit-bot"
+            }
+          ],
+          "license": "Apache-2.0",
+          "date": "2026-11-20T17:01:37.751Z",
+          "links": {
+            "homepage": "https://vercel.com",
+            "repository": "git+https://github.com/vercel/vercel.git",
+            "bugs": "https://github.com/vercel/vercel/issues",
+            "npm": "https://www.npmjs.com/package/@vercel/cli-support"
+          }
+        },
+        "score": {
+          "final": 51.40668,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 38402359,
+          "weekly": 9598158
+        },
+        "dependents": "526",
+        "updated": "2026-11-24T19:47:19.671Z",
+        "searchScore": 51.136784,
+        "package": {
+          "name": "@aws-sdk/client-cloudwatch-logs",
+          "keywords": [],
+          "version": "3.1177.0",
+          "description": "AWS SDK for JavaScript Cloudwatch Logs Client for Node.js, Browser and React Native",
+          "sanitized_name": "@aws-sdk/client-cloudwatch-logs",
+          "publisher": {
+            "actor": {
+              "name": "aws-sdk-bot",
+              "type": "user"
+            },
+            "username": "aws-sdk-bot"
+          },
+          "maintainers": [
+            {
+              "username": "amzn-oss"
+            },
+            {
+              "username": "aws-sdk-bot"
+            }
+          ],
+          "license": "Apache-2.0",
+          "date": "2026-11-24T19:46:46.547Z",
+          "links": {
+            "homepage": "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-cloudwatch-logs",
+            "repository": "git+https://github.com/aws/aws-sdk-js-v3.git",
+            "bugs": "https://github.com/aws/aws-sdk-js-v3/issues",
+            "npm": "https://www.npmjs.com/package/@aws-sdk/client-cloudwatch-logs"
+          }
+        },
+        "score": {
+          "final": 51.136784,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 379646659,
+          "weekly": 99822780
+        },
+        "dependents": "52",
+        "updated": "2026-11-24T10:12:48.969Z",
+        "searchScore": 51.080353,
+        "package": {
+          "name": "hookified",
+          "keywords": [
+            "hooks",
+            "eventemitter",
+            "eventemitter3",
+            "middleware",
+            "events",
+            "hooks",
+            "event-hooks",
+            "hook-system",
+            "event-driven",
+            "event-emitter",
+            "hook-handlers",
+            "middleware",
+            "emit",
+            "event-management",
+            "before-after-hooks",
+            "event-listeners",
+            "custom-hooks",
+            "hook-utilities",
+            "typescript-hooks"
+          ],
+          "version": "3.2.0",
+          "description": "Event Emitting and Middleware Hooks",
+          "sanitized_name": "hookified",
+          "publisher": {
+            "actor": {
+              "name": "jaredwray",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "6e9ff49e-06d9-4e59-9b4d-d3143073a263",
+              "id": "github"
+            },
+            "approver": {
+              "name": "jaredwray"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "jaredwray"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-22T00:21:08.312Z",
+          "links": {
+            "homepage": "https://github.com/jaredwray/hookified#readme",
+            "repository": "git+https://github.com/jaredwray/hookified.git",
+            "bugs": "https://github.com/jaredwray/hookified/issues",
+            "npm": "https://www.npmjs.com/package/hookified"
+          }
+        },
+        "score": {
+          "final": 51.080353,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 19612805,
+          "weekly": 6234855
+        },
+        "dependents": "1",
+        "updated": "2026-11-24T17:58:49.049Z",
+        "searchScore": 50.95225,
+        "package": {
+          "name": "expo-modules-cli",
+          "keywords": ["cli", "expo", "expo-module"],
+          "version": "0.5.0",
+          "description": "Command-line tools for developing Expo modules.",
+          "sanitized_name": "expo-modules-cli",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "82ab1c90-98f8-4a08-ac1d-d0b5b3cd5b95",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "ide"
+            },
+            {
+              "username": "brentvatne"
+            },
+            {
+              "username": "expoadmin"
+            },
+            {
+              "username": "exponent"
+            },
+            {
+              "username": "bycedric"
+            },
+            {
+              "username": "kudochien"
+            },
+            {
+              "username": "alanhughes"
+            },
+            {
+              "username": "tsapeta"
+            },
+            {
+              "username": "expo-bot"
+            },
+            {
+              "username": "philpl"
+            },
+            {
+              "username": "ccheever"
+            },
+            {
+              "username": "szdziedzic"
+            },
+            {
+              "username": "wschurman"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-11T09:49:01.645Z",
+          "links": {
+            "homepage": "https://github.com/expo/expo/tree/main/packages/expo-modules-cli#readme",
+            "repository": "https://github.com/expo/expo.git",
+            "bugs": "https://github.com/expo/expo/issues",
+            "npm": "https://www.npmjs.com/package/expo-modules-cli"
+          }
+        },
+        "score": {
+          "final": 50.95225,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 965813103,
+          "weekly": 238734938
+        },
+        "dependents": "1899",
+        "updated": "2026-11-24T10:06:59.100Z",
+        "searchScore": 50.42068,
+        "package": {
+          "name": "accepts",
+          "keywords": ["content", "negotiation", "accept", "accepts"],
+          "version": "1.3.8",
+          "description": "Higher-level content negotiation",
+          "sanitized_name": "accepts",
+          "publisher": {
+            "username": "dougwilson"
+          },
+          "maintainers": [
+            {
+              "username": "ulisesgascon"
+            },
+            {
+              "username": "blakeembrey"
+            },
+            {
+              "username": "wesleytodd"
+            },
+            {
+              "username": "dougwilson"
+            }
+          ],
+          "license": "MIT",
+          "date": "2022-02-02T23:52:08.772Z",
+          "links": {
+            "homepage": "https://github.com/jshttp/accepts#readme",
+            "repository": "git+https://github.com/jshttp/accepts.git",
+            "bugs": "https://github.com/jshttp/accepts/issues",
+            "npm": "https://www.npmjs.com/package/accepts"
+          }
+        },
+        "score": {
+          "final": 50.42068,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 130698662,
+          "weekly": 32330806
+        },
+        "dependents": "6",
+        "updated": "2026-11-24T10:15:48.448Z",
+        "searchScore": 50.325813,
+        "package": {
+          "name": "leac",
+          "keywords": ["lexer", "tokenizer", "lex", "token"],
+          "version": "0.7.0",
+          "description": "Lexer / tokenizer",
+          "sanitized_name": "leac",
+          "publisher": {
+            "username": "killy.mxi"
+          },
+          "maintainers": [
+            {
+              "username": "killy.mxi"
+            }
+          ],
+          "license": "MIT",
+          "date": "2025-09-05T12:50:28.031Z",
+          "links": {
+            "homepage": "https://github.com/mxxii/leac",
+            "repository": "git+https://github.com/mxxii/leac.git",
+            "bugs": "https://github.com/mxxii/leac/issues",
+            "npm": "https://www.npmjs.com/package/leac"
+          }
+        },
+        "score": {
+          "final": 50.325813,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 943422132,
+          "weekly": 232069621
+        },
+        "dependents": "363",
+        "updated": "2026-11-24T17:10:19.472Z",
+        "searchScore": 50.188374,
+        "package": {
+          "name": "fast-uri",
+          "keywords": [],
+          "version": "4.2.4",
+          "description": "Dependency-free RFC 3986 URI toolbox",
+          "sanitized_name": "fast-uri",
+          "publisher": {
+            "trustedPublisher": {
+              "oidcConfigId": "3e3519a6-3796-481a-83b4-491b920a2e44",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "jsumners"
+            },
+            {
+              "username": "delvedor"
+            },
+            {
+              "username": "matteo.collina"
+            },
+            {
+              "username": "eomm"
+            },
+            {
+              "username": "climba03003"
+            },
+            {
+              "username": "zekth"
+            }
+          ],
+          "license": "BSD-3-Clause",
+          "date": "2026-11-24T17:09:48.266Z",
+          "links": {
+            "homepage": "https://github.com/fastify/fast-uri",
+            "repository": "git+https://github.com/fastify/fast-uri.git",
+            "bugs": "https://github.com/fastify/fast-uri/issues",
+            "npm": "https://www.npmjs.com/package/fast-uri"
+          }
+        },
+        "score": {
+          "final": 50.188374,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 153142703,
+          "weekly": 38816270
+        },
+        "dependents": "783",
+        "updated": "2026-11-24T13:47:14.370Z",
+        "searchScore": 49.815155,
+        "package": {
+          "name": "storybook",
+          "keywords": [
+            "storybook",
+            "component",
+            "components",
+            "design-systems",
+            "component-testing",
+            "react",
+            "next",
+            "next.js",
+            "react-native",
+            "react-native-web",
+            "vue",
+            "angular",
+            "svelte",
+            "sveltekit",
+            "web-components"
+          ],
+          "version": "10.6.8",
+          "description": "Storybook: Develop, document, and test UI components in isolation",
+          "sanitized_name": "storybook",
+          "publisher": {
+            "actor": {
+              "name": "storybook-bot",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "79413afc-4ede-4e4a-bb84-44064a15eaec",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "ndelangen"
+            },
+            {
+              "username": "tmeasday"
+            },
+            {
+              "username": "ghengeveld"
+            },
+            {
+              "username": "kasperpeulen"
+            },
+            {
+              "username": "shilman"
+            },
+            {
+              "username": "jreinhold"
+            },
+            {
+              "username": "valentinpalkovic"
+            },
+            {
+              "username": "storybook-bot"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-20T08:21:41.941Z",
+          "links": {
+            "homepage": "https://storybook.js.org",
+            "repository": "https://github.com/storybookjs/storybook.git",
+            "bugs": "https://github.com/storybookjs/storybook/issues",
+            "npm": "https://www.npmjs.com/package/storybook"
+          }
+        },
+        "score": {
+          "final": 49.815155,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 696865468,
+          "weekly": 169949131
+        },
+        "dependents": "8974",
+        "updated": "2026-11-24T10:11:54.522Z",
+        "searchScore": 49.56991,
+        "package": {
+          "name": "rollup",
+          "keywords": ["modules", "bundler", "bundling", "es6", "optimizer"],
+          "version": "4.68.8",
+          "description": "Next-generation ES module bundler",
+          "sanitized_name": "rollup",
+          "publisher": {
+            "actor": {
+              "name": "lukastaegert",
+              "type": "user"
+            },
+            "trustedPublisher": {
+              "oidcConfigId": "3429dbce-6258-425b-980e-10bc61354285",
+              "id": "github"
+            },
+            "username": "GitHub Actions"
+          },
+          "maintainers": [
+            {
+              "username": "trysound"
+            },
+            {
+              "username": "rich_harris"
+            },
+            {
+              "username": "victorystick"
+            },
+            {
+              "username": "lukastaegert"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-11-21T06:57:31.857Z",
+          "links": {
+            "homepage": "https://rollupjs.org/",
+            "repository": "git+https://github.com/rollup/rollup.git",
+            "bugs": "https://github.com/rollup/rollup/issues",
+            "npm": "https://www.npmjs.com/package/rollup"
+          }
+        },
+        "score": {
+          "final": 49.56991,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      },
+      {
+        "downloads": {
+          "monthly": 402229262,
+          "weekly": 103257332
+        },
+        "dependents": "180",
+        "updated": "2026-11-24T10:05:13.652Z",
+        "searchScore": 49.545036,
+        "package": {
+          "name": "property-information",
+          "keywords": [
+            "aria",
+            "attribute",
+            "html",
+            "information",
+            "info",
+            "property",
+            "svg"
+          ],
+          "version": "7.2.0",
+          "description": "Info on the properties and attributes of the web platform",
+          "sanitized_name": "property-information",
+          "publisher": {
+            "username": "wooorm"
+          },
+          "maintainers": [
+            {
+              "username": "wooorm"
+            }
+          ],
+          "license": "MIT",
+          "date": "2026-06-01T17:35:58.155Z",
+          "links": {
+            "homepage": "https://github.com/wooorm/property-information#readme",
+            "repository": "git+https://github.com/wooorm/property-information.git",
+            "bugs": "https://github.com/wooorm/property-information/issues",
+            "npm": "https://www.npmjs.com/package/property-information"
+          }
+        },
+        "score": {
+          "final": 49.545036,
+          "detail": {
+            "popularity": 1,
+            "quality": 1,
+            "maintenance": 1
+          }
+        },
+        "flags": {
+          "insecure": 0
+        }
+      }
+    ],
+    "total": 2523470,
+    "time": "2026-11-24T20:03:35.755Z"
+  },
+  "status": 200,
+  "url": "https://registry.npmjs.org/-/v1/search?text=gerch-no-such-package-q7x2&size=20"
+}
