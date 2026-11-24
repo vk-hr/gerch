@@ -1,0 +1,92 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  GERCH_JOB_BUDGET_MS: "35000"
+  GITHUB_TOKEN: ${{ github.token }}
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: blob:none
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: pin, format, lint, typecheck
+        run: bun run verify pin format lint typecheck
+      - name: conventional commits
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          HK_SHA256: 8ff0b29c9925d73df9b14af7fc43ace86de03db73eafa3046750fce5c39e1955
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/jdx/hk/releases/download/v2.13.0/hk-x86_64-unknown-linux-gnu.tar.gz -o "$RUNNER_TEMP/hk.tgz"
+          echo "$HK_SHA256  $RUNNER_TEMP/hk.tgz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/hk" && tar xzf "$RUNNER_TEMP/hk.tgz" -C "$RUNNER_TEMP/hk"
+          PATH="$RUNNER_TEMP/hk:$PATH" bun scripts/check-commits.ts \
+            "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+      - name: budget
+        if: ${{ !cancelled() }}
+        run: bun scripts/ci-budget.ts
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: blob:none
+      - uses: ./.github/actions/setup
+      - name: full test suite
+        run: bun run verify test
+      - name: budget
+        if: ${{ !cancelled() }}
+        run: bun scripts/ci-budget.ts
+
+  test-changed:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: blob:none
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: tests the diff can reach
+        env:
+          GERCH_TEST_BASE: ${{ github.event.pull_request.base.sha }}
+        run: bun scripts/select-tests.ts
+      - name: budget
+        if: ${{ !cancelled() }}
+        run: bun scripts/ci-budget.ts
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: blob:none
+      - uses: ./.github/actions/setup
+      - name: build
+        run: bun run verify build
+      - name: budget
+        if: ${{ !cancelled() }}
+        run: bun scripts/ci-budget.ts

@@ -119,8 +119,8 @@ Rules were turned off only for these reasons:
 
 | Reason                                 | Rules off                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Bans a language feature the stack uses | `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`, `eslint/no-ternary`                                                                                                                                                                                                                                                                                                                                            |
-| Contradicts another enabled rule       | `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`)                                                                                                                                                                           |
+| Bans a language feature the stack uses | `eslint/no-undefined`, `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`, `eslint/no-ternary`                                                                                                                                                                                                                                                                                                                     |
+| Contradicts another enabled rule       | `vitest/prefer-describe-function-title` (vs `vitest/valid-title` and the `bun:test` types); `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`)                                                                               |
 | Contradicts a directive                | `vitest/no-importing-vitest-globals` (test files keep their `vitest` imports); `vitest/require-test-timeout` (no per-test timeouts)                                                                                                                                                                                                                                                                                                               |
 | Doesn't fit the stack                  | `react/react-in-jsx-scope` (automatic JSX runtime); `react/forbid-component-props` (Tailwind `className`); `react/jsx-no-literals` (no i18n); `typescript/explicit-function-return-type`, `typescript/explicit-module-boundary-types` (Router and Query rely on inferred types); `typescript/prefer-readonly-parameter-types` (library prop types aren't deep-readonly); `unicorn/text-encoding-identifier-case` (HTML `charSet` must be `utf-8`) |
 | Template had it off                    | `eslint/sort-keys`, `eslint/sort-imports`                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -131,7 +131,7 @@ allowed), `no-magic-numbers` (ignores -1, 0, 1), `jsx-max-depth` (5),
 `jsx-filename-extension` (`.tsx`), `capitalized-comments` (consecutive lines
 allowed), `no-duplicate-imports` (separate `import type` allowed),
 `vitest/consistent-test-it` (`test`). Scoped overrides: `scripts/**`
-(console, `process.exit`, sync calls, top-level await), `*.config.ts`
+(console, `process.exit`, sync calls, top-level await, `process.env`), `*.config.ts`
 (default export), `src/components/ui/**` (shadcn prop spreading and variant
 exports), `src/routes/**` (`only-export-components`; the Start plugin handles
 route HMR), tests (magic numbers, parent imports), `test/fixtures/**`
@@ -231,44 +231,62 @@ of the estimate.
 Decided 2026-11-24. The repo stays on the personal account, with no
 organization and no merge queue.
 
-The closest equivalent is a ruleset on `main` that requires a PR, the status
-check `full-suite`, and branches up to date before merging. The `full-suite`
-job runs every check with no test selection on each PR head. Combined with
-"up to date", this tests the exact tree that lands on main, which is what a
-single-author merge queue provides. I'll show you the ruleset before applying
-it in step 2.
+The closest equivalent is a ruleset on `main`, proposed in step 2 and applied
+only after your approval:
 
-### D9. Directive budgets on a new repo: proposed
+- Require a PR, and allow squash merges only, so the PR title (checked for
+  Conventional Commits) becomes the commit on `main`. PR #1 landed as a merge
+  commit, "Merge pull request #1", which isn't a Conventional Commit.
+- Require the status checks `checks`, `test` and `build`, with branches up to
+  date before merging. `test` runs the full suite with no selection on every
+  PR, and "up to date" means it ran on the exact tree that lands on `main`.
+  `test-changed` (selection) is not required.
+- Block force pushes and deletion of `main`.
 
-- Every budget applies from the first workflow. Each job ends with a step
-  that compares elapsed job time to its budget and fails over it. A budget
-  step for `bun lint`, `bun fmt` and `bun check` times each command.
-- The 150-run audit runs once 150 runs exist. The test-failure log
-  (`docs/test-failures.md`) starts with the first test.
-- "Bake the toolchain into the runner image" isn't possible on free
-  GitHub-hosted runners. Setup comes from a cached canary tarball and a cached
-  `node_modules`, with caches seeded by a workflow on `push` to `main`.
+### D9. Directive budgets on a new repo: implemented in step 2
+
+- **Shape.** `.github/workflows/ci.yml` runs on PRs and on pushes to `main`.
+  It has four parallel jobs and none uses `needs:`:
+  - `checks`: pin, format, lint, typecheck, plus Conventional Commits on the
+    PR title and every commit. The commits step runs even when the first step
+    fails, so every failure is listed.
+  - `test`: the full suite, with a JUnit report that proves every test file
+    ran.
+  - `test-changed` (PRs only): the selected tests.
+  - `build`: the build, plus a check that the route tree is unchanged.
+  - Byte budgets, Playwright and React Doctor join in step 7, as planned.
+- **Budgets.** Every job ends with `scripts/ci-budget.ts`. It reads the job's
+  `created_at` and `started_at` from the GitHub API and the end of setup from
+  the setup action. It fails the job when setup exceeds 15 s or the job
+  exceeds 35 s, and writes waiting, setup, running and job time to the job
+  summary. Inside the jobs, `scripts/verify.ts` fails lint or format over
+  1 s, typecheck over 5 s, and tests over 30 s.
 - **Waiting budget: approved 2026-11-24.** GitHub's queue time isn't
   something our code controls, and without Blacksmith roughly a quarter of
   jobs will wait over 5 s (D8). Failing those jobs would turn CI red for
-  reasons no commit can fix. So jobs fail on setup and running budgets only.
-  Waiting is recorded per job in the job summary and the 150-run audit,
-  against the 5 s target.
-- Shape: one `checks` job (format, lint, typecheck, conventional commits; it
-  reports every failure before exiting), plus `test` (sharded),
-  `build-budgets` (build plus byte budgets) and `e2e` (Playwright on its own
-  build). No job uses `needs:`.
-- Selection: on PRs, `bun test --changed=origin/main`. These inputs rerun
-  everything: `package.json`, `bun.lock`, `bunfig.toml`, `tsconfig.json`,
-  `vite.config.ts`, `test/setup*`, `test/fixtures/**`, `.github/**`,
-  `flake.nix`, `flake.lock`. A planted test proves selection can go red.
-- Tests run with `bun test --isolate=modules --randomize` and `vitest`
-  imports, which Bun maps through `--globals=bun` (verified flags). Shards
-  use `--shard=i/n --timings`, with timings recorded by main
-  (`--update-timings`). A final step checks that the shard file lists add up
-  to every test file.
-
-## App
+  reasons no commit can fix. So jobs fail on setup and running budgets only,
+  and waiting is recorded against the 5 s target.
+- **Setup.** "Bake the toolchain into the runner image" isn't possible on free
+  GitHub-hosted runners. `.github/actions/setup` restores `node_modules`,
+  which holds the pinned canary, keyed on `bun.lock`. On a miss it downloads
+  the canary tarball, checks it against `bun.lock`'s sha512, and runs
+  `bun ci`. Only pushes to `main` save the cache, so PR caches are seeded
+  from `main`. Checkout is blobless (`filter: blob:none`). In-progress PR runs
+  are cancelled when a new commit lands.
+- **Selection.** `scripts/select-tests.ts` runs `bun test --changed=<base>`
+  unless the diff touches a shared input. These rerun everything:
+  `package.json`, `bun.lock`, `bunfig.toml`, `tsconfig.json`,
+  `vite.config.ts`, `flake.nix`, `flake.lock`, `test/vitest.d.ts`,
+  `scripts/select-tests.ts`, `test/fixtures/**` and `.github/**`. An empty
+  diff runs nothing. The full `test` job still runs on every PR, so a change
+  hidden from selection still turns CI red (demonstrated on a throwaway PR
+  in step 2).
+- **Shards.** One shard for now, because the suite takes under 0.1 s.
+  `scripts/check-test-files.ts` already merges JUnit reports, so it proves
+  coverage across shards once they exist. Timings (`--timings`,
+  `--update-timings` on `main`) come with the second shard.
+- **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
+  (`docs/test-failures.md`) starts with the first fixed test failure.
 
 ### D10. Rendering: TanStack Start with SSR: approved
 
@@ -376,7 +394,7 @@ analytics service.
 
 ### D19. Hosting: Vercel and Supabase: approved
 
-Decided 2026-11-24.
+Decided 2026-11-24. You set up both accounts.
 
 - **Vercel Hobby, $0/month.** Hobby is limited to personal, non-commercial
   use. A portfolio project fits, but client work hosted on it would not.
@@ -390,25 +408,27 @@ Decided 2026-11-24.
 - **Supabase Free, $0/month:** 500 MB database, shared CPU, 500 MB RAM,
   5 GB egress. It pauses after a week without activity (see D12). Pro is
   $25/month if the nix index or traffic outgrows Free.
-- Domain: still open, for example `gerch.vkhr.dev`.
+- **Domain:** `gerch.vkhr.dev`.
 
-### D20. Deploys and secrets: needs you
+### D20. Deploys: Vercel Git integration: approved
 
-Recommendation: CI builds with the pinned canary, then runs `vercel build`
-and `vercel deploy --prebuilt` after the full suite passes on `main`. PR
-previews use the same path. This keeps "same binary in CI" true for what
-ships. The alternative, Vercel's Git integration, needs no GitHub secrets,
-but Vercel installs and builds with its own Bun.
+Decided 2026-11-24. Vercel deploys every push to `main` and builds a preview
+for every PR through its Git integration. No Vercel secrets go into GitHub.
 
-Secrets needed:
+Consequence: Vercel installs and builds with its own Bun, not the pinned
+canary. CI still runs every check on the canary, so what reaches `main` has
+passed them. The build itself (`vite build`) uses no canary-only command.
+Step 3 sets the Vercel install command to `bun ci`, so Vercel fails on a
+stale lockfile instead of rewriting it.
 
-| Secret                                                  | Where                  | For                    |
-| ------------------------------------------------------- | ---------------------- | ---------------------- |
-| `DATABASE_URL` (Supabase transaction pooler, port 6543) | Vercel env             | server routes          |
-| `DATABASE_URL` (Supabase session pooler or direct)      | GitHub Actions secret  | nix ingest, migrations |
-| `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`    | GitHub Actions secrets | prebuilt deploys       |
+Secrets, set by you:
 
-None of these are needed before step 3.
+| Secret                                                  | Where                 | For                    |
+| ------------------------------------------------------- | --------------------- | ---------------------- |
+| `DATABASE_URL` (Supabase transaction pooler, port 6543) | Vercel env            | server routes          |
+| `DATABASE_URL` (Supabase session pooler or direct)      | GitHub Actions secret | nix ingest, migrations |
+
+Neither is needed before step 3.
 
 ### D21. Database in tests: proposed
 
