@@ -6,17 +6,20 @@ Run everything inside the Nix dev shell (`direnv` loads it from `.envrc`).
 The shell provides the pinned Bun canary; the global `bun` is stable and
 lacks `bun lint`, `bun fmt` and `bun check`.
 
-| Task                     | Command                      |
-| ------------------------ | ---------------------------- |
-| Install                  | `bun ci`                     |
-| All checks (as pre-push) | `bun run verify`             |
-| Format                   | `bun fmt`                    |
-| Lint                     | `bun lint`                   |
-| Typecheck                | `bun check`                  |
-| Test                     | `bun test --isolate=modules` |
-| Dev server               | `bun run dev`                |
-| Build                    | `bun run build`              |
-| Check the Bun pin        | `bun run check-bun`          |
+| Task                     | Command                                         |
+| ------------------------ | ----------------------------------------------- |
+| Install                  | `bun ci`                                        |
+| All checks (as pre-push) | `bun run verify`                                |
+| Format                   | `bun fmt`                                       |
+| Lint                     | `bun lint`                                      |
+| Typecheck                | `bun check`                                     |
+| Test                     | `bun test --isolate=modules`                    |
+| Dev server               | `bun run dev`                                   |
+| Build                    | `bun run build`                                 |
+| Check the Bun pin        | `bun run check-bun`                             |
+| Live smoke test (npm)    | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
+| Re-record fixtures       | `bun run record-fixtures npm`                   |
+| Migrate the database     | `DATABASE_URL=… bun run migrate`                |
 
 hk hooks run on commit (format and lint staged files, Conventional Commits
 message) and on push (`bun run verify`). Install them with `hk install`.
@@ -24,19 +27,24 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 ## Structure
 
 - `src/routes/`: TanStack Start file routes and `/api/*` server routes.
+- `src/server/`: server-only code: registry adapters, SWR cache, database,
+  migrations. `src/shared/`: types shared with the browser (no zod).
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
 - `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
   budgets), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
   `check-test-files.ts`, `check-commits.ts`).
 - `.github/`: CI workflow and the setup action.
-- `test/`: tests and recorded fixtures (`test/fixtures/`).
+- `test/`: tests, recorded fixtures (`test/fixtures/`), the shared adapter
+  contract (`test/contract/adapters.test.ts`), and opt-in live smoke tests
+  (`test/live/*.live.ts`, not picked up by `bun test`).
 - `docs/spec.md`, `docs/decisions.md`: scope and decisions.
 - `docs/directives/`: binding directives. Ask before changing them.
 
 ## Banned patterns
 
 - `bun test` without `--isolate=modules`. `bunfig.toml` has no isolate key.
-- Network calls in unit tests. Use recorded fixtures.
+- Network calls in unit tests. Use recorded fixtures; the test preload
+  blocks `fetch`.
 - Retries, wider timeouts or skipped tests to make CI pass.
 - `eslint-disable` or `@ts-expect-error` to hide a finding. Fix it, or change
   the rule in `.oxlintrc.json` and record why in `docs/decisions.md`.
