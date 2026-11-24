@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { evaluate } from "../../scripts/ci-budget.ts"
+import { evaluate, findJob } from "../../scripts/ci-budget.ts"
 
 const budget = { jobMs: 35_000, setupMs: 15_000 }
 
@@ -47,5 +47,29 @@ describe("evaluate()", () => {
     const result = evaluate(timing, budget)
     expect(result.waitingMs).toBe(60_000)
     expect(result.failures).toStrictEqual([])
+  })
+})
+
+const job = (name: string, status: string) => ({
+  created_at: "2026-11-24T20:26:19Z",
+  name,
+  runner_name: "GitHub Actions 1",
+  started_at: "2026-11-24T20:26:21Z",
+  status,
+})
+
+describe("findJob()", () => {
+  test("finds the job by name whatever status the API reports yet", () => {
+    expect.hasAssertions()
+    const queued = job("test-changed", "queued")
+    const jobs = [job("checks", "in_progress"), queued]
+    expect(findJob(jobs, "test-changed")).toStrictEqual(queued)
+  })
+
+  test("throws when the run has no job with that name", () => {
+    expect.hasAssertions()
+    expect(() => findJob([job("checks", "in_progress")], "build")).toThrow(
+      "no job named build in this run attempt"
+    )
   })
 })
