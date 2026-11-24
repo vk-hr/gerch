@@ -200,7 +200,9 @@
         "ignoreConsecutiveComments": true
       }
     ],
-    "eslint/require-await": "off"
+    "eslint/require-await": "off",
+    "eslint/no-undefined": "off",
+    "vitest/prefer-describe-function-title": "off"
   },
   "ignorePatterns": ["src/routeTree.gen.ts"],
   "overrides": [
@@ -210,7 +212,8 @@
         "eslint/no-console": "off",
         "unicorn/no-process-exit": "off",
         "node/no-sync": "off",
-        "node/no-top-level-await": "off"
+        "node/no-top-level-await": "off",
+        "node/no-process-env": "off"
       }
     },
     {

@@ -1,6 +1,9 @@
 // Runs every check, reports every failure, and fails any check that exceeds
-// its time budget (docs/directives/ci.md). The pre-push hook and CI run this.
+// its time budget (docs/directives/ci.md). The pre-push hook runs all of
+// them; each CI job runs the ones it names: `bun run verify lint format`.
+const FIRST_ARG = 2
 const bun = process.execPath
+const JUNIT = "test-results/junit.xml"
 const NAME_WIDTH = 10
 const MS_WIDTH = 6
 
@@ -17,13 +20,17 @@ interface Result extends Check {
 }
 
 const checks: Check[] = [
-  { budgetMs: 1000, cmd: [bun, "scripts/check-bun.ts"], name: "bun pin" },
+  { budgetMs: 1000, cmd: [bun, "scripts/check-bun.ts"], name: "pin" },
   { budgetMs: 1000, cmd: [bun, "fmt", "--check"], name: "format" },
   { budgetMs: 1000, cmd: [bun, "lint"], name: "lint" },
   { budgetMs: 5000, cmd: [bun, "check"], name: "typecheck" },
   {
     budgetMs: 30_000,
-    cmd: [bun, "test", "--isolate=modules"],
+    cmd: [
+      "sh",
+      "-c",
+      `"${bun}" test --isolate=modules --reporter=junit --reporter-outfile=${JUNIT} && "${bun}" scripts/check-test-files.ts ${JUNIT}`,
+    ],
     name: "test",
   },
   {
@@ -76,8 +83,19 @@ function report(results: Result[]): string[] {
   })
 }
 
+const names = Bun.argv.slice(FIRST_ARG)
+const unknown = names.filter(
+  (name) => !checks.some((check) => check.name === name)
+)
+if (unknown.length > 0) {
+  console.error(`unknown checks: ${unknown.join(", ")}`)
+  process.exit(1)
+}
+const selected = checks.filter(
+  (check) => names.length === 0 || names.includes(check.name)
+)
 const failures = report(
-  await Promise.all(checks.map(async (check) => run(check)))
+  await Promise.all(selected.map(async (check) => run(check)))
 )
 if (failures.length > 0) {
   console.error(`\n${failures.join("\n\n")}`)
