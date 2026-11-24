@@ -1,7 +1,10 @@
 // Shared stale-while-revalidate cache (docs/spec.md, "Cache"). A fresh entry
 // is a hit. A stale entry is returned at once while one background refresh
 // runs. A missing or expired entry waits for the load.
-import type { Db } from "./db.ts"
+import { eq, sql } from "drizzle-orm"
+
+import type { Database } from "./db/index.ts"
+import { cacheEntries } from "./db/schema.ts"
 
 interface CacheEntry {
   value: unknown
@@ -51,29 +54,27 @@ function memoryStore(): CacheStore {
   }
 }
 
-function postgresStore(db: Db): CacheStore {
+function postgresStore(db: Database): CacheStore {
   return {
     get: async (key) => {
-      const [row] = await db.query(
-        "select value, fresh_until::float8 as fresh, stale_until::float8 as stale from cache_entries where key = $1",
-        [key]
-      )
-      if (row === undefined) {
-        return null
-      }
-      return {
-        freshUntil: Number(row.fresh),
-        staleUntil: Number(row.stale),
-        value: row.value,
-      }
+      const [row] = await db
+        .select({
+          freshUntil: cacheEntries.freshUntil,
+          staleUntil: cacheEntries.staleUntil,
+          value: cacheEntries.value,
+        })
+        .from(cacheEntries)
+        .where(eq(cacheEntries.key, key))
+      return row ?? null
     },
     set: async (key, entry) => {
-      await db.query(
-        `insert into cache_entries (key, value, fresh_until, stale_until) values ($1, $2::jsonb, $3, $4)
-         on conflict (key) do update set value = excluded.value, fresh_until = excluded.fresh_until,
-           stale_until = excluded.stale_until, updated_at = now()`,
-        [key, JSON.stringify(entry.value), entry.freshUntil, entry.staleUntil]
-      )
+      await db
+        .insert(cacheEntries)
+        .values({ key, ...entry })
+        .onConflictDoUpdate({
+          set: { ...entry, updatedAt: sql`now()` },
+          target: cacheEntries.key,
+        })
     },
   }
 }

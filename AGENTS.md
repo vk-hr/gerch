@@ -19,6 +19,7 @@ lacks `bun lint`, `bun fmt` and `bun check`.
 | Check the Bun pin        | `bun run check-bun`                             |
 | Live smoke test (npm)    | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
 | Re-record fixtures       | `bun run record-fixtures npm`                   |
+| New migration            | `bun run drizzle-kit generate --name <change>`  |
 | Migrate the database     | `DATABASE_URL=… bun run migrate`                |
 
 hk hooks run on commit (format and lint staged files, Conventional Commits
@@ -27,8 +28,9 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 ## Structure
 
 - `src/routes/`: TanStack Start file routes and `/api/*` server routes.
-- `src/server/`: server-only code: registry adapters, SWR cache, database,
-  migrations. `src/shared/`: types shared with the browser (no zod).
+- `src/server/`: server-only code: registry adapters, SWR cache, and the
+  Drizzle schema and connection (`src/server/db/`).
+- `drizzle/`: generated migrations. Edit the schema, then generate. `src/shared/`: types shared with the browser (no zod).
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
 - `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
   budgets), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
@@ -52,3 +54,6 @@ message) and on push (`bun run verify`). Install them with `hk install`.
   `docs/decisions.md`.
 - Commit messages that are not Conventional Commits.
 - npm, yarn, pnpm, Prettier, ESLint, oxlint, Vitest or Jest.
+- Hand-written migrations, or editing generated files in `drizzle/`.
+- `drizzle-kit push` against Supabase. Generate a migration and run
+  `bun run migrate`.

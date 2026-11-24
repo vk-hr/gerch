@@ -40,6 +40,7 @@ function evaluate(timing: Timing, budget: Budget): Evaluation {
 }
 
 interface ApiJob {
+  name: string
   runner_name: string | null
   status: string
   created_at: string
@@ -50,6 +51,8 @@ function isApiJob(value: unknown): value is ApiJob {
   return (
     typeof value === "object" &&
     value !== null &&
+    "name" in value &&
+    typeof value.name === "string" &&
     "status" in value &&
     typeof value.status === "string" &&
     "created_at" in value &&
@@ -73,6 +76,16 @@ function parseJobs(body: unknown): ApiJob[] {
   return body.jobs.filter((job) => isApiJob(job))
 }
 
+// Job names are unique within a run attempt (the workflow has no matrix).
+// The API can still report the running job as queued, so status is ignored.
+function findJob(jobs: readonly ApiJob[], name: string): ApiJob {
+  const job = jobs.find((candidate) => candidate.name === name)
+  if (job === undefined) {
+    throw new Error(`no job named ${name} in this run attempt`)
+  }
+  return job
+}
+
 function env(name: string): string {
   const value = process.env[name]
   if (value === undefined || value === "") {
@@ -90,15 +103,7 @@ async function currentJob(): Promise<ApiJob> {
     throw new Error(`GitHub API ${response.status} for ${url}`)
   }
   const jobs = parseJobs(await response.json())
-  const job = jobs.find(
-    (candidate) =>
-      candidate.runner_name === env("RUNNER_NAME") &&
-      candidate.status === "in_progress"
-  )
-  if (job === undefined) {
-    throw new Error(`no in-progress job on runner ${env("RUNNER_NAME")}`)
-  }
-  return job
+  return findJob(jobs, env("GITHUB_JOB"))
 }
 
 if (import.meta.main) {
@@ -121,4 +126,4 @@ if (import.meta.main) {
   }
 }
 
-export { evaluate }
+export { evaluate, findJob }

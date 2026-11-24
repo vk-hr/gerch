@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "skills": {
+    "drizzle": {
+      "source": "./node_modules/drizzle-kit/skills",
+      "sourceType": "local",
+      "computedHash": "c91331769b0cf9a9f5592d9ea5cf0998fdfcd81c4ed1fb0d8784ada819a797e9",
+      "installMode": "copy"
+    }
+  }
+}

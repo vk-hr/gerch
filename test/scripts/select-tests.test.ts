@@ -17,6 +17,8 @@ describe("testPlan()", () => {
       "test/fixtures/npm/search-zod.json",
       ".github/workflows/ci.yml",
       "scripts/select-tests.ts",
+      "drizzle.config.ts",
+      "drizzle/20261124202437_cache_entries/migration.sql",
     ]) {
       expect(testPlan([file])).toStrictEqual({ mode: "all", reason: file })
     }

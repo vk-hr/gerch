@@ -11,8 +11,9 @@ const RERUN_ALL_FILES = new Set([
   "flake.lock",
   "test/vitest.d.ts",
   "scripts/select-tests.ts",
+  "drizzle.config.ts",
 ])
-const RERUN_ALL_DIRS = ["test/fixtures/", ".github/"]
+const RERUN_ALL_DIRS = ["test/fixtures/", ".github/", "drizzle/"]
 
 type TestPlan = { mode: "all"; reason: string } | { mode: "changed" | "none" }
 

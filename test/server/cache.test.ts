@@ -31,7 +31,7 @@ async function failing(): Promise<number> {
 
 async function postgres(): Promise<CacheStore> {
   database.db ??= await freshDb()
-  return postgresStore(database.db)
+  return postgresStore(database.db.db)
 }
 
 function harness(store: CacheStore) {
@@ -60,7 +60,7 @@ describe.each([
   })
 
   afterEach(async () => {
-    await database.db?.query("truncate cache_entries")
+    await database.db?.empty()
   })
 
   afterAll(async () => {

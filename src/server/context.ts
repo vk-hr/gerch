@@ -1,7 +1,7 @@
 import { waitUntil } from "@vercel/functions"
 
 import { createCache, memoryStore, postgresStore } from "./cache.ts"
-import { bunSqlDb } from "./db.ts"
+import { connect } from "./db/index.ts"
 import { databaseUrl } from "./env.ts"
 import { createNpmAdapter } from "./registries/npm.ts"
 import type { SearchDeps } from "./search.ts"
@@ -15,7 +15,7 @@ function createContext(): SearchDeps {
       onError: (error) => {
         console.error("cache refresh failed", error)
       },
-      store: url === undefined ? memoryStore() : postgresStore(bunSqlDb(url)),
+      store: url === undefined ? memoryStore() : postgresStore(connect(url)),
       waitUntil,
     }),
   }
