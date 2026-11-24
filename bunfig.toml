@@ -4,3 +4,6 @@ restoreMocks = true
 clearMocks = true
 unstubEnvs = true
 unstubGlobals = true
+
+[lint]
+typeAware = true

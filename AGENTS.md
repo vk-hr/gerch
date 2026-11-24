@@ -11,7 +11,7 @@ lacks `bun lint`, `bun fmt` and `bun check`.
 | Install                  | `bun ci`                     |
 | All checks (as pre-push) | `bun run verify`             |
 | Format                   | `bun fmt`                    |
-| Lint                     | `bun lint --type-aware`      |
+| Lint                     | `bun lint`                   |
 | Typecheck                | `bun check`                  |
 | Test                     | `bun test --isolate=modules` |
 | Dev server               | `bun run dev`                |

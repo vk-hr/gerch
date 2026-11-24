@@ -34,8 +34,8 @@
             url = "https://registry.npmjs.org/@oven/${bunTarballs.${system}.pkg}/-/${bunTarballs.${system}.pkg}-${bunVersion}.tgz";
             inherit (bunTarballs.${system}) hash;
           };
-          nativeBuildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
-          buildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib ];
+          nativeBuildInputs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.autoPatchelfHook ];
+          buildInputs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.stdenv.cc.cc.lib ];
           dontConfigure = true;
           dontBuild = true;
           dontStrip = true;

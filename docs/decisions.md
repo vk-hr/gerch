@@ -111,7 +111,9 @@ without them).
 
 **Lint config.** `.oxlintrc.json` turns on every category (`correctness`,
 `suspicious`, `pedantic`, `perf`, `style`, `restriction`), carries all 68
-template rules, and runs with `--type-aware`. The first run flagged 99
+template rules, and runs type-aware rules (`typeAware = true` in
+`bunfig.toml`, so plain `bun lint` includes them; without it they are
+skipped silently, measured). The first run flagged 99
 problems on template code. Code was fixed where the finding was real.
 Rules were turned off only for these reasons:
 
@@ -135,7 +137,10 @@ exports), `src/routes/**` (`only-export-components`; the Start plugin handles
 route HMR), tests (magic numbers, parent imports), `test/fixtures/**`
 (`require-hook`), `*.d.ts` (`import/unambiguous`).
 
-Timings on this repo: `bun lint --type-aware` 168 ms, `bun fmt --check`
+`typescript/ban-ts-comment` bans `@ts-expect-error`, `@ts-ignore` and
+`@ts-nocheck` outright (the template allowed `@ts-expect-error`).
+
+Timings on this repo: `bun lint` (type-aware) 168 ms, `bun fmt --check`
 69 ms, `bun check` 49 ms.
 
 **Tests.** `bunfig.toml` has no key for isolation; the binary's config parser

@@ -19,12 +19,21 @@ interface Result extends Check {
 const checks: Check[] = [
   { budgetMs: 1000, cmd: [bun, "scripts/check-bun.ts"], name: "bun pin" },
   { budgetMs: 1000, cmd: [bun, "fmt", "--check"], name: "format" },
-  { budgetMs: 1000, cmd: [bun, "lint", "--type-aware"], name: "lint" },
+  { budgetMs: 1000, cmd: [bun, "lint"], name: "lint" },
   { budgetMs: 5000, cmd: [bun, "check"], name: "typecheck" },
   {
     budgetMs: 30_000,
     cmd: [bun, "test", "--isolate=modules"],
     name: "test",
+  },
+  {
+    budgetMs: 30_000,
+    cmd: [
+      "sh",
+      "-c",
+      `"${bun}" run build && git diff --exit-code -- src/routeTree.gen.ts`,
+    ],
+    name: "build",
   },
 ]
 
