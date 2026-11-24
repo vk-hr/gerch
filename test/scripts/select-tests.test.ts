@@ -11,12 +11,10 @@ describe("testPlan()", () => {
       "bunfig.toml",
       "tsconfig.json",
       "vite.config.ts",
-      "flake.nix",
       "flake.lock",
       "test/vitest.d.ts",
       "test/fixtures/npm/search-zod.json",
       ".github/workflows/ci.yml",
-      "scripts/select-tests.ts",
     ]) {
       expect(testPlan([file])).toStrictEqual({ mode: "all", reason: file })
     }

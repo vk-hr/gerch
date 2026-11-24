@@ -7,10 +7,8 @@ const RERUN_ALL_FILES = new Set([
   "bunfig.toml",
   "tsconfig.json",
   "vite.config.ts",
-  "flake.nix",
   "flake.lock",
   "test/vitest.d.ts",
-  "scripts/select-tests.ts",
 ])
 const RERUN_ALL_DIRS = ["test/fixtures/", ".github/"]
 

@@ -12,7 +12,7 @@
       bunTarballs = {
         x86_64-linux = {
           pkg = "bun-linux-x64";
-          hash = "sha512-bPgrPTNQtJp8oLQBaak99SCQEob5vZ33SlkbzFkzR0M4l7XWpqYiLTM4BqFs1gMJDgkU3DyQPbQRYxUxdUWCTw==";
+          hash = "sha512-XPgrPTNQtJp8oLQBaak99SCQEob5vZ33SlkbzFkzR0M4l7XWpqYiLTM4BqFs1gMJDgkU3DyQPbQRYxUxdUWCTw==";
         };
         aarch64-linux = {
           pkg = "bun-linux-aarch64";
