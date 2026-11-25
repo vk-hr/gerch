@@ -16,9 +16,6 @@ export default defineConfig({
   use: {
     ...devices["Desktop Chrome"],
     baseURL: `http://localhost:${PORT}`,
-    // GitHub's runners ship Google Chrome; locally the Nix dev shell provides
-    // Playwright's Chromium (PLAYWRIGHT_BROWSERS_PATH).
-    channel: process.env.CI === undefined ? undefined : "chrome",
   },
   workers: process.env.CI === undefined ? undefined : "100%",
   webServer: {
