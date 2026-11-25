@@ -14,6 +14,19 @@ type IngestResult =
 
 const HEADERS = { "user-agent": USER_AGENT }
 
+// A new dump with under half the packages of the current index is far more
+// likely a format change than a real shrink. Replacing the index with it
+// would empty search until the next release, so the ingest fails instead.
+const MIN_SHARE = 0.5
+
+function checkSize(packages: number, current: number | undefined): void {
+  if (packages === 0 || packages < (current ?? 0) * MIN_SHARE) {
+    throw new Error(
+      `refusing a dump with ${packages} packages; the index has ${current ?? 0}`
+    )
+  }
+}
+
 // The channel redirects to its current release, e.g.
 // releases.nixos.org/nixos/unstable/nixos-26.11pre1125864.2786a2a72088/…
 function releaseOf(url: string): string | null {
@@ -45,6 +58,8 @@ async function runNixIngest(
   }
   // Served with `content-encoding: br`, so fetch decodes the Brotli.
   const rows = nixRows(await response.json())
+  const current = await nixIndexState(db)
+  checkSize(rows.length, current?.packages)
   await replaceNixIndex(db, rows, {
     etag: response.headers.get("etag"),
     release: releaseOf(response.url),

@@ -46,6 +46,21 @@ describe("health route", () => {
     })
   })
 
+  test("stays up when the database is down", async () => {
+    expect.hasAssertions()
+    const response = await handleHealth({
+      nixState: async () => {
+        throw new Error("connection refused")
+      },
+      now: () => 0,
+    })
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toStrictEqual({
+      nix: { error: "the nix index can't be read" },
+      ok: true,
+    })
+  })
+
   test("reports a missing index as null", async () => {
     expect.hasAssertions()
     const response = await handleHealth({

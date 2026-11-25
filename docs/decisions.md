@@ -1023,6 +1023,22 @@ detection.
   `playwright.config.ts` now sets `DATABASE_URL` to an empty string, which
   Bun leaves alone. The health flow asserts there is no nix index, so it
   fails if a database leaks in again.
+- **Review of #16**, by a separate reviewer agent starting without this
+  session's context.
+  - Fixed: a dump with no packages, or under half the current index, is
+    refused before anything is written. A changed format would otherwise
+    empty search, and the stored ETag would keep it empty until the next
+    release.
+  - Fixed: `/api/health` stays `200` with
+    `nix: { error: "the nix index can't be read" }` when the database is
+    down.
+  - Fixed: both indexes split words on letters and decimal digits. Postgres
+    drops digits such as "²", and the in-memory index used to keep them.
+  - Accepted: a push that changes `drizzle/` runs migrations next to
+    Vercel's build. New code can serve before the tables exist for a few
+    minutes, with nix answering "unavailable" (`no-store`).
+  - Accepted: a nix search before the first ingest is cached by the CDN
+    as empty for its 10-minute fresh window, like any search.
 
 ### D31. Byte budgets in CI: implemented in step 7a
 

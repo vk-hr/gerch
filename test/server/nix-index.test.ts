@@ -132,5 +132,22 @@ describe("nix index", () => {
       expect(attrs(fromMemory)).toStrictEqual(attrs(fromPostgres))
       expect(fromPostgres.length).toBeGreaterThan(0)
     })
+
+    // Postgres doesn't index digits such as "²" (review of #16).
+    test.each(["x²", "²", "ripgrep²"])(
+      "%p finds the same as in Postgres",
+      async (query) => {
+        expect.hasAssertions()
+        const fromPostgres = await postgresNixIndex(await loaded()).search(
+          query,
+          20
+        )
+        const fromMemory = await memoryNixIndex(await recordedRows()).search(
+          query,
+          20
+        )
+        expect(attrs(fromMemory)).toStrictEqual(attrs(fromPostgres))
+      }
+    )
   })
 })

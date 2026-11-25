@@ -12,26 +12,27 @@ interface HealthDeps {
 // Liveness, plus the nix index's release and age (docs/spec.md, "API"). It
 // stays 200 while the index is old or missing, so it never takes the app
 // down; `nix.stale` says when the ingest needs attention.
+function nixReport(state: NixIndexState | null, now: number) {
+  if (state === null) {
+    return null
+  }
+  const ageHours = Math.floor((now - state.ingestedAt.getTime()) / HOUR_MS)
+  return {
+    ageHours,
+    ingestedAt: state.ingestedAt.toISOString(),
+    packages: state.packages,
+    release: state.release,
+    stale: ageHours >= NIX_STALE_HOURS,
+  }
+}
+
 async function handleHealth(deps: HealthDeps): Promise<Response> {
-  const state = await deps.nixState()
-  const ageHours =
-    state === null
-      ? null
-      : Math.floor((deps.now() - state.ingestedAt.getTime()) / HOUR_MS)
+  const nix = await deps.nixState().then(
+    (state) => nixReport(state, deps.now()),
+    () => ({ error: "the nix index can't be read" })
+  )
   return Response.json(
-    {
-      nix:
-        state === null
-          ? null
-          : {
-              ageHours,
-              ingestedAt: state.ingestedAt.toISOString(),
-              packages: state.packages,
-              release: state.release,
-              stale: (ageHours ?? 0) >= NIX_STALE_HOURS,
-            },
-      ok: true,
-    },
+    { nix, ok: true },
     { headers: { "cache-control": "no-store" } }
   )
 }

@@ -31,6 +31,14 @@ function channel(etag: string) {
   return { fetcher, requests }
 }
 
+// A new release whose dump is `dump`.
+function newRelease(dump: unknown): Fetch {
+  return async (_input, init) =>
+    Response.json(init?.method === "HEAD" ? null : dump, {
+      headers: { etag: '"two"' },
+    })
+}
+
 // A new release whose download fails.
 const failingDownload: Fetch = async (_input, init) =>
   init?.method === "HEAD"
@@ -80,6 +88,25 @@ describe("nix ingest", () => {
     const db = await testDb()
     await runNixIngest(db, channel('"one"').fetcher)
     await expect(runNixIngest(db, failingDownload)).rejects.toThrow("503")
+    await expect(nixIndexState(db)).resolves.toMatchObject({
+      etag: '"one"',
+      packages: 18,
+    })
+  })
+
+  // A changed dump format would drop most entries; replacing the index with
+  // the rest would empty search until the next release (review of #16).
+  test.each([
+    ["an empty dump", { packages: {}, version: 2 }],
+    [
+      "a dump with under half the packages",
+      { packages: { hello: { version: "1" } }, version: 2 },
+    ],
+  ])("refuses %s and keeps the index", async (_case, dump) => {
+    expect.hasAssertions()
+    const db = await testDb()
+    await runNixIngest(db, channel('"one"').fetcher)
+    await expect(runNixIngest(db, newRelease(dump))).rejects.toThrow("refusing")
     await expect(nixIndexState(db)).resolves.toMatchObject({
       etag: '"one"',
       packages: 18,

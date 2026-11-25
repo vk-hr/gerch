@@ -29,12 +29,12 @@ interface NixIndexState extends NixRelease {
 const CHANNEL = "nixos-unstable"
 const INSERT_BATCH = 2000
 
-// The words of a text, as Postgres indexes them: runs of letters and digits,
-// lower-cased.
+// The words of a text, as Postgres indexes them: runs of letters and
+// decimal digits, lower-cased. Postgres drops other digits such as "²".
 function wordsOf(text: string): string[] {
   return text
     .toLowerCase()
-    .split(/[^\p{L}\p{N}]+/u)
+    .split(/[^\p{L}\p{Nd}]+/u)
     .filter((word) => word !== "")
 }
 
