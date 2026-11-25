@@ -496,3 +496,12 @@ Decided 2026-11-24, at your request.
   progress) becomes the same result in the query function. So each section
   shows its own error and Retry without an error boundary, and a failure is
   stale at once, so revisiting it searches again.
+- The search server function sets its CDN `Cache-Control` only on the
+  browser's own call (Start sends `x-tsr-serverFn: true`). During SSR the
+  loader calls it in-process, inside the page request, and crawlers get the
+  page in one response after the searches finish, so the page used to carry
+  whichever search finished last: `s-maxage=600` or `no-store`.
+- Known gap: the search box isn't resynced when `q` changes from outside
+  (back, forward, a link). Nothing can trigger it yet, because typing
+  replaces the history entry and the page has no links to queries. Step 5
+  adds such links, so it fixes this with a test.

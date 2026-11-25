@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import type { ReactNode } from "react"
 
 import { CopiedContext } from "./copied-context.ts"
@@ -17,10 +17,14 @@ async function writeClipboard(install: string): Promise<boolean> {
 
 function CopiedProvider({ children }: { children: ReactNode }) {
   const [copied, setCopied] = useState<string | null>(null)
+  const reset = useRef<ReturnType<typeof setTimeout> | null>(null)
   const markCopied = (install: string) => {
     setCopied(install)
-    setTimeout(() => {
-      setCopied((current) => (current === install ? null : current))
+    if (reset.current !== null) {
+      clearTimeout(reset.current)
+    }
+    reset.current = setTimeout(() => {
+      setCopied(null)
     }, RESET_MS)
   }
   const copyAndMark = async (install: string) => {

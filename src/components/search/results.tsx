@@ -7,7 +7,9 @@ import { ResultCard } from "./result-card.tsx"
 import { SearchFailed } from "./search-failed.tsx"
 
 function Results({ registry, text }: { registry: Registry; text: string }) {
-  const { data, refetch } = useSuspenseQuery(searchQuery(registry, text))
+  const { data, isFetching, refetch } = useSuspenseQuery(
+    searchQuery(registry, text)
+  )
   if (!data.ok) {
     return (
       <SearchFailed
@@ -15,6 +17,7 @@ function Results({ registry, text }: { registry: Registry; text: string }) {
         onRetry={() => {
           void refetch()
         }}
+        retrying={isFetching}
       />
     )
   }

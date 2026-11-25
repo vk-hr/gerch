@@ -31,13 +31,14 @@ function validateSearchInput(input: unknown): SearchInput {
 }
 
 // The app's typed path to /api/search's logic: same cache, same results, and
-// CDN cache headers on the GET response. A failed search is returned as data:
-// production builds redact the messages of thrown server errors.
+// CDN cache headers on the browser's GET request. A failed search is
+// returned as data: production builds redact the messages of thrown server
+// errors.
 const searchRegistry = createServerFn({ method: "GET" })
   .validator(validateSearchInput)
   .handler(async ({ data }): Promise<SearchResult> => {
     const [
-      { setResponseHeaders },
+      { getRequestHeader, setResponseHeaders },
       { serverContext },
       { CDN_CACHE, runSearch },
     ] = await Promise.all([
@@ -46,12 +47,17 @@ const searchRegistry = createServerFn({ method: "GET" })
       import("@/server/search.ts"),
     ])
     const outcome = await runSearch(serverContext(), data.registry, data.q)
-    if (!outcome.ok) {
-      setResponseHeaders(new Headers({ "cache-control": "no-store" }))
-      return { message: outcome.message, ok: false }
+    // During SSR the loader calls this in-process, inside the page's request;
+    // only the browser's own call (Start sends x-tsr-serverFn) gets the
+    // search's cache headers.
+    if (getRequestHeader("x-tsr-serverFn") === "true") {
+      setResponseHeaders(
+        new Headers({ "cache-control": outcome.ok ? CDN_CACHE : "no-store" })
+      )
     }
-    setResponseHeaders(new Headers({ "cache-control": CDN_CACHE }))
-    return { body: outcome.body, ok: true }
+    return outcome.ok
+      ? { body: outcome.body, ok: true }
+      : { message: outcome.message, ok: false }
   })
 
 // A request that never reaches the server (offline, a deploy in progress) is

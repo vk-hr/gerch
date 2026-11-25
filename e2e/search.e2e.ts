@@ -28,8 +28,11 @@ test("typing a prefixed query searches only that registry", async ({
   await interactive(page, "/")
   await page.keyboard.press("/")
   await expect(page.getByRole("searchbox")).toBeFocused()
+  const search = page.waitForResponse("**/_serverFn/**")
   await page.keyboard.type("npm:react query")
   await expect(page).toHaveURL(/q=npm%3Areact(?:\+|%20)query/u)
+  const response = await search
+  expect(response.headers()["cache-control"]).toContain("s-maxage")
   await expect(firstResult(page, "npm").getByRole("heading")).toHaveText(
     "@trpc/tanstack-react-query"
   )
@@ -59,10 +62,22 @@ test("a failing registry shows its own error and leaves the page usable", async 
   page,
 }) => {
   await page.goto("/?q=npm:no-recorded-fixture")
-  await expect(page.getByRole("region", { name: "npm" })).toContainText(
-    "npm is unavailable"
-  )
+  const npm = page.getByRole("region", { name: "npm" })
+  await expect(npm).toContainText("npm is unavailable")
   await expect(page.getByRole("searchbox")).toBeEditable()
+})
+
+// Crawlers get the whole page in one response instead of a stream, so the
+// page's headers are written after the searches finish.
+test("a search's cache headers stay off the page", async ({ request }) => {
+  const crawler = { "user-agent": "Googlebot/2.1" }
+  const found = await request.get("/?q=zod", { headers: crawler })
+  expect(await found.text()).toContain("npm i zod")
+  expect(found.headers()["cache-control"] ?? "").not.toContain("s-maxage")
+  const failed = await request.get("/?q=npm:no-recorded-fixture", {
+    headers: crawler,
+  })
+  expect(failed.headers()["cache-control"] ?? "").not.toBe("no-store")
 })
 
 test("a search request that never reaches the server can be retried", async ({
