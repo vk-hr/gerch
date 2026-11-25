@@ -67,8 +67,10 @@ function useSearchHotkeys(
     [
       { callback: move(1), hotkey: HOTKEYS.next.keys },
       { callback: move(1), hotkey: HOTKEYS.nextAlt.keys },
+      { callback: move(1), hotkey: HOTKEYS.nextAnywhere.keys },
       { callback: move(-1), hotkey: HOTKEYS.previous.keys },
       { callback: move(-1), hotkey: HOTKEYS.previousAlt.keys },
+      { callback: move(-1), hotkey: HOTKEYS.previousAnywhere.keys },
     ],
     inList
   )

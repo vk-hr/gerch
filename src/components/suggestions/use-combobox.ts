@@ -1,4 +1,4 @@
-import { useHotkey } from "@tanstack/react-hotkeys"
+import { useHotkey, useHotkeys } from "@tanstack/react-hotkeys"
 import { useId, useState } from "react"
 import type { RefObject } from "react"
 
@@ -34,32 +34,25 @@ function useListKeys(box: RefObject<HTMLInputElement | null>, keys: ListKeys) {
   const onBox = { ignoreInputs: false, target: box } as const
   const down = { ...onBox, enabled: keys.shown && keys.active < keys.count - 1 }
   const up = { ...onBox, enabled: keys.shown && keys.active >= 0 }
-  useHotkey(
-    HOTKEYS.next.keys,
-    () => {
-      keys.move(1)
-    },
+  const forward = () => {
+    keys.move(1)
+  }
+  const back = () => {
+    keys.move(-1)
+  }
+  useHotkeys(
+    [HOTKEYS.next, HOTKEYS.nextAlt, HOTKEYS.nextAnywhere].map(
+      ({ keys: hotkey }) => ({
+        callback: forward,
+        hotkey,
+      })
+    ),
     down
   )
-  useHotkey(
-    HOTKEYS.nextAlt.keys,
-    () => {
-      keys.move(1)
-    },
-    down
-  )
-  useHotkey(
-    HOTKEYS.previous.keys,
-    () => {
-      keys.move(-1)
-    },
-    up
-  )
-  useHotkey(
-    HOTKEYS.previousAlt.keys,
-    () => {
-      keys.move(-1)
-    },
+  useHotkeys(
+    [HOTKEYS.previous, HOTKEYS.previousAlt, HOTKEYS.previousAnywhere].map(
+      ({ keys: hotkey }) => ({ callback: back, hotkey })
+    ),
     up
   )
   useHotkey(HOTKEYS.open.keys, keys.pick, up)

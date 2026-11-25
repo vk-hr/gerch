@@ -89,6 +89,29 @@ test("Ctrl+N and Ctrl+P move through results and Ctrl+P does not print", async (
   )
 })
 
+// Ctrl+N belongs to the browser on Windows and Linux; Alt+J and Alt+K work
+// everywhere (D27).
+test("Alt+J and Alt+K move through results", async ({ page }) => {
+  await interactive(page, "/?q=zod")
+  await expect(firstResult(page, "npm")).toBeVisible()
+  const results = page.getByRole("region", { name: "npm" }).getByRole("article")
+  await searchBox(page).focus()
+  await pressTimes(page, "Alt+KeyJ", SECOND_RESULT + 1)
+  await expect(results.nth(SECOND_RESULT)).toBeFocused()
+  await page.keyboard.press("Alt+KeyK")
+  await expect(results.nth(0)).toBeFocused()
+})
+
+test("the shortcut list shows Alt+J next to the other next-result keys", async ({
+  page,
+}) => {
+  await interactive(page, "/")
+  await page.keyboard.press("Shift+?")
+  const next = shortcutList(page).getByRole("row", { name: /Next result/u })
+  await expect(next).toContainText("Alt")
+  await expect(next).toContainText("J")
+})
+
 test("shortcut list screenshot", async ({ page }, testInfo) => {
   await page.setViewportSize({ height: 900, width: 1280 })
   await interactive(page, "/")

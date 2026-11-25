@@ -846,9 +846,11 @@ or Linux:
 - The e2e flow passes Ctrl+N because Playwright's CDP input skips browser
   accelerators. It proves the handler, not real Windows or Linux behavior.
 
-Proposal, not shipped: add Alt+J and Alt+K as next and previous on every
-platform. Neither is a Firefox menu letter or a Chrome shortcut. This
-changes the spec's keyboard map, so it needs your approval.
+Shipped 2026-11-26, with your approval: Alt+J and Alt+K move to the next
+and previous result on every platform, in the result list and in the
+suggestions. Neither is a Firefox menu letter or a Chrome shortcut. The
+spec's keyboard map lists them, and Ctrl+N / Ctrl+P stay for macOS and
+app windows.
 
 **Prefix chip (flow 2).** `splitPrefix` and `joinPrefix` in
 `src/shared/query.ts`. They keep the text after the prefix exactly as
@@ -1217,8 +1219,9 @@ The two earlier runs, before the focus fix, agree:
   observers. Its first numbers were wrong and were thrown away.
 - **React Doctor** (the directive's profiler) isn't installed. Version
   0.9.23 depends on `oxlint`, which AGENTS.md bans, requires TypeScript
-  below 6 (gerch uses 7), bundles `@sentry/node`, and is 8 days old. It
-  needs your approval before it runs on this project.
+  below 6 (gerch uses 7), bundles `@sentry/node`, and is 8 days old.
+  Decided 2026-11-26: it isn't used. Slow interactions are profiled with
+  `scripts/measure-renderers.ts` and its Chromium traces instead.
 
 ### D35. GET /api/package and the nix live check: implemented
 

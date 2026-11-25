@@ -183,21 +183,21 @@ Single-key shortcuts only fire when focus is outside a text input. All
 shortcuts are registered through `@tanstack/react-hotkeys` from one
 definitions file, which also renders the `?` list.
 
-| Keys                           | Where           | Action                                    |
-| ------------------------------ | --------------- | ----------------------------------------- |
-| `/` or `Ctrl+K`                | anywhere        | Focus the search input                    |
-| `Esc`                          | search          | Clear the query; a second Esc blurs       |
-| `↓` / `↑`, `Ctrl+N` / `Ctrl+P` | search, results | Move the selection                        |
-| `Enter`                        | result          | Open in the current tab                   |
-| `Shift+Enter`                  | result          | Open in a new tab next to the current one |
-| `Alt+C`                        | result          | Copy the install command                  |
-| `Alt+P`                        | result          | Pin to a workspace                        |
-| `Alt+.` / `Alt+,`              | anywhere        | Next or previous tab                      |
-| `Alt+Shift+.` / `Alt+Shift+,`  | anywhere        | Move the current tab right or left        |
-| `Alt+X`                        | anywhere        | Close the current tab                     |
-| `Alt+Shift+X`                  | anywhere        | Reopen the last closed tab                |
-| `Alt+W`                        | anywhere        | Open the workspace switcher               |
-| `?`                            | outside inputs  | Show the shortcut list                    |
+| Keys                                              | Where           | Action                                    |
+| ------------------------------------------------- | --------------- | ----------------------------------------- |
+| `/` or `Ctrl+K`                                   | anywhere        | Focus the search input                    |
+| `Esc`                                             | search          | Clear the query; a second Esc blurs       |
+| `↓` / `↑`, `Alt+J` / `Alt+K`, `Ctrl+N` / `Ctrl+P` | search, results | Move the selection                        |
+| `Enter`                                           | result          | Open in the current tab                   |
+| `Shift+Enter`                                     | result          | Open in a new tab next to the current one |
+| `Alt+C`                                           | result          | Copy the install command                  |
+| `Alt+P`                                           | result          | Pin to a workspace                        |
+| `Alt+.` / `Alt+,`                                 | anywhere        | Next or previous tab                      |
+| `Alt+Shift+.` / `Alt+Shift+,`                     | anywhere        | Move the current tab right or left        |
+| `Alt+X`                                           | anywhere        | Close the current tab                     |
+| `Alt+Shift+X`                                     | anywhere        | Reopen the last closed tab                |
+| `Alt+W`                                           | anywhere        | Open the workspace switcher               |
+| `?`                                               | outside inputs  | Show the shortcut list                    |
 
 ## Data sources
 

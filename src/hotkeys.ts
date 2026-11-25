@@ -13,6 +13,8 @@ const HOTKEYS = {
   moveTabRight: { keys: "Alt+Shift+.", label: "Move the current tab right" },
   next: { keys: "ArrowDown", label: "Next result" },
   nextAlt: { keys: "Control+N", label: "Next result" },
+  // Ctrl+N opens a window on Windows and Linux; Alt+J works everywhere (D27).
+  nextAnywhere: { keys: "Alt+J", label: "Next result" },
   nextTab: { keys: "Alt+.", label: "Next tab" },
   open: { keys: "Enter", label: "Open the result in the current tab" },
   openInNewTab: {
@@ -22,6 +24,7 @@ const HOTKEYS = {
   pin: { keys: "Alt+P", label: "Pin the result to a workspace" },
   previous: { keys: "ArrowUp", label: "Previous result" },
   previousAlt: { keys: "Control+P", label: "Previous result" },
+  previousAnywhere: { keys: "Alt+K", label: "Previous result" },
   previousTab: { keys: "Alt+,", label: "Previous tab" },
   reopenTab: { keys: "Alt+Shift+X", label: "Reopen the last closed tab" },
   shortcuts: { keys: "Shift+?", label: "Show the shortcut list" },

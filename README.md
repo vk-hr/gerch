@@ -26,22 +26,23 @@ without leaving the keyboard.
 
 ### Keyboard
 
-| Keys                           | Action                                 |
-| ------------------------------ | -------------------------------------- |
-| `/` or `Ctrl+K`                | Focus the search box                   |
-| `↓` / `↑`, `Ctrl+N` / `Ctrl+P` | Move through results                   |
-| `Enter` / `Shift+Enter`        | Open in this tab / in a new tab        |
-| `Alt+C`                        | Copy the install command               |
-| `Alt+P` / `Alt+W`              | Pin to a workspace / open workspaces   |
-| `Alt+.` / `Alt+,`              | Next or previous tab                   |
-| `Alt+Shift+.` / `Alt+Shift+,`  | Move the tab right or left             |
-| `Alt+X` / `Alt+Shift+X`        | Close the tab / reopen the last closed |
-| `?`                            | All shortcuts                          |
+| Keys                          | Action                                 |
+| ----------------------------- | -------------------------------------- |
+| `/` or `Ctrl+K`               | Focus the search box                   |
+| `↓` / `↑`, `Alt+J` / `Alt+K`  | Move through results                   |
+| `Enter` / `Shift+Enter`       | Open in this tab / in a new tab        |
+| `Alt+C`                       | Copy the install command               |
+| `Alt+P` / `Alt+W`             | Pin to a workspace / open workspaces   |
+| `Alt+.` / `Alt+,`             | Next or previous tab                   |
+| `Alt+Shift+.` / `Alt+Shift+,` | Move the tab right or left             |
+| `Alt+X` / `Alt+Shift+X`       | Close the tab / reopen the last closed |
+| `?`                           | All shortcuts                          |
 
 The map avoids shortcuts browsers reserve (Ctrl+T, Ctrl+W, Ctrl+1–9) and
-the Alt+letters that open browser menus. Ctrl+N works on macOS and in
-installed app windows; on Windows and Linux the browser keeps it for a new
-window, so use the arrow keys there.
+the Alt+letters that open browser menus. `Ctrl+N` / `Ctrl+P` also move
+through results on macOS and in installed app windows; on Windows and Linux
+the browser keeps Ctrl+N for a new window, so `Alt+J` / `Alt+K` work
+everywhere.
 
 ## How it works
 
@@ -126,3 +127,7 @@ npm's registry and downloads APIs, the crates.io API (within its
 [data access policy](https://crates.io/data-access)), and the nixos-unstable
 channel dump from channels.nixos.org. Every request identifies itself as
 `gerch/<version> (+https://github.com/vk-hr/gerch)`.
+
+## License
+
+[MIT](LICENSE)
