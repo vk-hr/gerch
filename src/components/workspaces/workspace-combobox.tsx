@@ -1,5 +1,5 @@
 import { Combobox } from "@base-ui/react/combobox"
-import { useEffect, useId, useRef } from "react"
+import { useId, useLayoutEffect, useRef } from "react"
 import type { ReactNode } from "react"
 
 import { ComboboxOptions } from "./combobox-options.tsx"
@@ -26,7 +26,9 @@ function WorkspaceCombobox<TOption>(props: WorkspaceComboboxProps<TOption>) {
   const box = useRef<HTMLInputElement>(null)
   // The view swaps between its list and a workspace inside one dialog, so
   // the box takes focus whenever it appears, not only when the dialog opens.
-  useEffect(() => {
+  // A layout effect sets it before the first paint, so a fast key press
+  // can't land first and then lose focus (D34).
+  useLayoutEffect(() => {
     box.current?.focus()
   }, [])
   return (

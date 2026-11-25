@@ -7,13 +7,13 @@ import { nitro } from "nitro/vite"
 import { defineConfig } from "vite"
 import type { PluginOption } from "vite"
 
-// The browser renderer: React DOM, or Redact with GERCH_RENDERER=redact.
-// Redact breaks focus in required flows today, so React DOM ships (D32).
-// The server always renders with React DOM (D10).
+// The browser renderer: Redact, which won the comparison (D34), or React DOM
+// with GERCH_RENDERER=react-dom. The server always renders with React DOM
+// (D10).
 const browserRenderer: PluginOption[] =
-  process.env.GERCH_RENDERER === "redact"
-    ? [redact({ environments: ["client"] }) as PluginOption]
-    : []
+  process.env.GERCH_RENDERER === "react-dom"
+    ? []
+    : [redact({ environments: ["client"] }) as PluginOption]
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },

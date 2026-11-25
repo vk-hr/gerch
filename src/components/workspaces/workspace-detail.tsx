@@ -1,5 +1,5 @@
 import { ArrowLeft, Trash2 } from "lucide-react"
-import { useEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 
 import type { Workspace } from "@/client/state.ts"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,8 @@ function WorkspaceDetail({
   workspace: Workspace
 }) {
   const back = useRef<HTMLButtonElement>(null)
-  useEffect(() => {
+  // Before the first paint, like the list's box (D34).
+  useLayoutEffect(() => {
     back.current?.focus()
   }, [])
   return (
