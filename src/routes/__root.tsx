@@ -7,6 +7,7 @@ import {
 import type { ReactNode } from "react"
 
 import { NotFound } from "@/components/not-found.tsx"
+import { TabStrip } from "@/components/tabs/tab-strip.tsx"
 import appCss from "@/styles.css?url"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -36,6 +37,7 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="min-h-svh antialiased">
+        <TabStrip />
         {children}
         <Scripts />
       </body>

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as ApiSearchRouteImport } from "./routes/api/search"
+import { Route as PRegistryNameRouteImport } from "./routes/p.$registry.$name"
 
 const IndexRoute = IndexRouteImport.update({
   id: "/",
@@ -22,31 +23,40 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: "/api/search",
   getParentRoute: () => rootRouteImport,
 } as any)
+const PRegistryNameRoute = PRegistryNameRouteImport.update({
+  id: "/p/$registry/$name",
+  path: "/p/$registry/$name",
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/api/search": typeof ApiSearchRoute
+  "/p/$registry/$name": typeof PRegistryNameRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/api/search": typeof ApiSearchRoute
+  "/p/$registry/$name": typeof PRegistryNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
   "/api/search": typeof ApiSearchRoute
+  "/p/$registry/$name": typeof PRegistryNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/api/search"
+  fullPaths: "/" | "/api/search" | "/p/$registry/$name"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/api/search"
-  id: "__root__" | "/" | "/api/search"
+  to: "/" | "/api/search" | "/p/$registry/$name"
+  id: "__root__" | "/" | "/api/search" | "/p/$registry/$name"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiSearchRoute: typeof ApiSearchRoute
+  PRegistryNameRoute: typeof PRegistryNameRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -65,12 +75,20 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/p/$registry/$name": {
+      id: "/p/$registry/$name"
+      path: "/p/$registry/$name"
+      fullPath: "/p/$registry/$name"
+      preLoaderRoute: typeof PRegistryNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiSearchRoute: ApiSearchRoute,
+  PRegistryNameRoute: PRegistryNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
