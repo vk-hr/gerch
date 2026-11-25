@@ -32,6 +32,8 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 - `src/server/`: server-only code: registry adapters, SWR cache, and the
   Drizzle schema and connection (`src/server/db/`).
 - `src/shared/`: types and pure helpers shared with the browser (no zod).
+- `src/client/`: browser-only state saved in `localStorage` (tabs,
+  workspaces, pins, history). Read it with `useClientState`.
 - `drizzle/`: generated migrations. Edit the schema, then generate.
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
 - `src/components/search/`: the search page, one component per file.

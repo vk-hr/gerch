@@ -267,7 +267,8 @@
         "vitest/no-hooks": "off",
         "eslint/max-lines-per-function": "off",
         "eslint/max-statements": "off",
-        "typescript/no-confusing-void-expression": "off"
+        "typescript/no-confusing-void-expression": "off",
+        "vitest/prefer-called-times": "off"
       },
       "plugins": ["vitest"]
     },
