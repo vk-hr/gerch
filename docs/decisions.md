@@ -599,7 +599,9 @@ writes through `@tanstack/query-async-storage-persister` and
 - The router's `Wrap` starts the persister in an effect, after hydration
   (D15).
 - Only `["search", …]` queries with `ok: true` are saved. `maxAge` is the
-  spec's 7-day stale window, and the buster is the `package.json` version.
+  spec's 7-day stale window. Saving and restoring also check each query's
+  last successful fetch time. After restoring, the first save includes SSR
+  results from direct links. The buster is the `package.json` version.
 - In the browser, `gcTime` is also 7 days. Otherwise an idle search leaves
   memory after 5 minutes, and the next save drops it from IndexedDB.
 - The search loader waits for a restore in progress. A search typed right
@@ -655,9 +657,8 @@ typed. `parseQuery` trims, and the box would lose a typed space.
 needs `lib: ES2023`. `tsconfig.json` now uses it. This changes types only.
 Vite's default browser targets all have `toSorted`.
 
-**Open.**
+**Search outcomes.**
 
-- A background revalidation that fails replaces the cached result with the
-  error, because failures are data (D23). Keeping the stale result and
-  showing the error next to it is a follow-up.
+- Failed background revalidation keeps the last successful data and its
+  timestamp. The results stay visible alongside the error and Retry.
 - History counts every committed search, including ones with no results.

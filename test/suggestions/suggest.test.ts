@@ -96,6 +96,13 @@ describe("suggest()", () => {
     ).toStrictEqual(["pin npm:zod"])
   })
 
+  test("replays a history query whose text starts with a prefix", () => {
+    expect.hasAssertions()
+    expect(
+      shape({ query: "npm:cr", history: [recent("crate:foo", "npm")] })
+    ).toStrictEqual(["history npm:crate:foo"])
+  })
+
   test("suggests nothing before any text is typed", () => {
     expect.hasAssertions()
     expect(

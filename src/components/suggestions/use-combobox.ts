@@ -75,31 +75,31 @@ function useCombobox(
 ): Combobox {
   const listId = useId()
   const [open, setOpen] = useState(false)
-  const [active, setActive] = useState(-1)
+  const [selected, setSelected] = useState<string | null>(null)
+  const active = suggestions.findIndex((item) => item.query === selected)
   const shown = open && suggestions.length > 0
   const close = () => {
     setOpen(false)
-    setActive(-1)
+    setSelected(null)
   }
   const choose = (suggestion: Suggestion) => {
     onChoose(suggestion.query)
     close()
   }
-  const pick = () => {
-    const suggestion = suggestions[active]
-    if (suggestion !== undefined) {
-      choose(suggestion)
-    }
-  }
   const move = (step: 1 | -1) => {
-    setActive(active + step)
+    setSelected(suggestions[active + step]?.query ?? null)
   }
   useListKeys(box, {
     active,
     close,
     count: suggestions.length,
     move,
-    pick,
+    pick: () => {
+      const suggestion = suggestions[active]
+      if (suggestion !== undefined) {
+        choose(suggestion)
+      }
+    },
     shown,
   })
   return {
@@ -110,7 +110,7 @@ function useCombobox(
     optionId: (index) => `${listId}-${index}`,
     reopen: () => {
       setOpen(true)
-      setActive(-1)
+      setSelected(null)
     },
     shown,
   }

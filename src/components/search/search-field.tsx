@@ -46,8 +46,13 @@ function SearchField(props: FieldProps) {
   const handlers = fieldHandlers(props)
   const active = combobox.shown && combobox.active >= 0
   return (
-    <label className="flex h-10 items-center gap-2 rounded-xl border border-input bg-background px-3 text-sm focus-within:ring-3 focus-within:ring-ring/40">
-      <Search aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+    <div className="flex h-10 items-center gap-2 rounded-xl border border-input bg-background px-3 text-sm focus-within:ring-3 focus-within:ring-ring/40">
+      <label
+        htmlFor={`${combobox.listId}-input`}
+        className="flex h-full items-center"
+      >
+        <Search aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+      </label>
       {prefix === null ? null : (
         <PrefixChip onRemove={handlers.handleRemove} prefix={prefix} />
       )}
@@ -66,12 +71,13 @@ function SearchField(props: FieldProps) {
         onKeyDown={handlers.handleKeyDown}
         placeholder={prefix === null ? PLACEHOLDER : `Search ${prefix}`}
         ref={box}
+        id={`${combobox.listId}-input`}
         role="combobox"
         spellCheck={false}
         type="search"
         value={rest}
       />
-    </label>
+    </div>
   )
 }
 

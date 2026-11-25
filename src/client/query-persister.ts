@@ -3,7 +3,11 @@
 // D15, D27).
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
 import type { Query, QueryClient } from "@tanstack/react-query"
-import { persistQueryClient } from "@tanstack/react-query-persist-client"
+import type { Persister } from "@tanstack/react-query-persist-client"
+import {
+  persistQueryClient,
+  persistQueryClientSave,
+} from "@tanstack/react-query-persist-client"
 import { createStore, del, get, set } from "idb-keyval"
 
 import { version } from "~/package.json" with { type: "json" }
@@ -15,10 +19,14 @@ const PERSIST_MAX_AGE_MS = STALE_DAYS * DAY_MS
 
 let restored: Promise<void> = Promise.resolve()
 
+function withinWindow(updatedAt: number): boolean {
+  return Date.now() - updatedAt <= PERSIST_MAX_AGE_MS
+}
+
 function shouldPersistQuery(query: Query): boolean {
   const data: unknown = query.state.data
   return (
-    query.state.status === "success" &&
+    withinWindow(query.state.dataUpdatedAt) &&
     query.queryKey[0] === "search" &&
     typeof data === "object" &&
     data !== null &&
@@ -27,9 +35,13 @@ function shouldPersistQuery(query: Query): boolean {
   )
 }
 
-async function settle(restoring: Promise<void>): Promise<void> {
+async function settle(
+  restoring: Promise<void>,
+  save: () => Promise<void>
+): Promise<void> {
   try {
     await restoring
+    await save()
   } catch (error) {
     console.warn("Restoring the saved search cache failed", error)
   }
@@ -37,7 +49,7 @@ async function settle(restoring: Promise<void>): Promise<void> {
 
 // Restores the saved cache and saves later changes. Call it after hydration:
 // restored data must not change the markup React is hydrating.
-function persistQueryCache(queryClient: QueryClient): () => void {
+function createPersister(): Persister {
   const store = createStore("gerch", "query-cache")
   const persister = createAsyncStoragePersister({
     storage: {
@@ -46,14 +58,34 @@ function persistQueryCache(queryClient: QueryClient): () => void {
       setItem: async (key, value: string) => set(key, value, store),
     },
   })
-  const [stop, restoring] = persistQueryClient({
+  return {
+    ...persister,
+    restoreClient: async () => {
+      const saved = await persister.restoreClient()
+      if (saved !== undefined) {
+        saved.clientState.queries = saved.clientState.queries.filter((query) =>
+          withinWindow(query.state.dataUpdatedAt)
+        )
+        for (const query of saved.clientState.queries) {
+          query.state.status = "success"
+          query.state.error = null
+        }
+      }
+      return saved
+    },
+  }
+}
+
+function persistQueryCache(queryClient: QueryClient): () => void {
+  const options = {
     buster: version,
     dehydrateOptions: { shouldDehydrateQuery: shouldPersistQuery },
     maxAge: PERSIST_MAX_AGE_MS,
-    persister,
+    persister: createPersister(),
     queryClient,
-  })
-  restored = settle(restoring)
+  }
+  const [stop, restoring] = persistQueryClient(options)
+  restored = settle(restoring, async () => persistQueryClientSave(options))
   return stop
 }
 

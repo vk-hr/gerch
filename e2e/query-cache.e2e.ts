@@ -62,3 +62,26 @@ test("failed searches are not persisted", async ({ page }) => {
   await expect.poll(async () => savedIndexedDb(page)).toContain("npm i zod")
   expect(await savedIndexedDb(page)).not.toContain("no-recorded-fixture")
 })
+
+test("a direct-link search is saved after hydration", async ({ page }) => {
+  await interactive(page, "/?q=npm:zod")
+  await expect(firstResult(page, "npm")).toBeVisible()
+  await expect.poll(async () => savedIndexedDb(page)).toContain("npm i zod")
+})
+
+test("failed background revalidation keeps the previous results", async ({
+  page,
+}) => {
+  await interactive(page, "/")
+  await searchAndPersist(page, "npm:zod", "npm i zod")
+  await interactive(page, "/")
+  await page.clock.setFixedTime(Date.now() + LATER_MS)
+  await page.route("**/_serverFn/**", async (route) => route.abort())
+  const failure = page.waitForEvent("requestfailed")
+  await typeSearch(page, "npm:zod")
+  await failure
+  await expect(page.getByRole("region", { name: "npm" })).toContainText(
+    "npm is unavailable"
+  )
+  await expect(firstResult(page, "npm")).toBeVisible()
+})

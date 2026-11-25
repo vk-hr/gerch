@@ -21,6 +21,9 @@ describe("the persisted query cache", () => {
       ok: false,
     })
     client.setQueryData(["package", "npm", "zod"], { ok: true })
+    client.setQueryData(["search", "npm", "expired"], found, {
+      updatedAt: Date.now() - PERSIST_MAX_AGE_MS - 1,
+    })
     const persisted = dehydrate(client, {
       shouldDehydrateQuery: shouldPersistQuery,
     })

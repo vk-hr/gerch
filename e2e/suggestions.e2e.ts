@@ -165,3 +165,32 @@ test("prefix chip screenshot", async ({ page }, testInfo) => {
   await page.keyboard.press("Escape")
   await page.screenshot({ path: testInfo.outputPath("prefix-chip.png") })
 })
+
+test("clicking the search icon focuses the input with its prefix intact", async ({
+  page,
+}) => {
+  await interactive(page, "/?q=npm:zod")
+  await page.locator("svg.lucide-search").click()
+  await expect(searchBox(page)).toBeFocused()
+  await expect(npmChip(page)).toBeVisible()
+})
+
+test("the active suggestion follows its package when pins change", async ({
+  page,
+}) => {
+  await searchZodWithSuggestions(page)
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("ArrowDown")
+  await expectActive(page, 1)
+  await page.evaluate(() => {
+    const key = "gerch:v1"
+    const state: unknown = JSON.parse(localStorage.getItem(key) ?? "{}")
+    if (state === null || typeof state !== "object") {
+      throw new Error("Expected saved client state")
+    }
+    localStorage.setItem(key, JSON.stringify({ ...state, workspaces: [] }))
+    dispatchEvent(new StorageEvent("storage", { key }))
+  })
+  await expect(options(page).first()).toHaveText(/zod-mini/u)
+  await expectActive(page, 0)
+})

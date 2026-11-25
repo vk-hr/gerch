@@ -46,7 +46,10 @@ function historySuggestion(entry: HistoryEntry): Suggestion {
   return {
     kind: "history",
     name: entry.query,
-    query: joinPrefix(entry.registry, entry.query),
+    query:
+      entry.registry === null
+        ? entry.query
+        : `${entry.registry}:${entry.query}`,
     registry: entry.registry,
   }
 }
@@ -82,7 +85,7 @@ function suggest(input: SuggestInput): Suggestion[] {
     text.toLowerCase(),
     prefix
   )
-  const seen = new Set([joinPrefix(prefix, text).toLowerCase()])
+  const seen = new Set([input.query.trim().toLowerCase()])
   const fresh = (item: Suggestion) => {
     const key = item.query.toLowerCase()
     if (seen.has(key)) {
