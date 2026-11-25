@@ -1,4 +1,6 @@
 // The only place server code reads environment variables.
+
+const SHORT_SHA = 7
 function databaseUrl(): string | undefined {
   const url = process.env.DATABASE_URL
   return url === undefined || url === "" ? undefined : url
@@ -10,4 +12,10 @@ function replayDir(): string | undefined {
   return dir === undefined || dir === "" ? undefined : dir
 }
 
-export { databaseUrl, replayDir }
+// The deployed commit, which Vercel sets; "local" elsewhere.
+function release(): string {
+  const sha = process.env.VERCEL_GIT_COMMIT_SHA
+  return sha === undefined || sha === "" ? "local" : sha.slice(0, SHORT_SHA)
+}
+
+export { databaseUrl, release, replayDir }

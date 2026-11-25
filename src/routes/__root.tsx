@@ -12,6 +12,7 @@ import { CopiedProvider } from "@/components/search/copied-provider.tsx"
 import { WorkspaceDialogs } from "@/components/workspaces/workspace-dialogs.tsx"
 import { ShortcutList } from "@/components/shortcuts/shortcut-list.tsx"
 import { TabStrip } from "@/components/tabs/tab-strip.tsx"
+import { VitalsReporter } from "@/components/vitals-reporter.tsx"
 import appCss from "@/styles.css?url"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -53,6 +54,7 @@ function RootDocument({ children }: { children: ReactNode }) {
             {children}
           </CopiedProvider>
         </ThemeProvider>
+        <VitalsReporter />
         <Scripts />
       </body>
     </html>

@@ -1,9 +1,11 @@
 name: nix-ingest
 
-# Applies migrations and refreshes the nix index in Supabase from the
-# nixos-unstable channel dump (D30). The dump is downloaded only when its
-# ETag changed. Needs the DATABASE_URL secret (Supabase session pooler or a
-# direct connection, D20); without it every step is skipped.
+# Applies migrations, refreshes the nix index in Supabase from the
+# nixos-unstable channel dump (D30), and prunes field vitals older than 30
+# days (D33). The dump is downloaded only when its ETag changed. Needs the
+# DATABASE_URL secret (Supabase session pooler or a direct connection, D20);
+# without it every step is skipped.
+
 on:
   schedule:
     - cron: "17 */6 * * *"
@@ -40,3 +42,6 @@ jobs:
       - if: env.DATABASE_URL != ''
         name: ingest the nix channel dump
         run: bun scripts/ingest-nix.ts
+      - if: env.DATABASE_URL != ''
+        name: prune field vitals older than 30 days
+        run: bun scripts/prune-vitals.ts

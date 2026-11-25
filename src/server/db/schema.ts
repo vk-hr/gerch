@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm"
 import {
   bigint,
   customType,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -76,4 +77,19 @@ const nixIndex = pgTable("nix_index", {
   release: text("release"),
 })
 
-export { cacheEntries, nixIndex, nixPackages, rateSlots }
+// Field vitals from browsers (D18), by route template and release.
+const vitals = pgTable("vitals", {
+  attribution: jsonb("attribution").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  name: text("name").notNull(),
+  navigationType: text("navigation_type").notNull(),
+  rating: text("rating").notNull(),
+  release: text("release").notNull(),
+  route: text("route").notNull(),
+  value: doublePrecision("value").notNull(),
+})
+
+export { cacheEntries, nixIndex, nixPackages, rateSlots, vitals }
