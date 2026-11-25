@@ -311,6 +311,15 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     fourth shard leaves room for slow setups. Matrix jobs share one
     `GITHUB_JOB`, so `ci-budget.ts` reads the shard's name from
     `GERCH_JOB_NAME`.
+  - Root cause of the slow e2e jobs (diagnostic traces, draft PR #12): each
+    Playwright worker launches its own browser, and on a fresh runner four
+    simultaneous launches of the runner's Google Chrome took 8–48 s, plus
+    1.8–11.6 s to create the first page. The flows themselves take about
+    1 s. Tests aren't slow; the browser start-up is, and it varies by runner.
+    CI now uses Playwright's `chromium-headless-shell`, the default for
+    headless Chromium without a `channel`, cached in `~/.cache/ms-playwright`
+    per Playwright version (saved only from `main`). Locally the Nix shell's
+    browsers are unchanged.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 

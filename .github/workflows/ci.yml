@@ -108,7 +108,25 @@ jobs:
         with:
           filter: blob:none
       - uses: ./.github/actions/setup
-      - name: end-to-end flows (runner's Google Chrome, recorded fixtures)
+      # Playwright's headless shell starts in a fraction of the time the
+      # runner's Google Chrome takes (D9). Cached per Playwright version;
+      # only main saves the cache, like node_modules.
+      - id: playwright
+        shell: bash
+        run: echo "version=$(jq -r '.devDependencies["@playwright/test"]' package.json)" >> "$GITHUB_OUTPUT"
+      - id: browsers
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: bun x playwright install chromium-headless-shell
+      - if: steps.browsers.outputs.cache-hit != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.shard == 1
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.browsers.outputs.cache-primary-key }}
+      - name: end-to-end flows (Playwright's headless shell, recorded fixtures)
         run: bun x playwright test --shard=${{ matrix.shard }}/4
       - name: the four shards run every flow once
         if: ${{ !cancelled() }}
