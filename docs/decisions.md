@@ -303,10 +303,12 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     Pinned to 4 cores locally: about 500 ms beside typecheck, about 300 ms
     alone. CI lint ranged 500–1,112 ms across the step 5 branches.
   - E2E: "buy cores before shards" means paid larger runners, so the flows
-    run as 3 Playwright shards on free runners (`--shard=i/3`). Shard 1
-    keeps the job name `e2e`, the required check; the others are `e2e-2`
-    and `e2e-3`. `scripts/check-e2e-shards.ts` proves in each shard job that
-    the 3 shards list every flow exactly once. Matrix jobs share one
+    run as 4 Playwright shards on free runners (`--shard=i/4`). Shard 1
+    keeps the job name `e2e`, the required check; the others are `e2e-2` to
+    `e2e-4`. `scripts/check-e2e-shards.ts` proves in each shard job that
+    the shards list every flow exactly once. The first CI run used 3 shards:
+    jobs took 27.0–33.9 s, and the 33.9 s one had a 13.6 s setup, so a
+    fourth shard leaves room for slow setups. Matrix jobs share one
     `GITHUB_JOB`, so `ci-budget.ts` reads the shard's name from
     `GERCH_JOB_NAME`.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log

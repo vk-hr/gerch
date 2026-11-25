@@ -1,6 +1,6 @@
 // Proves the e2e shards together run every flow exactly once
 // (docs/directives/ci.md, "prove the shards together ran every file"). Each
-// shard job runs it: `bun scripts/check-e2e-shards.ts 3`.
+// shard job runs it: `bun scripts/check-e2e-shards.ts 4`.
 const FIRST_ARG = 2
 const TEST_LINE = /^ {2}(?<test>\S+\.e2e\.ts:\d+:\d+ › .+)$/u
 
