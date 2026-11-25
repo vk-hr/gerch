@@ -294,6 +294,21 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
   `scripts/check-test-files.ts` already merges JUnit reports, so it proves
   coverage across shards once they exist. Timings (`--timings`,
   `--update-timings` on `main`) come with the second shard.
+- **Step 5 growth (2026-11-25).** PR #11 went over two budgets with every
+  test passing: lint took 1,112 ms (budget 1 s) and the e2e job 48 s
+  (budget 35 s, 57 flows on one runner).
+  - Lint: type-aware lint and `bun check` both type-check the project, and
+    `verify.ts` ran them side by side on the runner's 4 cores. Lint now runs
+    alone first, then the rest in parallel, still listing every failure.
+    Pinned to 4 cores locally: about 500 ms beside typecheck, about 300 ms
+    alone. CI lint ranged 500–1,112 ms across the step 5 branches.
+  - E2E: "buy cores before shards" means paid larger runners, so the flows
+    run as 3 Playwright shards on free runners (`--shard=i/3`). Shard 1
+    keeps the job name `e2e`, the required check; the others are `e2e-2`
+    and `e2e-3`. `scripts/check-e2e-shards.ts` proves in each shard job that
+    the 3 shards list every flow exactly once. Matrix jobs share one
+    `GITHUB_JOB`, so `ci-budget.ts` reads the shard's name from
+    `GERCH_JOB_NAME`.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
