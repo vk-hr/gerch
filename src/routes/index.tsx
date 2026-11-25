@@ -4,7 +4,6 @@ import { queryCacheRestored } from "@/client/query-persister.ts"
 import { SearchPage } from "@/components/search/search-page.tsx"
 import { startSearch } from "@/lib/search.ts"
 import { parseQuery } from "@/shared/query.ts"
-import { isAvailable } from "@/shared/registry.ts"
 
 export const Route = createFileRoute("/")({
   // `q` is optional: a required key makes the router redirect `/` to `/?q=`.
@@ -20,9 +19,7 @@ export const Route = createFileRoute("/")({
     }
     // A search right after a reload reads the restored cache (D27).
     await queryCacheRestored()
-    for (const registry of registries.filter((candidate) =>
-      isAvailable(candidate)
-    )) {
+    for (const registry of registries) {
       void startSearch(context.queryClient, registry, text)
     }
   },

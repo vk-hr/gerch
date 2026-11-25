@@ -64,13 +64,6 @@ test("an unknown package is not found", async ({ page, request }) => {
   )
 })
 
-test("a registry that is not built yet says so", async ({ page }) => {
-  await page.goto("/p/nix/ripgrep")
-  await expect(page.getByRole("main")).toContainText(
-    "nixpkgs packages are coming soon"
-  )
-})
-
 test("package screenshot", async ({ page }, testInfo) => {
   await page.setViewportSize({ height: 900, width: 1280 })
   await focusFirstZodResult(page)

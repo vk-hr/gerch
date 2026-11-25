@@ -29,7 +29,7 @@ function packageCdnCache(registry: Registry): string {
 }
 
 type PackageOutcome =
-  | { status: "found"; state: CacheState; summary: PackageSummary }
+  | { status: "found"; state: CacheState | "index"; summary: PackageSummary }
   | { status: "missing" }
   | { status: "failed"; message: string }
 
@@ -82,6 +82,12 @@ async function lookup(
   adapter: RegistryAdapter,
   name: string
 ): Promise<PackageOutcome> {
+  if (adapter.localIndex === true) {
+    const summary = await adapter.package(name)
+    return summary === null
+      ? { status: "missing" }
+      : { state: "index", status: "found", summary }
+  }
   const found = await deps.cache.get({
     key: `package:${adapter.registry}:${name}`,
     load: async () => ({ summary: await adapter.package(name) }),

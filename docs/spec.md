@@ -76,7 +76,7 @@ GitHub Actions (every 6 h)  --------->   nix index <--- packages.json.br
 | ---------------------------------------------- | -------------------------------------------------------------- |
 | `GET /api/search?registry=npm\|crate\|nix&q=…` | One registry's results, normalized                             |
 | `GET /api/package/:registry/:name`             | One package, normalized, with license and links                |
-| `GET /api/health`                              | Liveness, per-registry cache age, nix index age                |
+| `GET /api/health`                              | Liveness, nix index release and age                            |
 | `POST /api/vitals`                             | `web-vitals/attribution` samples by route template and release |
 
 The client sends one request per registry, in parallel. Each response is its

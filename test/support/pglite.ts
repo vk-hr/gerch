@@ -3,7 +3,12 @@ import { drizzle } from "drizzle-orm/pglite"
 import { migrate } from "drizzle-orm/pglite/migrator"
 
 import { MIGRATIONS_FOLDER } from "@/server/db/index.ts"
-import { cacheEntries, rateSlots } from "@/server/db/schema.ts"
+import {
+  cacheEntries,
+  nixIndex,
+  nixPackages,
+  rateSlots,
+} from "@/server/db/schema.ts"
 
 // An in-process Postgres with the app's migrations applied.
 async function freshDb() {
@@ -16,6 +21,8 @@ async function freshDb() {
     empty: async () => {
       await db.delete(cacheEntries)
       await db.delete(rateSlots)
+      await db.delete(nixPackages)
+      await db.delete(nixIndex)
     },
   }
 }
