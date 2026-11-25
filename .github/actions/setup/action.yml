@@ -1,7 +1,9 @@
 name: setup
 description: >
   Restore node_modules, which holds the pinned Bun canary, or install it from
-  the npm tarball checked against bun.lock. Fails unless bun is the canary.
+  the npm tarball checked against bun.lock. When bun.lock changed, start from
+  main's latest node_modules and install only the difference. Fails unless
+  bun is the canary.
 runs:
   using: composite
   steps:
@@ -10,12 +12,25 @@ runs:
       with:
         path: node_modules
         key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+        # A PR that changes bun.lock has no exact cache; main's latest one
+        # still holds almost every package (D9).
+        restore-keys: node-modules-${{ runner.os }}-${{ runner.arch }}-
     - if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
+      env:
+        MATCHED: ${{ steps.cache.outputs.cache-matched-key }}
       run: |
         set -euo pipefail
         version=$(jq -r .devDependencies.bun package.json)
         pkg=bun-linux-x64
+        # The restored canary is the pinned one (its version carries a
+        # "+<commit>" suffix): install only what changed.
+        restored=$(jq -r .version node_modules/bun/package.json 2>/dev/null || true)
+        if [ -n "$MATCHED" ] && [ "${restored%%+*}" = "$version" ]; then
+          echo "restored $MATCHED; installing the difference"
+          node_modules/.bin/bun ci
+          exit 0
+        fi
         expected=$(grep "\"@oven/$pkg\": \[" bun.lock | grep -o 'sha512-[^"]*')
         curl -fsSL "https://registry.npmjs.org/@oven/$pkg/-/$pkg-$version.tgz" -o "$RUNNER_TEMP/bun.tgz"
         actual="sha512-$(openssl dgst -sha512 -binary "$RUNNER_TEMP/bun.tgz" | base64 -w0)"

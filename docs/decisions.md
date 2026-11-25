@@ -320,6 +320,13 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     headless Chromium without a `channel`, cached in `~/.cache/ms-playwright`
     per Playwright version (saved only from `main`). Locally the Nix shell's
     browsers are unchanged.
+  - A PR that changes `bun.lock` missed the `node_modules` cache, which is
+    saved only from `main`, and installed from scratch: 15.1 s setup on
+    `test-changed` (step 5) and 15.4 s on `e2e-4` (#15), over the 15 s
+    budget. The cache now falls back to `main`'s newest `node_modules`
+    (`restore-keys`). When its Bun canary matches the pin, `bun ci`
+    installs only the difference; otherwise setup downloads the canary as
+    before.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
