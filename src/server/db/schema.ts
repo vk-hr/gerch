@@ -16,6 +16,10 @@ import {
 const cacheEntries = pgTable("cache_entries", {
   freshUntil: bigint("fresh_until", { mode: "number" }).notNull(),
   key: text("key").primaryKey(),
+  // The last failed background refresh since the last successful one, for
+  // /api/health (docs/spec.md, "Cache").
+  refreshError: text("refresh_error"),
+  refreshFailedAt: bigint("refresh_failed_at", { mode: "number" }),
   staleUntil: bigint("stale_until", { mode: "number" }).notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()

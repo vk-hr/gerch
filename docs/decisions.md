@@ -1227,3 +1227,19 @@ The two earlier runs, before the focus fix, agree:
   registry". It sends a `HEAD` request for the channel dump and checks the
   ETag and the release name in the redirect target. The dump itself
   (10.6 MB) is read only by the scheduled ingest.
+
+### D36. Failed cache refreshes in /api/health: implemented
+
+The spec's cache section says upstream errors on a stale key "keep serving
+stale data and report the error in `/api/health`". Serving stale data was
+built in step 3; the report wasn't.
+
+- `cache_entries` gains `refresh_error` and `refresh_failed_at` (generated
+  migration). A failed background refresh records them on its row, and the
+  next successful store clears them. They live in Postgres, so every
+  function instance sees them. The memory store, for local dev and tests,
+  keeps them in a map.
+- `/api/health` lists `refreshFailures`: the latest failure per registry in
+  the last hour, as `{ registry, message, at }`. The registry is the second
+  part of the cache key (`search:npm:zod`). If the cache can't be read, it
+  says so and still answers `200`.

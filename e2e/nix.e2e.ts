@@ -43,7 +43,11 @@ test("the health route reports no nix index without a database", async ({
 }) => {
   const response = await request.get("/api/health")
   expect(response.headers()["cache-control"]).toBe("no-store")
-  await expect(response.json()).resolves.toStrictEqual({ nix: null, ok: true })
+  await expect(response.json()).resolves.toStrictEqual({
+    nix: null,
+    ok: true,
+    refreshFailures: [],
+  })
 })
 
 test("nix screenshot", async ({ page }, testInfo) => {

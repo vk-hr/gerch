@@ -1,0 +1,81 @@
+{
+  "type": "diff",
+  "version": "10",
+  "dialect": "postgres",
+  "id": "75ceee04-eaa7-4d82-ab3a-8a12ed05bc9e",
+  "prevIds": [
+    "c4ba54a7-cb49-410c-86f4-a82878487464"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "cache_entries",
+        "refresh_error"
+      ],
+      "writes": [
+        "s|col|public.cache_entries.refresh_error",
+        "n|col|public.cache_entries.refresh_error",
+        "e|col|public.cache_entries.refresh_error"
+      ],
+      "reads": [
+        "n|tbl|public.cache_entries",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "cache_entries",
+        "refresh_failed_at"
+      ],
+      "writes": [
+        "s|col|public.cache_entries.refresh_failed_at",
+        "n|col|public.cache_entries.refresh_failed_at",
+        "e|col|public.cache_entries.refresh_failed_at"
+      ],
+      "reads": [
+        "n|tbl|public.cache_entries",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "cache_entries",
+        "name": "refresh_error",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "cache_entries",
+        "name": "refresh_failed_at",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

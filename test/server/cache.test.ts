@@ -156,6 +156,31 @@ describe.each([
     })
   })
 
+  // Upstream errors on a stale key are reported in /api/health
+  // (docs/spec.md, "Cache"), so the store keeps them per registry.
+  test("a failed background refresh is recorded until one succeeds", async () => {
+    expect.hasAssertions()
+    const store = await makeStore()
+    const { background, cache, clock } = harness(store)
+    await cache.get(request("search:npm:zod", constant(1)))
+    await cache.get(request("package:crate:serde", constant(2)))
+    clock.now = 2000
+    await cache.get(request("search:npm:zod", failing))
+    await cache.get(request("package:crate:serde", failing))
+    await Promise.all(background)
+    await expect(store.failures(0)).resolves.toStrictEqual([
+      { at: 2000, message: "upstream down", registry: "crate" },
+      { at: 2000, message: "upstream down", registry: "npm" },
+    ])
+    await expect(store.failures(2001)).resolves.toStrictEqual([])
+    clock.now = 4000
+    await cache.get(request("search:npm:zod", constant(3)))
+    await Promise.all(background)
+    await expect(store.failures(0)).resolves.toStrictEqual([
+      { at: 2000, message: "upstream down", registry: "crate" },
+    ])
+  })
+
   test("a failed load on a miss rejects", async () => {
     expect.hasAssertions()
     const { cache } = harness(await makeStore())

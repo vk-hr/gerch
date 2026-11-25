@@ -1,7 +1,7 @@
 // Shared stale-while-revalidate cache (docs/spec.md, "Cache"). A fresh entry
 // is a hit. A stale entry is returned at once while one background refresh
 // runs. A missing or expired entry waits for the load.
-import { eq, sql } from "drizzle-orm"
+import { eq, gte, sql } from "drizzle-orm"
 
 import type { Database } from "./db/index.ts"
 import { cacheEntries } from "./db/schema.ts"
@@ -12,9 +12,21 @@ interface CacheEntry {
   staleUntil: number
 }
 
+// A failed background refresh: the registry is the second part of the key
+// ("search:npm:zod").
+interface RefreshFailure {
+  registry: string
+  message: string
+  at: number
+}
+
 interface CacheStore {
   get: (key: string) => Promise<CacheEntry | null>
+  // Storing a value also clears the key's recorded failure.
   set: (key: string, entry: CacheEntry) => Promise<void>
+  markFailed: (key: string, message: string, at: number) => Promise<void>
+  // The latest failure per registry at or after `since`.
+  failures: (since: number) => Promise<RefreshFailure[]>
 }
 
 interface CachePolicy {
@@ -44,12 +56,39 @@ interface Cache {
   ) => Promise<{ value: TValue; state: CacheState }>
 }
 
+// The latest failure of each registry, sorted by registry.
+function latestPerRegistry(
+  failed: readonly { key: string; message: string; at: number }[]
+): RefreshFailure[] {
+  const latest = new Map<string, RefreshFailure>()
+  for (const { at, key, message } of failed) {
+    const registry = key.split(":")[1] ?? key
+    if ((latest.get(registry)?.at ?? -1) < at) {
+      latest.set(registry, { at, message, registry })
+    }
+  }
+  return [...latest.values()].toSorted((left, right) =>
+    left.registry.localeCompare(right.registry)
+  )
+}
+
 function memoryStore(): CacheStore {
   const entries = new Map<string, CacheEntry>()
+  const failed = new Map<string, { message: string; at: number }>()
   return {
+    failures: async (since) =>
+      latestPerRegistry(
+        [...failed]
+          .filter(([, failure]) => failure.at >= since)
+          .map(([key, { at, message }]) => ({ at, key, message }))
+      ),
     get: async (key) => entries.get(key) ?? null,
+    markFailed: async (key, message, at) => {
+      failed.set(key, { at, message })
+    },
     set: async (key, entry) => {
       entries.set(key, entry)
+      failed.delete(key)
     },
   }
 }
@@ -67,12 +106,36 @@ function postgresStore(db: Database): CacheStore {
         .where(eq(cacheEntries.key, key))
       return row ?? null
     },
+    failures: async (since) => {
+      const rows = await db
+        .select({
+          at: cacheEntries.refreshFailedAt,
+          key: cacheEntries.key,
+          message: cacheEntries.refreshError,
+        })
+        .from(cacheEntries)
+        .where(gte(cacheEntries.refreshFailedAt, since))
+      return latestPerRegistry(
+        rows.map((row) => ({
+          at: row.at ?? 0,
+          key: row.key,
+          message: row.message ?? "",
+        }))
+      )
+    },
+    markFailed: async (key, message, at) => {
+      await db
+        .update(cacheEntries)
+        .set({ refreshError: message, refreshFailedAt: at })
+        .where(eq(cacheEntries.key, key))
+    },
     set: async (key, entry) => {
+      const cleared = { refreshError: null, refreshFailedAt: null }
       await db
         .insert(cacheEntries)
-        .values({ key, ...entry })
+        .values({ key, ...entry, ...cleared })
         .onConflictDoUpdate({
-          set: { ...entry, updatedAt: sql`now()` },
+          set: { ...entry, ...cleared, updatedAt: sql`now()` },
           target: cacheEntries.key,
         })
     },
@@ -123,6 +186,10 @@ function createCache(deps: CacheDeps): Cache {
       await refresh(request)
     } catch (error) {
       deps.onError(error)
+      const message = error instanceof Error ? error.message : String(error)
+      await deps.store
+        .markFailed(request.key, message, deps.now())
+        .catch(deps.onError)
     }
   }
 
@@ -143,4 +210,4 @@ function createCache(deps: CacheDeps): Cache {
 }
 
 export { createCache, memoryStore, postgresStore }
-export type { Cache, CachePolicy, CacheState, CacheStore }
+export type { Cache, CachePolicy, CacheState, CacheStore, RefreshFailure }
