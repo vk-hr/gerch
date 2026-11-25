@@ -91,16 +91,28 @@ jobs:
         if: ${{ !cancelled() }}
         run: bun scripts/ci-budget.ts
 
+  # Three shards on separate runners keep each job under 35 s. Shard 1 keeps
+  # the name `e2e`, the required check; the others are e2e-2 and e2e-3.
   e2e:
+    name: ${{ matrix.shard == 1 && 'e2e' || format('e2e-{0}', matrix.shard) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      GERCH_JOB_NAME: ${{ matrix.shard == 1 && 'e2e' || format('e2e-{0}', matrix.shard) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           filter: blob:none
       - uses: ./.github/actions/setup
       - name: end-to-end flows (runner's Google Chrome, recorded fixtures)
-        run: bun x playwright test
+        run: bun x playwright test --shard=${{ matrix.shard }}/3
+      - name: the three shards run every flow once
+        if: ${{ !cancelled() }}
+        run: bun scripts/check-e2e-shards.ts 3
       - name: budget
         if: ${{ !cancelled() }}
         run: bun scripts/ci-budget.ts
