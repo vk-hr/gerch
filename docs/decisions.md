@@ -904,7 +904,6 @@ Vite's default browser targets all have `toSorted`.
   abort signal, so changing the search leaves the old chain's one lookup in
   flight while the new chain starts. The server queue still holds the
   1 req/s limit; a fast typist can briefly hold two places in it.
-  ||||||| parent of 6dc7996 (feat(theme): follow the system theme with start-theme (step 6c) (#15))
 
 ### D29. Auto theme with start-theme: implemented in step 6c
 
