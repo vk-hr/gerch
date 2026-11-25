@@ -73,3 +73,21 @@ test("package screenshot", async ({ page }, testInfo) => {
   await expect(main.locator("time")).toBeVisible()
   await page.screenshot({ path: testInfo.outputPath("package.png") })
 })
+
+test("the package API answers by registry and name", async ({ request }) => {
+  const scoped = await request.get(
+    "/api/package/npm/%40trpc%2Ftanstack-react-query"
+  )
+  expect(scoped.ok()).toBe(true)
+  await expect(scoped.json()).resolves.toMatchObject({
+    name: "@trpc/tanstack-react-query",
+  })
+  const nested = await request.get(
+    "/api/package/nix/python313Packages.requests"
+  )
+  await expect(nested.json()).resolves.toMatchObject({ license: "Apache-2.0" })
+  const missing = await request.get(
+    "/api/package/npm/gerch-no-such-package-q7x2"
+  )
+  expect(missing.status()).toBe(NOT_FOUND)
+})

@@ -14,6 +14,7 @@ import { Route as ApiHealthRouteImport } from "./routes/api/health"
 import { Route as ApiSearchRouteImport } from "./routes/api/search"
 import { Route as ApiVitalsRouteImport } from "./routes/api/vitals"
 import { Route as PRegistryNameRouteImport } from "./routes/p.$registry.$name"
+import { Route as ApiPackageRegistryNameRouteImport } from "./routes/api/package.$registry.$name"
 
 const IndexRoute = IndexRouteImport.update({
   id: "/",
@@ -40,6 +41,11 @@ const PRegistryNameRoute = PRegistryNameRouteImport.update({
   path: "/p/$registry/$name",
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPackageRegistryNameRoute = ApiPackageRegistryNameRouteImport.update({
+  id: "/api/package/$registry/$name",
+  path: "/api/package/$registry/$name",
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   "/api/search": typeof ApiSearchRoute
   "/api/vitals": typeof ApiVitalsRoute
   "/p/$registry/$name": typeof PRegistryNameRoute
+  "/api/package/$registry/$name": typeof ApiPackageRegistryNameRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   "/api/search": typeof ApiSearchRoute
   "/api/vitals": typeof ApiVitalsRoute
   "/p/$registry/$name": typeof PRegistryNameRoute
+  "/api/package/$registry/$name": typeof ApiPackageRegistryNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,25 @@ export interface FileRoutesById {
   "/api/search": typeof ApiSearchRoute
   "/api/vitals": typeof ApiVitalsRoute
   "/p/$registry/$name": typeof PRegistryNameRoute
+  "/api/package/$registry/$name": typeof ApiPackageRegistryNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    "/" | "/api/health" | "/api/search" | "/api/vitals" | "/p/$registry/$name"
+    | "/"
+    | "/api/health"
+    | "/api/search"
+    | "/api/vitals"
+    | "/p/$registry/$name"
+    | "/api/package/$registry/$name"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/api/health" | "/api/search" | "/api/vitals" | "/p/$registry/$name"
+  to:
+    | "/"
+    | "/api/health"
+    | "/api/search"
+    | "/api/vitals"
+    | "/p/$registry/$name"
+    | "/api/package/$registry/$name"
   id:
     | "__root__"
     | "/"
@@ -76,6 +96,7 @@ export interface FileRouteTypes {
     | "/api/search"
     | "/api/vitals"
     | "/p/$registry/$name"
+    | "/api/package/$registry/$name"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +105,7 @@ export interface RootRouteChildren {
   ApiSearchRoute: typeof ApiSearchRoute
   ApiVitalsRoute: typeof ApiVitalsRoute
   PRegistryNameRoute: typeof PRegistryNameRoute
+  ApiPackageRegistryNameRoute: typeof ApiPackageRegistryNameRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -123,6 +145,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PRegistryNameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/api/package/$registry/$name": {
+      id: "/api/package/$registry/$name"
+      path: "/api/package/$registry/$name"
+      fullPath: "/api/package/$registry/$name"
+      preLoaderRoute: typeof ApiPackageRegistryNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSearchRoute: ApiSearchRoute,
   ApiVitalsRoute: ApiVitalsRoute,
   PRegistryNameRoute: PRegistryNameRoute,
+  ApiPackageRegistryNameRoute: ApiPackageRegistryNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -31,14 +31,18 @@ function packageCdnCache(registry: Registry): string {
 type PackageOutcome =
   | { status: "found"; state: CacheState | "index"; summary: PackageSummary }
   | { status: "missing" }
-  | { status: "failed"; message: string }
+  // "request": a bad registry or name; "upstream": the registry failed.
+  | { status: "failed"; message: string; reason: "request" | "upstream" }
 
 // The cached value wraps the summary: Postgres stores values in a NOT NULL
 // column, so a missing package is `{ summary: null }`, not `null`.
 const lookupSchema = z.object({ summary: packageSummarySchema.nullable() })
 
-function failed(message: string): PackageOutcome {
-  return { message, status: "failed" }
+function failed(
+  message: string,
+  reason: "request" | "upstream"
+): PackageOutcome {
+  return { message, reason, status: "failed" }
 }
 
 function adapterFor(
@@ -65,7 +69,7 @@ async function runPackage(
   const name = rawName.trim()
   const adapter = adapterFor(deps, registry, name)
   if (typeof adapter === "string") {
-    return failed(adapter)
+    return failed(adapter, "request")
   }
   if (!adapter.isPackageName(name)) {
     return { status: "missing" }
@@ -73,7 +77,7 @@ async function runPackage(
   try {
     return await lookup(deps, adapter, name)
   } catch {
-    return failed(`${registry} is unavailable`)
+    return failed(`${registry} is unavailable`, "upstream")
   }
 }
 
@@ -100,5 +104,40 @@ async function lookup(
     : { state: found.state, status: "found", summary }
 }
 
-export { packageCdnCache, runPackage }
+const NOT_FOUND = 404
+const BAD_REQUEST = 400
+const BAD_GATEWAY = 502
+const NO_STORE = { "cache-control": "no-store" }
+
+// GET /api/package/:registry/:name: the same lookup as the package page.
+async function handlePackage(
+  registry: string,
+  name: string,
+  deps: SearchDeps
+): Promise<Response> {
+  const outcome = await runPackage(deps, registry, name)
+  if (outcome.status === "found") {
+    return Response.json(outcome.summary, {
+      headers: {
+        "cache-control": packageCdnCache(outcome.summary.registry),
+        "x-gerch-cache": outcome.state,
+      },
+    })
+  }
+  if (outcome.status === "missing") {
+    return Response.json(
+      { error: `${registry} has no package named ${name.trim()}` },
+      { headers: NO_STORE, status: NOT_FOUND }
+    )
+  }
+  return Response.json(
+    { error: outcome.message },
+    {
+      headers: NO_STORE,
+      status: outcome.reason === "request" ? BAD_REQUEST : BAD_GATEWAY,
+    }
+  )
+}
+
+export { handlePackage, packageCdnCache, runPackage }
 export type { PackageOutcome }
