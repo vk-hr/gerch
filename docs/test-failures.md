@@ -1,0 +1,11 @@
+# Test failures
+
+Two-week log starting 2026-11-25. Each row records a fixed failure and what
+the check detected.
+
+| Date       | Check                                             | Classification     | Observed behavior and correction                                                                                                                                                                                                                                       |
+| ---------- | ------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-25 | Workspace picker, dialogs and copy feedback (#9)  | Caught regressions | Exact workspace names could select a longer name, and shortcuts could affect a card behind the dialog. Fixed ranking, modal focus handling and card feedback.                                                                                                          |
+| 2026-11-25 | Package lookup and tab flows (#10)                | Caught regressions | A missing package produced an invalid database value. Background opens reversed order, and pending input could overwrite another tab. Fixed cache representation, insertion order and input resync.                                                                    |
+| 2026-11-25 | Back navigation under a pending debounce (#10)    | Test timing defect | The virtual clock passed the pause target between browser commands. Fixed both the start and pause instants.                                                                                                                                                           |
+| 2026-11-25 | Persistence, history and combobox selection (#11) | Caught regressions | Direct links missed the cache, failed refreshes lost cached cards, and expired entries survived. List updates moved the active selection, nested prefixes changed registry, and clicking the icon removed the chip. Added regression coverage and fixed each behavior. |
