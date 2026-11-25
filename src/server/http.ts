@@ -15,10 +15,17 @@ class UpstreamError extends Error {
   }
 }
 
+// Gives each request its own timeout, started when the request starts. It
+// wraps the network fetch directly, inside any rate-limit queue, so time
+// spent waiting for a turn doesn't count against the request (D28).
+function withTimeout(fetcher: Fetch, ms = UPSTREAM_TIMEOUT_MS): Fetch {
+  return async (input, init) =>
+    fetcher(input, { ...init, signal: AbortSignal.timeout(ms) })
+}
+
 async function getJson(fetcher: Fetch, url: string): Promise<unknown> {
   const response = await fetcher(url, {
     headers: { accept: "application/json", "user-agent": USER_AGENT },
-    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   })
   if (!response.ok) {
     throw new UpstreamError(url, response.status)
@@ -26,5 +33,5 @@ async function getJson(fetcher: Fetch, url: string): Promise<unknown> {
   return response.json()
 }
 
-export { getJson, UpstreamError, USER_AGENT }
+export { getJson, UpstreamError, USER_AGENT, withTimeout }
 export type { Fetch }

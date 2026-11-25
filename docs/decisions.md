@@ -861,6 +861,10 @@ Vite's default browser targets all have `toSorted`.
   upstream error. Without `DATABASE_URL` (local dev) the queue lives in
   memory. With `GERCH_REPLAY_DIR` (e2e) there is no queue: recorded
   responses never reach crates.io.
+- **Timeout after the wait.** The 5 s upstream timeout wraps the network
+  fetch inside the queue (`withTimeout` in `src/server/http.ts`), so it
+  starts when the request leaves. Before review it started in `getJson`,
+  so a wait of 5 s or more reached crates.io with an aborted signal.
 - **Licenses on cards.** `useLazyLicenses` looks up each crate in a result
   list without a license through the package endpoint, one at a time in
   result order. So one open search page holds at most one place in the
@@ -880,3 +884,7 @@ Vite's default browser targets all have `toSorted`.
   `@tanstack/start-server-core`). The lookup itself finishes and fills the
   server cache. The e2e server logs about 20 of these per run, because
   every unprefixed `zod` search now looks up crates.
+- **One lookup per page, not per user.** The lookups don't pass the query's
+  abort signal, so changing the search leaves the old chain's one lookup in
+  flight while the new chain starts. The server queue still holds the
+  1 req/s limit; a fast typist can briefly hold two places in it.

@@ -4,6 +4,7 @@ import { createCache, memoryStore, postgresStore } from "./cache.ts"
 import { connect } from "./db/index.ts"
 import type { Database } from "./db/index.ts"
 import { databaseUrl, replayDir } from "./env.ts"
+import { withTimeout } from "./http.ts"
 import type { Fetch } from "./http.ts"
 import { memorySlot, postgresSlot, throttledFetch } from "./rate-slot.ts"
 import { createCratesAdapter } from "./registries/crates.ts"
@@ -28,9 +29,10 @@ function createContext(): SearchDeps {
   const url = databaseUrl()
   const replay = replayDir()
   const db = url === undefined ? undefined : connect(url)
-  const upstream = replay === undefined ? fetch : replayDirectory(replay)
+  const network = withTimeout(fetch)
+  const upstream = replay === undefined ? network : replayDirectory(replay)
   // Recorded responses never reach crates.io, so replay skips its queue.
-  const crates = replay === undefined ? cratesFetch(fetch, db) : upstream
+  const crates = replay === undefined ? cratesFetch(network, db) : upstream
   return {
     adapters: {
       crate: createCratesAdapter(crates),

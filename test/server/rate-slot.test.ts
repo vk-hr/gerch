@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, test } from "vitest"
 
+import { withTimeout } from "@/server/http.ts"
 import type { Fetch } from "@/server/http.ts"
 import {
   memorySlot,
@@ -128,6 +129,25 @@ describe("throttled fetch", () => {
       "https://crates.io/a after 0",
       "https://crates.io/b after 0,1000",
     ])
+  })
+
+  // The upstream timeout covers the request, not the wait for a turn.
+  test("starts the request timeout after the queue wait", async () => {
+    expect.hasAssertions()
+    const seen: (AbortSignal | null | undefined)[] = []
+    const fetcher = throttledFetch(
+      withTimeout(async (input, init) => {
+        seen.push(init?.signal)
+        return ok(input, init)
+      }, 20),
+      {
+        ...SECOND,
+        sleep: async () => Bun.sleep(40),
+        slot: memorySlot(() => 0),
+      }
+    )
+    await fetcher("https://crates.io/a")
+    expect(seen.map((signal) => signal?.aborted)).toStrictEqual([false])
   })
 
   test("rejects without a request when the queue is full", async () => {
