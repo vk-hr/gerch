@@ -51,6 +51,9 @@ const lookUpPackage = createServerFn({ method: "GET" })
         outcome.status === "found" ? packageCdnCache(data.registry) : "no-store"
       setResponseHeaders(new Headers({ "cache-control": cache }))
     }
+    if (outcome.status === "failed") {
+      return { message: outcome.message, status: "failed" }
+    }
     return outcome.status === "found"
       ? { status: "found", summary: outcome.summary }
       : outcome

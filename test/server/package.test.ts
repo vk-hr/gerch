@@ -148,6 +148,7 @@ describe("package lookup", () => {
     const handler = deps(statusFetch(503), { now: 0 })
     await expect(runPackage(handler, "npm", "zod")).resolves.toStrictEqual({
       message: "npm is unavailable",
+      reason: "upstream",
       status: "failed",
     })
   })
@@ -161,6 +162,7 @@ describe("package lookup", () => {
     const handler = deps(statusFetch(500), { now: 0 })
     await expect(runPackage(handler, registry, name)).resolves.toStrictEqual({
       message,
+      reason: "request",
       status: "failed",
     })
   })

@@ -1210,3 +1210,20 @@ The two earlier runs, before the focus fix, agree:
   0.9.23 depends on `oxlint`, which AGENTS.md bans, requires TypeScript
   below 6 (gerch uses 7), bundles `@sentry/node`, and is 8 days old. It
   needs your approval before it runs on this project.
+
+### D35. GET /api/package and the nix live check: implemented
+
+- `GET /api/package/:registry/:name`, from the spec's API table, runs the
+  same lookup as the package page (`runPackage`):
+  - `200`: the summary, with the registry's CDN cache headers.
+  - `404`: an unknown package.
+  - `400`: a bad registry or name.
+  - `502`: a failing registry.
+  - Every error is `no-store`.
+- A failed lookup now carries `reason: "request" | "upstream"`, which
+  picks the status. The package server function still sends the browser
+  only `{ status, message }`.
+- `test/live/nix.live.ts` completes the spec's "one smoke test per
+  registry". It sends a `HEAD` request for the channel dump and checks the
+  ETag and the release name in the redirect target. The dump itself
+  (10.6 MB) is read only by the scheduled ingest.
