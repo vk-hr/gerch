@@ -3,14 +3,33 @@
 import { describe, expect, test } from "vitest"
 
 import { UpstreamError, USER_AGENT } from "@/server/http.ts"
+import type { Fetch } from "@/server/http.ts"
+import { createCratesAdapter } from "@/server/registries/crates.ts"
 import { createNpmAdapter } from "@/server/registries/npm.ts"
+import type { RegistryAdapter } from "@/server/registries/types.ts"
 import { packageSummarySchema } from "@/server/schema.ts"
+import type { Registry } from "@/shared/registry.ts"
 
 import { fixtureFetch, statusFetch } from "../support/fixtures.ts"
 
 const UNAVAILABLE = 503
 
-const adapters = [
+interface AdapterContract {
+  // Searches against recorded fixtures; expectedFirst is undefined when the
+  // registry finds nothing.
+  cases: readonly {
+    expectedFirst: string | undefined
+    fixture: string
+    query: string
+  }[]
+  create: (fetcher: Fetch) => RegistryAdapter
+  install: (name: string) => string
+  missing: { fixtures: readonly string[]; name: string }
+  packages: readonly { fixtures: readonly string[]; name: string }[]
+  registry: Registry
+}
+
+const adapters: readonly AdapterContract[] = [
   {
     cases: [
       { expectedFirst: "zod", fixture: "search-zod", query: "zod" },
@@ -46,7 +65,29 @@ const adapters = [
     ],
     registry: "npm",
   },
-] as const
+  {
+    cases: [
+      { expectedFirst: "serde", fixture: "search-serde", query: "serde" },
+      { expectedFirst: "zod", fixture: "search-zod", query: "zod" },
+      {
+        expectedFirst: undefined,
+        fixture: "search-nonsense",
+        query: "gerch-no-such-package-q7x2",
+      },
+    ],
+    create: createCratesAdapter,
+    install: (name: string) => `cargo add ${name}`,
+    missing: {
+      fixtures: ["package-nonsense"],
+      name: "gerch-no-such-package-q7x2",
+    },
+    packages: [
+      { fixtures: ["package-serde"], name: "serde" },
+      { fixtures: ["package-serde_json"], name: "serde_json" },
+    ],
+    registry: "crate",
+  },
+]
 
 describe.each(adapters)(
   "$registry adapter contract",

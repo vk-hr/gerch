@@ -1,0 +1,118 @@
+{
+  "body": {
+    "crate": {
+      "id": "serde-saphyr",
+      "name": "serde-saphyr",
+      "updated_at": "2026-11-18T17:29:51.155259Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2025-09-27T20:32:53.691021Z",
+      "downloads": 23064990,
+      "recent_downloads": 17817566,
+      "default_version": "2.2.0",
+      "num_versions": 42,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "YAML (de)serializer for Serde, emphasizing panic-free parsing, fast builds and good error reporting. Supports properties, include, tag and comment capture",
+      "homepage": null,
+      "documentation": "https://docs.rs/serde-saphyr/latest/serde-saphyr/",
+      "repository": "https://github.com/bourumir-wyngs/serde-saphyr",
+      "links": {
+        "version_downloads": "/api/v1/crates/serde-saphyr/downloads",
+        "versions": "/api/v1/crates/serde-saphyr/versions",
+        "owners": "/api/v1/crates/serde-saphyr/owners",
+        "owner_team": "/api/v1/crates/serde-saphyr/owner_team",
+        "owner_user": "/api/v1/crates/serde-saphyr/owner_user",
+        "reverse_dependencies": "/api/v1/crates/serde-saphyr/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": true
+    },
+    "versions": [
+      {
+        "id": 3861723,
+        "crate": "serde-saphyr",
+        "num": "2.2.0",
+        "dl_path": "/api/v1/crates/serde-saphyr/2.2.0/download",
+        "readme_path": "/api/v1/crates/serde-saphyr/2.2.0/readme",
+        "updated_at": "2026-11-18T03:00:29.480627Z",
+        "created_at": "2026-11-18T03:00:29.480627Z",
+        "downloads": 202415,
+        "features": {
+          "comments": ["granit-parser?/comments"],
+          "default": ["serialize", "deserialize", "comments"],
+          "deserialize": [
+            "dep:num-traits",
+            "dep:annotate-snippets",
+            "dep:granit-parser",
+            "dep:smallvec",
+            "dep:encoding_rs_io"
+          ],
+          "figment": ["dep:figment", "deserialize"],
+          "figment2": ["dep:figment2", "deserialize"],
+          "garde": ["dep:garde", "deserialize"],
+          "huge_documents": ["deserialize"],
+          "include": ["deserialize"],
+          "include_fs": ["include"],
+          "miette": ["dep:miette", "deserialize"],
+          "properties": ["deserialize"],
+          "robotics": ["deserialize"],
+          "serde_derived_types": ["dep:serde", "deserialize"],
+          "serialize": [
+            "dep:base64",
+            "dep:num-traits",
+            "dep:zmij",
+            "dep:nohash-hasher"
+          ],
+          "validator": ["dep:validator", "deserialize"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT OR Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/serde-saphyr/2.2.0/dependencies",
+          "version_downloads": "/api/v1/crates/serde-saphyr/2.2.0/downloads",
+          "authors": "/api/v1/crates/serde-saphyr/2.2.0/authors"
+        },
+        "crate_size": 767356,
+        "published_by": null,
+        "audit_actions": [],
+        "checksum": "969cde0349344dbbf58b5f9badbfb8f806db13969364eb8007c057ef687007d9",
+        "rust_version": "1.89",
+        "has_lib": true,
+        "bin_names": ["serde-saphyr"],
+        "edition": "2024",
+        "description": "YAML (de)serializer for Serde, emphasizing panic-free parsing, fast builds and good error reporting. Supports properties, include, tag and comment capture",
+        "homepage": null,
+        "documentation": "https://docs.rs/serde-saphyr/latest/serde-saphyr/",
+        "repository": "https://github.com/bourumir-wyngs/serde-saphyr",
+        "trustpub_data": {
+          "provider": "github",
+          "repository": "bourumir-wyngs/serde-saphyr",
+          "run_id": "44174882099",
+          "sha": "c0b737af68b8b4bca625bcafb7e228f110e57a48"
+        },
+        "linecounts": {
+          "languages": {
+            "Rust": {
+              "code_lines": 32075,
+              "comment_lines": 1169,
+              "files": 59
+            }
+          },
+          "total_code_lines": 32075,
+          "total_comment_lines": 1169
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/serde-saphyr?include=default_version,downloads"
+}

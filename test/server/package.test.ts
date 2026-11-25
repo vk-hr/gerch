@@ -3,7 +3,8 @@ import { afterAll, describe, expect, test } from "vitest"
 import { createCache, memoryStore, postgresStore } from "@/server/cache.ts"
 import type { CacheStore } from "@/server/cache.ts"
 import type { Fetch } from "@/server/http.ts"
-import { runPackage } from "@/server/package.ts"
+import { packageCdnCache, runPackage } from "@/server/package.ts"
+import { createCratesAdapter } from "@/server/registries/crates.ts"
 import { createNpmAdapter } from "@/server/registries/npm.ts"
 
 import { fixtureFetch, statusFetch } from "../support/fixtures.ts"
@@ -22,7 +23,10 @@ function deps(
   store: CacheStore = memoryStore()
 ) {
   return {
-    adapters: { npm: createNpmAdapter(fetcher) },
+    adapters: {
+      crate: createCratesAdapter(fetcher),
+      npm: createNpmAdapter(fetcher),
+    },
     cache: createCache({
       now: () => clock.now,
       onError: (error) => {
@@ -57,6 +61,35 @@ describe("package lookup", () => {
     })
     expect(requests).toHaveLength(2)
   })
+
+  test("serves a crate fresh for 6 hours", async () => {
+    expect.hasAssertions()
+    const { fetch, requests } = await fixtureFetch("crate", ["package-serde"])
+    const clock = { now: 0 }
+    const handler = deps(fetch, clock)
+    await runPackage(handler, "crate", "serde")
+    clock.now = 6 * HOUR_MS - 1
+    await expect(runPackage(handler, "crate", "serde")).resolves.toMatchObject({
+      state: "hit",
+      summary: { license: "MIT OR Apache-2.0", name: "serde" },
+    })
+    expect(requests).toHaveLength(1)
+    clock.now = 6 * HOUR_MS
+    await expect(runPackage(handler, "crate", "serde")).resolves.toMatchObject({
+      state: "stale",
+    })
+  })
+
+  test.each([
+    ["npm", "s-maxage=3600,"],
+    ["crate", "s-maxage=21600,"],
+  ] as const)(
+    "the CDN keeps a %s package for its fresh window",
+    (registry, header) => {
+      expect.hasAssertions()
+      expect(packageCdnCache(registry)).toContain(header)
+    }
+  )
 
   test("serves a stale package for up to 30 days", async () => {
     expect.hasAssertions()
@@ -120,7 +153,7 @@ describe("package lookup", () => {
   })
 
   test.each([
-    ["crate", "serde", "crate is not available yet"],
+    ["nix", "ripgrep", "nix is not available yet"],
     ["pypi", "requests", "registry must be one of npm, crate, nix"],
     ["npm", " ", "name must not be empty"],
   ])("rejects %s/%s", async (registry, name, message) => {

@@ -838,3 +838,53 @@ Vite's default browser targets all have `toSorted`.
 - Failed background revalidation keeps the last successful data and its
   timestamp. The results stay visible alongside the error and Retry.
 - History counts every committed search, including ones with no results.
+
+### D28. crates.io adapter and the 1 req/s queue: implemented in step 6a
+
+- **Adapter** (`src/server/registries/crates.ts`). Search is
+  `GET /api/v1/crates?q=&per_page=10`, 10 results rather than npm's 20,
+  because each license lookup waits for its own slot (D13). The package
+  endpoint is `GET /api/v1/crates/{name}?include=default_version,downloads`:
+  the crate plus only its default version, 2.7 KB for serde against
+  441 KB for the full response with every version. `downloads` in `include`
+  fills `recent_downloads`, which is null without it.
+- **Fields.** Search cards show `max_stable_version`, or `default_version`
+  for a crate with only pre-releases, and `updated_at` as the release date.
+  The package page shows the default version's number, license and
+  `created_at`. Downloads are the 90-day `recent_downloads` (D14).
+- **Queue** (`src/server/rate-slot.ts`, table `rate_slots`). Each request
+  reserves the next send time with one atomic upsert:
+  `next_at = greatest(next_at, now) + 1000`, on the database clock, so
+  instances with skewed clocks still agree. A reservation that would wait
+  more than 8 s is refused (the upsert's `WHERE` returns no row) and takes no
+  place in the queue. The search or lookup then fails like any other
+  upstream error. Without `DATABASE_URL` (local dev) the queue lives in
+  memory. With `GERCH_REPLAY_DIR` (e2e) there is no queue: recorded
+  responses never reach crates.io.
+- **Timeout after the wait.** The 5 s upstream timeout wraps the network
+  fetch inside the queue (`withTimeout` in `src/server/http.ts`), so it
+  starts when the request leaves. Before review it started in `getJson`,
+  so a wait of 5 s or more reached crates.io with an aborted signal.
+- **Licenses on cards.** `useLazyLicenses` looks up each crate in a result
+  list without a license through the package endpoint, one at a time in
+  result order. So one open search page holds at most one place in the
+  queue. Answers go through the usual package cache: 6 h fresh on the
+  server, plus the persisted client cache. A repeated search shows every
+  license at once. The e2e flow asserts the order and that only one lookup
+  is in flight at a time.
+- **Cache.** crates.io packages are fresh for 6 h and served stale up to
+  30 days, per the spec. `packageCdnCache(registry)` sets the matching
+  `s-maxage`.
+- **Cold entry** grows by 236 B Brotli: 142,523 B on `main`, 142,759 B
+  here, against the 150 kB budget. Measured from the JS each page's server
+  HTML loads.
+- **Known noise.** A lookup still in flight when the page navigates away is
+  aborted by the browser, and Start's request handler logs that
+  `AbortError` with `console.error` (`resolveErrorStatus` in
+  `@tanstack/start-server-core`). The lookup itself finishes and fills the
+  server cache. The e2e server logs about 20 of these per run, because
+  every unprefixed `zod` search now looks up crates.
+- **One lookup per page, not per user.** The lookups don't pass the query's
+  abort signal, so changing the search leaves the old chain's one lookup in
+  flight while the new chain starts. The server queue still holds the
+  1 req/s limit; a fast typist can briefly hold two places in it.

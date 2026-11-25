@@ -65,9 +65,9 @@ test("an unknown package is not found", async ({ page, request }) => {
 })
 
 test("a registry that is not built yet says so", async ({ page }) => {
-  await page.goto("/p/crate/serde")
+  await page.goto("/p/nix/ripgrep")
   await expect(page.getByRole("main")).toContainText(
-    "crates.io packages are coming soon"
+    "nixpkgs packages are coming soon"
   )
 })
 

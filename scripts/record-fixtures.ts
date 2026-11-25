@@ -1,6 +1,6 @@
 // Records real registry responses once into test/fixtures/<registry>/, so
 // unit and contract tests never touch the network. Rerun only on purpose:
-// `bun run record-fixtures npm`, or `bun run record-fixtures npm package-` to
+// `bun run record-fixtures npm`, or `bun run record-fixtures crate package-` to
 // record only the fixtures whose names start with that prefix.
 import { USER_AGENT } from "@/server/http.ts"
 
@@ -26,7 +26,39 @@ const requests: Record<string, Record<string, string>> = {
     "package-nonsense-downloads":
       "https://api.npmjs.org/downloads/point/last-week/gerch-no-such-package-q7x2",
   },
+  crate: {
+    "search-serde": "https://crates.io/api/v1/crates?q=serde&per_page=10",
+    "search-zod": "https://crates.io/api/v1/crates?q=zod&per_page=10",
+    "search-nonsense":
+      "https://crates.io/api/v1/crates?q=gerch-no-such-package-q7x2&per_page=10",
+    "package-serde":
+      "https://crates.io/api/v1/crates/serde?include=default_version,downloads",
+    "package-serde_json":
+      "https://crates.io/api/v1/crates/serde_json?include=default_version,downloads",
+    "package-nonsense":
+      "https://crates.io/api/v1/crates/gerch-no-such-package-q7x2?include=default_version,downloads",
+    // The rest of the serde results, so a recorded search fills every license.
+    "package-serde-saphyr":
+      "https://crates.io/api/v1/crates/serde-saphyr?include=default_version,downloads",
+    "package-clickhouse":
+      "https://crates.io/api/v1/crates/clickhouse?include=default_version,downloads",
+    "package-serde_yml":
+      "https://crates.io/api/v1/crates/serde_yml?include=default_version,downloads",
+    "package-serde_valid":
+      "https://crates.io/api/v1/crates/serde_valid?include=default_version,downloads",
+    "package-serde_toon_format":
+      "https://crates.io/api/v1/crates/serde_toon_format?include=default_version,downloads",
+    "package-yaml_serde":
+      "https://crates.io/api/v1/crates/yaml_serde?include=default_version,downloads",
+    "package-serde_json_borrow":
+      "https://crates.io/api/v1/crates/serde_json_borrow?include=default_version,downloads",
+    "package-rust_decimal":
+      "https://crates.io/api/v1/crates/rust_decimal?include=default_version,downloads",
+  },
 }
+
+// The crates.io limit is one request per second (docs/spec.md, "Data sources").
+const SPACING_MS: Record<string, number> = { crate: 1000 }
 
 const registry = Bun.argv[FIRST_ARG] ?? ""
 const prefix = Bun.argv[FIRST_ARG + 1] ?? ""
@@ -58,6 +90,7 @@ await Object.entries(targets)
   .filter(([name]) => name.startsWith(prefix))
   .reduce(async (previous, [name, url]) => {
     await previous
+    await Bun.sleep(SPACING_MS[registry] ?? 0)
     const response = await fetch(url, { headers: { "user-agent": USER_AGENT } })
     const body = withoutEmails(await response.json())
     const file = `test/fixtures/${registry}/${name}.json`

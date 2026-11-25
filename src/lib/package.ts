@@ -39,7 +39,7 @@ const lookUpPackage = createServerFn({ method: "GET" })
     const [
       { getRequestHeader, setResponseHeaders },
       { serverContext },
-      { PACKAGE_CDN_CACHE, runPackage },
+      { packageCdnCache, runPackage },
     ] = await Promise.all([
       import("@tanstack/react-start/server"),
       import("@/server/context.ts"),
@@ -47,7 +47,8 @@ const lookUpPackage = createServerFn({ method: "GET" })
     ])
     const outcome = await runPackage(serverContext(), data.registry, data.name)
     if (getRequestHeader("x-tsr-serverFn") === "true") {
-      const cache = outcome.status === "found" ? PACKAGE_CDN_CACHE : "no-store"
+      const cache =
+        outcome.status === "found" ? packageCdnCache(data.registry) : "no-store"
       setResponseHeaders(new Headers({ "cache-control": cache }))
     }
     return outcome.status === "found"

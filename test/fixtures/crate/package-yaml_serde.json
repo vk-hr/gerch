@@ -1,0 +1,111 @@
+{
+  "body": {
+    "crate": {
+      "id": "yaml_serde",
+      "name": "yaml_serde",
+      "updated_at": "2026-08-18T16:56:51.839798Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2026-01-24T21:25:28.543340Z",
+      "downloads": 8073652,
+      "recent_downloads": 6376812,
+      "default_version": "0.10.7",
+      "num_versions": 7,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "serde_yaml maintained by The YAML Organization",
+      "homepage": null,
+      "documentation": "https://docs.rs/yaml_serde/",
+      "repository": "https://github.com/yaml/yaml-serde",
+      "links": {
+        "version_downloads": "/api/v1/crates/yaml_serde/downloads",
+        "versions": "/api/v1/crates/yaml_serde/versions",
+        "owners": "/api/v1/crates/yaml_serde/owners",
+        "owner_team": "/api/v1/crates/yaml_serde/owner_team",
+        "owner_user": "/api/v1/crates/yaml_serde/owner_user",
+        "reverse_dependencies": "/api/v1/crates/yaml_serde/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 3025532,
+        "crate": "yaml_serde",
+        "num": "0.10.7",
+        "dl_path": "/api/v1/crates/yaml_serde/0.10.7/download",
+        "readme_path": "/api/v1/crates/yaml_serde/0.10.7/readme",
+        "updated_at": "2026-08-18T16:56:51.839798Z",
+        "created_at": "2026-08-18T16:56:51.839798Z",
+        "downloads": 5250684,
+        "features": {
+          "default": ["std"],
+          "std": ["serde/std", "indexmap/std"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT OR Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/yaml_serde/0.10.7/dependencies",
+          "version_downloads": "/api/v1/crates/yaml_serde/0.10.7/downloads",
+          "authors": "/api/v1/crates/yaml_serde/0.10.7/authors"
+        },
+        "crate_size": 72752,
+        "published_by": {
+          "id": 165876,
+          "login": "ingydotnet",
+          "name": "Ingy döt Net",
+          "avatar": "https://avatars.githubusercontent.com/u/21826?v=4",
+          "url": "https://github.com/ingydotnet",
+          "github_username_matches": true,
+          "created_at": "2008-08-25T07:13:26Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 165876,
+              "login": "ingydotnet",
+              "name": "Ingy döt Net",
+              "avatar": "https://avatars.githubusercontent.com/u/21826?v=4",
+              "url": "https://github.com/ingydotnet",
+              "github_username_matches": true,
+              "created_at": "2008-08-25T07:13:26Z"
+            },
+            "time": "2026-08-18T16:56:51.839798Z"
+          }
+        ],
+        "checksum": "33b729a08a9a6be689bbad3e2bf8015926db54b6622cc89c3a5f7dc174b9e918",
+        "rust_version": "1.82",
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2021",
+        "description": "serde_yaml maintained by The YAML Organization",
+        "homepage": null,
+        "documentation": "https://docs.rs/yaml_serde/",
+        "repository": "https://github.com/yaml/yaml-serde",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "Rust": {
+              "code_lines": 8873,
+              "comment_lines": 61,
+              "files": 25
+            }
+          },
+          "total_code_lines": 8873,
+          "total_comment_lines": 61
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/yaml_serde?include=default_version,downloads"
+}

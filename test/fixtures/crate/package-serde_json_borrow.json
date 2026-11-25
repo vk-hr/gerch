@@ -1,0 +1,111 @@
+{
+  "body": {
+    "crate": {
+      "id": "serde_json_borrow",
+      "name": "serde_json_borrow",
+      "updated_at": "2025-09-30T11:27:45.334722Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2023-01-14T05:21:11.154695Z",
+      "downloads": 491370,
+      "recent_downloads": 189616,
+      "default_version": "0.9.0",
+      "num_versions": 23,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "Provides JSON deserialization into a borrowed DOM",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/PSeitz/serde_json_borrow",
+      "links": {
+        "version_downloads": "/api/v1/crates/serde_json_borrow/downloads",
+        "versions": "/api/v1/crates/serde_json_borrow/versions",
+        "owners": "/api/v1/crates/serde_json_borrow/owners",
+        "owner_team": "/api/v1/crates/serde_json_borrow/owner_team",
+        "owner_user": "/api/v1/crates/serde_json_borrow/owner_user",
+        "reverse_dependencies": "/api/v1/crates/serde_json_borrow/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 1752056,
+        "crate": "serde_json_borrow",
+        "num": "0.9.0",
+        "dl_path": "/api/v1/crates/serde_json_borrow/0.9.0/download",
+        "readme_path": "/api/v1/crates/serde_json_borrow/0.9.0/readme",
+        "updated_at": "2025-09-30T11:27:45.334722Z",
+        "created_at": "2025-09-30T11:27:45.334722Z",
+        "downloads": 266478,
+        "features": {
+          "cowkeys": [],
+          "default": ["cowkeys"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT",
+        "links": {
+          "dependencies": "/api/v1/crates/serde_json_borrow/0.9.0/dependencies",
+          "version_downloads": "/api/v1/crates/serde_json_borrow/0.9.0/downloads",
+          "authors": "/api/v1/crates/serde_json_borrow/0.9.0/authors"
+        },
+        "crate_size": 25836,
+        "published_by": {
+          "id": 6354,
+          "login": "PSeitz",
+          "name": null,
+          "avatar": "https://avatars.githubusercontent.com/u/1109503?v=4",
+          "url": "https://github.com/PSeitz",
+          "github_username_matches": true,
+          "created_at": "2011-10-07T07:15:24Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 6354,
+              "login": "PSeitz",
+              "name": null,
+              "avatar": "https://avatars.githubusercontent.com/u/1109503?v=4",
+              "url": "https://github.com/PSeitz",
+              "github_username_matches": true,
+              "created_at": "2011-10-07T07:15:24Z"
+            },
+            "time": "2025-09-30T11:27:45.334722Z"
+          }
+        ],
+        "checksum": "2780994ebdf8677793192229715c7f5d9dd4c37cefc7fb760b9418903ffb5c34",
+        "rust_version": null,
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2021",
+        "description": "Provides JSON deserialization into a borrowed DOM",
+        "homepage": null,
+        "documentation": null,
+        "repository": "https://github.com/PSeitz/serde_json_borrow",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "Rust": {
+              "code_lines": 1486,
+              "comment_lines": 29,
+              "files": 10
+            }
+          },
+          "total_code_lines": 1486,
+          "total_comment_lines": 29
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/serde_json_borrow?include=default_version,downloads"
+}

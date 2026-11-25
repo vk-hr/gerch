@@ -1,0 +1,110 @@
+{
+  "body": {
+    "crate": {
+      "id": "serde_yml",
+      "name": "serde_yml",
+      "updated_at": "2026-05-27T22:51:08.150617Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2024-03-29T13:47:41.460002Z",
+      "downloads": 26199611,
+      "recent_downloads": 3877651,
+      "default_version": "0.0.13",
+      "num_versions": 13,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "DEPRECATED — `serde_yml` is unmaintained. This release is a thin compatibility shim that forwards every call to `noyalib` (a pure-Rust, `#![forbid(unsafe_code)]` YAML library). Please migrate to `noyalib`.\n",
+      "homepage": "https://github.com/sebastienrousseau/noyalib",
+      "documentation": "https://docs.rs/serde_yml/",
+      "repository": "https://github.com/sebastienrousseau/serde_yml",
+      "links": {
+        "version_downloads": "/api/v1/crates/serde_yml/downloads",
+        "versions": "/api/v1/crates/serde_yml/versions",
+        "owners": "/api/v1/crates/serde_yml/owners",
+        "owner_team": "/api/v1/crates/serde_yml/owner_team",
+        "owner_user": "/api/v1/crates/serde_yml/owner_user",
+        "reverse_dependencies": "/api/v1/crates/serde_yml/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 2469303,
+        "crate": "serde_yml",
+        "num": "0.0.13",
+        "dl_path": "/api/v1/crates/serde_yml/0.0.13/download",
+        "readme_path": "/api/v1/crates/serde_yml/0.0.13/readme",
+        "updated_at": "2026-05-27T22:51:08.150617Z",
+        "created_at": "2026-05-27T22:51:08.150617Z",
+        "downloads": 886719,
+        "features": {
+          "default": []
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT OR Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/serde_yml/0.0.13/dependencies",
+          "version_downloads": "/api/v1/crates/serde_yml/0.0.13/downloads",
+          "authors": "/api/v1/crates/serde_yml/0.0.13/authors"
+        },
+        "crate_size": 23385,
+        "published_by": {
+          "id": 186843,
+          "login": "sebastienrousseau",
+          "name": "Sebastien Rousseau",
+          "avatar": "https://avatars.githubusercontent.com/u/1394998?v=4",
+          "url": "https://github.com/sebastienrousseau",
+          "github_username_matches": true,
+          "created_at": "2012-01-31T16:10:59Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 186843,
+              "login": "sebastienrousseau",
+              "name": "Sebastien Rousseau",
+              "avatar": "https://avatars.githubusercontent.com/u/1394998?v=4",
+              "url": "https://github.com/sebastienrousseau",
+              "github_username_matches": true,
+              "created_at": "2012-01-31T16:10:59Z"
+            },
+            "time": "2026-05-27T22:51:08.150617Z"
+          }
+        ],
+        "checksum": "909764a65f86829ccdb5eea9ab355843aa02c019a7bfd47465092953565caa05",
+        "rust_version": "1.85.0",
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2021",
+        "description": "DEPRECATED — `serde_yml` is unmaintained. This release is a thin compatibility shim that forwards every call to `noyalib` (a pure-Rust, `#![forbid(unsafe_code)]` YAML library). Please migrate to `noyalib`.\n",
+        "homepage": "https://github.com/sebastienrousseau/noyalib",
+        "documentation": "https://docs.rs/serde_yml/",
+        "repository": "https://github.com/sebastienrousseau/serde_yml",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "Rust": {
+              "code_lines": 25,
+              "comment_lines": 3,
+              "files": 1
+            }
+          },
+          "total_code_lines": 25,
+          "total_comment_lines": 3
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/serde_yml?include=default_version,downloads"
+}

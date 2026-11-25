@@ -1,0 +1,146 @@
+{
+  "body": {
+    "crate": {
+      "id": "clickhouse",
+      "name": "clickhouse",
+      "updated_at": "2026-10-13T08:26:54.451769Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2017-05-17T22:21:47.894469Z",
+      "downloads": 18200818,
+      "recent_downloads": 6385591,
+      "default_version": "0.15.3",
+      "num_versions": 47,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "Official Rust client for ClickHouse DB",
+      "homepage": "https://clickhouse.com",
+      "documentation": null,
+      "repository": "https://github.com/ClickHouse/clickhouse-rs",
+      "links": {
+        "version_downloads": "/api/v1/crates/clickhouse/downloads",
+        "versions": "/api/v1/crates/clickhouse/versions",
+        "owners": "/api/v1/crates/clickhouse/owners",
+        "owner_team": "/api/v1/crates/clickhouse/owner_team",
+        "owner_user": "/api/v1/crates/clickhouse/owner_user",
+        "reverse_dependencies": "/api/v1/crates/clickhouse/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 3481959,
+        "crate": "clickhouse",
+        "num": "0.15.3",
+        "dl_path": "/api/v1/crates/clickhouse/0.15.3/download",
+        "readme_path": "/api/v1/crates/clickhouse/0.15.3/readme",
+        "updated_at": "2026-10-13T08:26:54.451769Z",
+        "created_at": "2026-10-13T08:26:54.451769Z",
+        "downloads": 412062,
+        "features": {
+          "chrono": ["dep:chrono"],
+          "default": ["lz4"],
+          "futures03": [],
+          "inserter": ["dep:quanta"],
+          "lz4": ["dep:lz4_flex", "dep:cityhash-rs", "dep:twox-hash"],
+          "native-tls": ["dep:hyper-tls"],
+          "opentelemetry": ["dep:opentelemetry", "dep:opentelemetry-http"],
+          "rustls-tls": ["rustls-tls-aws-lc", "rustls-tls-webpki-roots"],
+          "rustls-tls-aws-lc": [
+            "dep:rustls",
+            "dep:hyper-rustls",
+            "hyper-rustls?/aws-lc-rs"
+          ],
+          "rustls-tls-native-roots": [
+            "dep:rustls",
+            "dep:hyper-rustls",
+            "hyper-rustls?/native-tokio"
+          ],
+          "rustls-tls-ring": [
+            "dep:rustls",
+            "dep:hyper-rustls",
+            "hyper-rustls?/ring"
+          ],
+          "rustls-tls-webpki-roots": [
+            "dep:rustls",
+            "dep:hyper-rustls",
+            "hyper-rustls?/webpki-tokio"
+          ],
+          "test-util": ["hyper/server"],
+          "time": ["dep:time"],
+          "uuid": ["dep:uuid"],
+          "zstd": ["dep:zstd", "dep:cityhash-rs"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT OR Apache-2.0",
+        "links": {
+          "dependencies": "/api/v1/crates/clickhouse/0.15.3/dependencies",
+          "version_downloads": "/api/v1/crates/clickhouse/0.15.3/downloads",
+          "authors": "/api/v1/crates/clickhouse/0.15.3/authors"
+        },
+        "crate_size": 750227,
+        "published_by": {
+          "id": 127,
+          "login": "abonander",
+          "name": "Austin Bonander",
+          "avatar": "https://avatars.githubusercontent.com/u/3198595?v=4",
+          "url": "https://github.com/abonander",
+          "github_username_matches": true,
+          "created_at": "2013-01-06T12:59:48Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 127,
+              "login": "abonander",
+              "name": "Austin Bonander",
+              "avatar": "https://avatars.githubusercontent.com/u/3198595?v=4",
+              "url": "https://github.com/abonander",
+              "github_username_matches": true,
+              "created_at": "2013-01-06T12:59:48Z"
+            },
+            "time": "2026-10-13T08:26:54.451769Z"
+          }
+        ],
+        "checksum": "d6ad2112cf4ad543ceed12e48b779e82e8f3a8172374cac98d59e59feda35c69",
+        "rust_version": "1.89.0",
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2024",
+        "description": "Official Rust client for ClickHouse DB",
+        "homepage": "https://clickhouse.com",
+        "documentation": null,
+        "repository": "https://github.com/ClickHouse/clickhouse-rs",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "MDX": {
+              "code_lines": 0,
+              "comment_lines": 430,
+              "files": 1
+            },
+            "Rust": {
+              "code_lines": 13690,
+              "comment_lines": 616,
+              "files": 50
+            }
+          },
+          "total_code_lines": 13690,
+          "total_comment_lines": 1046
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/clickhouse?include=default_version,downloads"
+}

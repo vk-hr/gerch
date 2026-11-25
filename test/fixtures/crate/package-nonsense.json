@@ -1,0 +1,11 @@
+{
+  "body": {
+    "errors": [
+      {
+        "detail": "crate `gerch-no-such-package-q7x2` does not exist"
+      }
+    ]
+  },
+  "status": 404,
+  "url": "https://crates.io/api/v1/crates/gerch-no-such-package-q7x2?include=default_version,downloads"
+}

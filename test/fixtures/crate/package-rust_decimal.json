@@ -1,0 +1,155 @@
+{
+  "body": {
+    "crate": {
+      "id": "rust_decimal",
+      "name": "rust_decimal",
+      "updated_at": "2026-09-02T00:43:11.457502Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2016-11-16T16:31:13.547828Z",
+      "downloads": 183144774,
+      "recent_downloads": 47073684,
+      "default_version": "1.43.0",
+      "num_versions": 107,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "Decimal number implementation written in pure Rust suitable for financial and fixed-precision calculations.",
+      "homepage": null,
+      "documentation": "https://docs.rs/rust_decimal/",
+      "repository": "https://github.com/paupino/rust-decimal",
+      "links": {
+        "version_downloads": "/api/v1/crates/rust_decimal/downloads",
+        "versions": "/api/v1/crates/rust_decimal/versions",
+        "owners": "/api/v1/crates/rust_decimal/owners",
+        "owner_team": "/api/v1/crates/rust_decimal/owner_team",
+        "owner_user": "/api/v1/crates/rust_decimal/owner_user",
+        "reverse_dependencies": "/api/v1/crates/rust_decimal/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 3130714,
+        "crate": "rust_decimal",
+        "num": "1.43.0",
+        "dl_path": "/api/v1/crates/rust_decimal/1.43.0/download",
+        "readme_path": "/api/v1/crates/rust_decimal/1.43.0/readme",
+        "updated_at": "2026-09-02T00:43:11.457502Z",
+        "created_at": "2026-09-02T00:43:11.457502Z",
+        "downloads": 15743562,
+        "features": {
+          "align16": [],
+          "borsh": ["dep:borsh", "std"],
+          "bytemuck": ["c-repr", "dep:bytemuck", "dep:bytemuck_derive"],
+          "c-repr": [],
+          "db-diesel-mysql": ["diesel/mysql_backend", "std"],
+          "db-diesel-postgres": ["diesel/postgres_backend", "std"],
+          "db-diesel2-mysql": ["db-diesel-mysql"],
+          "db-diesel2-postgres": ["db-diesel-postgres"],
+          "db-postgres": ["dep:bytes", "dep:postgres-types", "std"],
+          "db-tokio-postgres": ["dep:bytes", "dep:postgres-types", "std"],
+          "default": ["serde", "std"],
+          "legacy-ops": [],
+          "macros": ["dep:rust_decimal_macros"],
+          "maths": [],
+          "maths-nopanic": ["maths"],
+          "ndarray": ["dep:ndarray"],
+          "proptest": ["dep:proptest"],
+          "rand": ["dep:rand"],
+          "rand-0_9": ["dep:rand-0_9"],
+          "rocket-traits": ["dep:rocket", "std"],
+          "rust-fuzz": ["dep:arbitrary"],
+          "serde": ["dep:serde", "wasm-bindgen?/serde"],
+          "serde-arbitrary-precision": ["serde-with-arbitrary-precision"],
+          "serde-bincode": ["serde-str"],
+          "serde-float": ["serde-with-float"],
+          "serde-str": ["serde-with-str"],
+          "serde-with-arbitrary-precision": [
+            "serde",
+            "serde_json/arbitrary_precision",
+            "serde_json/std",
+            "zmij"
+          ],
+          "serde-with-float": ["serde"],
+          "serde-with-str": ["serde"],
+          "std": [
+            "arrayvec/std",
+            "wasm-bindgen?/std",
+            "borsh?/std",
+            "bytes?/std",
+            "rand?/std",
+            "rand-0_9?/std",
+            "serde?/std",
+            "serde_json?/std"
+          ],
+          "tokio-pg": ["db-tokio-postgres"],
+          "wasm": ["dep:wasm-bindgen"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT",
+        "links": {
+          "dependencies": "/api/v1/crates/rust_decimal/1.43.0/dependencies",
+          "version_downloads": "/api/v1/crates/rust_decimal/1.43.0/downloads",
+          "authors": "/api/v1/crates/rust_decimal/1.43.0/authors"
+        },
+        "crate_size": 170178,
+        "published_by": {
+          "id": 5326,
+          "login": "paupino",
+          "name": "Paul Mason",
+          "avatar": "https://avatars.githubusercontent.com/u/868420?v=4",
+          "url": "https://github.com/paupino",
+          "github_username_matches": true,
+          "created_at": "2011-06-22T20:50:27Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 5326,
+              "login": "paupino",
+              "name": "Paul Mason",
+              "avatar": "https://avatars.githubusercontent.com/u/868420?v=4",
+              "url": "https://github.com/paupino",
+              "github_username_matches": true,
+              "created_at": "2011-06-22T20:50:27Z"
+            },
+            "time": "2026-09-02T00:43:11.457502Z"
+          }
+        ],
+        "checksum": "7653272e75dcac41dc199fbea6f5797633994fafd339943c06c9af16bf29cd3a",
+        "rust_version": "1.67.1",
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2021",
+        "description": "Decimal number implementation written in pure Rust suitable for financial and fixed-precision calculations.",
+        "homepage": null,
+        "documentation": "https://docs.rs/rust_decimal/",
+        "repository": "https://github.com/paupino/rust-decimal",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "Rust": {
+              "code_lines": 9008,
+              "comment_lines": 998,
+              "files": 31
+            }
+          },
+          "total_code_lines": 9008,
+          "total_comment_lines": 998
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/rust_decimal?include=default_version,downloads"
+}
