@@ -1,19 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { Button } from "@/components/ui/button"
 
-export const Route = createFileRoute("/")({ component: App })
+import { CopiedProvider } from "@/components/search/copied-provider.tsx"
+import { SearchPage } from "@/components/search/search-page.tsx"
+import { startSearch } from "@/lib/search.ts"
+import { parseQuery } from "@/shared/query.ts"
+import { isAvailable } from "@/shared/registry.ts"
 
-function App() {
+export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search.q === "string" ? search.q : "",
+  }),
+  loaderDeps: ({ search }) => ({ query: search.q }),
+  // Start every registry's search while the page streams; each section
+  // suspends on its own query, so the slowest registry never blocks the rest.
+  loader: ({ context, deps }) => {
+    const { registries, text } = parseQuery(deps.query)
+    if (text === "") {
+      return
+    }
+    for (const registry of registries.filter((candidate) =>
+      isAvailable(candidate)
+    )) {
+      void startSearch(context.queryClient, registry, text)
+    }
+  },
+  component: SearchRoute,
+})
+
+function SearchRoute() {
+  const { q: query } = Route.useSearch()
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-      </div>
-    </div>
+    <CopiedProvider>
+      <SearchPage query={query} />
+    </CopiedProvider>
   )
 }

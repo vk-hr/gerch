@@ -123,6 +123,7 @@ Rules were turned off only for these reasons:
 | Contradicts another enabled rule       | `unicorn/no-array-reduce` (vs `eslint/no-await-in-loop`: no allowed way to run async steps in order); `typescript/require-await` (same as `eslint/require-await`); `vitest/no-hooks` (vs `vitest/require-hook`); `vitest/prefer-describe-function-title` (vs `vitest/valid-title` and the `bun:test` types); `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`) |
 | Contradicts a directive                | `vitest/no-importing-vitest-globals` (test files keep their `vitest` imports); `vitest/require-test-timeout` (no per-test timeouts)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Doesn't fit the stack                  | `react/react-in-jsx-scope` (automatic JSX runtime); `react/forbid-component-props` (Tailwind `className`); `react/jsx-no-literals` (no i18n); `typescript/explicit-function-return-type`, `typescript/explicit-module-boundary-types` (Router and Query rely on inferred types); `typescript/prefer-readonly-parameter-types` (library prop types aren't deep-readonly); `unicorn/text-encoding-identifier-case` (HTML `charSet` must be `utf-8`)                                                                                                                                    |
+| React Compiler does it (D10)           | `react-perf/jsx-no-new-function-as-prop`, `jsx-no-new-object-as-prop`, `jsx-no-new-array-as-prop`, `jsx-no-jsx-as-prop` (they ask for hand-written `useCallback` and `useMemo` on every prop; the directive's React Compiler memoizes them, and step 7 adds it)                                                                                                                                                                                                                                                                                                                      |
 | Template had it off                    | `eslint/sort-keys`, `eslint/sort-imports`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 Configured rather than turned off: `no-console` (allows `console.error` and
@@ -131,7 +132,7 @@ allowed), `one-var` (`never`), `no-use-before-define` (hoisted functions
 allowed), `no-magic-numbers` (ignores -1, 0, 1), `jsx-max-depth` (5),
 `jsx-filename-extension` (`.tsx`), `capitalized-comments` (consecutive lines
 allowed), `no-duplicate-imports` (separate `import type` allowed),
-`vitest/consistent-test-it` (`test`). Scoped overrides: `scripts/**`
+`vitest/consistent-test-it` (`test`), `id-length` (allows `q`, the search URL parameter), `no-void` (allowed as a statement: the way `no-floating-promises` accepts a promise an event handler starts and doesn't wait for). Scoped overrides: `scripts/**`
 (console, `process.exit`, sync calls, top-level await, `process.env`), `*.config.ts`
 (default export), `src/components/ui/**` (shadcn prop spreading and variant
 exports), `src/routes/**` (`only-export-components`; the Start plugin handles
@@ -139,7 +140,7 @@ route HMR), tests (magic numbers, parent imports, function length and statement 
 `no-confusing-void-expression`, which `bun:test`'s `void`-typed `.resolves`
 matchers trip); the vitest plugin runs on test files only, `test/fixtures/**`
 (`require-hook`), `*.d.ts` (`import/unambiguous`), `src/server/env.ts` (the one place that
-reads `process.env`), `test/setup/**` (the preload reads `GERCH_LIVE`).
+reads `process.env`), `playwright.config.ts` (reads `CI` to pick the browser), `test/setup/**` (the preload reads `GERCH_LIVE`).
 
 `typescript/ban-ts-comment` bans `@ts-expect-error`, `@ts-ignore` and
 `@ts-nocheck` outright (the template allowed `@ts-expect-error`).
@@ -472,3 +473,26 @@ Decided 2026-11-24, at your request.
   same columns.
 - `drizzle/` and `drizzle.config.ts` rerun every test, because tests read the
   migrations from disk, which `bun test --changed` can't see.
+
+### D23. Arrow keys and streamed results: implemented in step 4
+
+- Arrow keys move focus through result cards. They are list navigation, so
+  their TanStack Hotkeys registrations target `<main>` and act only while
+  focus is in the search box or a card. `/`, Mod+K, Escape and Alt+C listen
+  on the document.
+- A direct link streams each registry's results inside a Suspense boundary.
+  React's streaming runtime (`$RC` in `react-dom/server`, React 19.3) parks a
+  finished boundary in `<div hidden id="S:…">` and, once the page has painted,
+  reveals it at most every 300 ms (`$RT + 300 - now`), so boundaries that
+  finish close together appear in one batch. Measured with the replay
+  fixtures: results in the DOM by 104 ms, revealed at 326–347 ms.
+- During that window the skeleton is on screen and ArrowDown has nothing
+  visible to focus, so it does nothing. That is the expected behavior, not a
+  lost key. The end-to-end flow waits for the first card to be visible before
+  pressing ArrowDown, as a user would. It first failed 5 of 5 by pressing
+  right after hydration.
+- Every search failure is data: the server function returns `{ ok: false }`,
+  and a request that never reaches the server (offline, a deploy in
+  progress) becomes the same result in the query function. So each section
+  shows its own error and Retry without an error boundary, and a failure is
+  stale at once, so revisiting it searches again.

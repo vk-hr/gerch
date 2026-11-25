@@ -1,7 +1,7 @@
 import { isRegistry } from "@/shared/registry.ts"
 import type { Registry, SearchResponse } from "@/shared/registry.ts"
 
-import type { Cache, CachePolicy } from "./cache.ts"
+import type { Cache, CachePolicy, CacheState } from "./cache.ts"
 import type { RegistryAdapter } from "./registries/types.ts"
 import { packageSummariesSchema } from "./schema.ts"
 
@@ -23,20 +23,16 @@ interface SearchDeps {
   cache: Cache
 }
 
+type SearchOutcome =
+  | { ok: true; state: CacheState; body: SearchResponse }
+  | { ok: false; status: number; message: string }
+
 type Parsed =
   | { ok: true; registry: Registry; query: string; adapter: RegistryAdapter }
   | { ok: false; message: string }
 
-function errorResponse(status: number, message: string): Response {
-  return Response.json(
-    { error: message },
-    { headers: { "cache-control": "no-store" }, status }
-  )
-}
-
-function parse(url: URL, deps: SearchDeps): Parsed {
-  const registry = url.searchParams.get("registry") ?? ""
-  const query = (url.searchParams.get("q") ?? "").trim().toLowerCase()
+function parse(registry: string, rawQuery: string, deps: SearchDeps): Parsed {
+  const query = rawQuery.trim().toLowerCase()
   if (!isRegistry(registry)) {
     return { message: "registry must be one of npm, crate, nix", ok: false }
   }
@@ -50,10 +46,16 @@ function parse(url: URL, deps: SearchDeps): Parsed {
   return { adapter, ok: true, query, registry }
 }
 
-async function handleSearch(url: URL, deps: SearchDeps): Promise<Response> {
-  const parsed = parse(url, deps)
+// One registry search through the shared cache. /api/search and the app's
+// server function both call this, so they return the same results.
+async function runSearch(
+  deps: SearchDeps,
+  registryInput: string,
+  rawQuery: string
+): Promise<SearchOutcome> {
+  const parsed = parse(registryInput, rawQuery, deps)
   if (!parsed.ok) {
-    return errorResponse(BAD_REQUEST, parsed.message)
+    return { message: parsed.message, ok: false, status: BAD_REQUEST }
   }
   const { adapter, query, registry } = parsed
   try {
@@ -63,14 +65,36 @@ async function handleSearch(url: URL, deps: SearchDeps): Promise<Response> {
       parse: (value) => packageSummariesSchema.parse(value),
       policy: SEARCH_POLICY,
     })
-    const body: SearchResponse = { query, registry, results: found.value }
-    return Response.json(body, {
-      headers: { "cache-control": CDN_CACHE, "x-gerch-cache": found.state },
-    })
+    return {
+      body: { query, registry, results: found.value },
+      ok: true,
+      state: found.state,
+    }
   } catch {
-    return errorResponse(BAD_GATEWAY, `${registry} is unavailable`)
+    return {
+      message: `${registry} is unavailable`,
+      ok: false,
+      status: BAD_GATEWAY,
+    }
   }
 }
 
-export { handleSearch }
-export type { SearchDeps }
+async function handleSearch(url: URL, deps: SearchDeps): Promise<Response> {
+  const outcome = await runSearch(
+    deps,
+    url.searchParams.get("registry") ?? "",
+    url.searchParams.get("q") ?? ""
+  )
+  if (!outcome.ok) {
+    return Response.json(
+      { error: outcome.message },
+      { headers: { "cache-control": "no-store" }, status: outcome.status }
+    )
+  }
+  return Response.json(outcome.body, {
+    headers: { "cache-control": CDN_CACHE, "x-gerch-cache": outcome.state },
+  })
+}
+
+export { CDN_CACHE, handleSearch, runSearch }
+export type { SearchDeps, SearchOutcome }

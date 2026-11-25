@@ -25,9 +25,22 @@ interface SearchResponse {
   results: PackageSummary[]
 }
 
+// Registries the server can search today; the rest show "coming soon".
+const AVAILABLE_REGISTRIES: ReadonlySet<Registry> = new Set(["npm"])
+
+const REGISTRY_LABELS: Record<Registry, string> = {
+  crate: "crates.io",
+  nix: "nixpkgs",
+  npm: "npm",
+}
+
+function isAvailable(registry: Registry): boolean {
+  return AVAILABLE_REGISTRIES.has(registry)
+}
+
 function isRegistry(value: string): value is Registry {
   return REGISTRIES.some((registry) => registry === value)
 }
 
-export { isRegistry, REGISTRIES }
+export { isAvailable, isRegistry, REGISTRIES, REGISTRY_LABELS }
 export type { PackageSummary, Registry, SearchResponse }

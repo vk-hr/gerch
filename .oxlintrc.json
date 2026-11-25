@@ -200,6 +200,22 @@
       {
         "allow": ["error", "warn"]
       }
+    ],
+    "eslint/id-length": [
+      "error",
+      {
+        "exceptions": ["q"]
+      }
+    ],
+    "react-perf/jsx-no-new-function-as-prop": "off",
+    "react-perf/jsx-no-new-object-as-prop": "off",
+    "react-perf/jsx-no-new-array-as-prop": "off",
+    "react-perf/jsx-no-jsx-as-prop": "off",
+    "eslint/no-void": [
+      "error",
+      {
+        "allowAsStatement": true
+      }
     ]
   },
   "ignorePatterns": ["src/routeTree.gen.ts"],
@@ -279,6 +295,12 @@
       "rules": {
         "node/no-process-env": "off",
         "import/unambiguous": "off"
+      }
+    },
+    {
+      "files": ["playwright.config.ts"],
+      "rules": {
+        "node/no-process-env": "off"
       }
     }
   ]

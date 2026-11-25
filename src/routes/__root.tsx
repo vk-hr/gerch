@@ -1,44 +1,41 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
+import type { QueryClient } from "@tanstack/react-query"
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from "@tanstack/react-router"
+import type { ReactNode } from "react"
 
+import { NotFound } from "@/components/not-found.tsx"
 import appCss from "@/styles.css?url"
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "gerch",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  notFoundComponent: () => (
-    <main className="container mx-auto p-4 pt-16">
-      <h1>404</h1>
-      <p>The requested page could not be found.</p>
-    </main>
-  ),
-  shellComponent: RootDocument,
-})
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    head: () => ({
+      links: [{ href: appCss, rel: "stylesheet" }],
+      meta: [
+        { charSet: "utf-8" },
+        { content: "width=device-width, initial-scale=1", name: "viewport" },
+        { title: "gerch" },
+        {
+          content:
+            "One keyboard-first search across npm, crates.io and nixpkgs.",
+          name: "description",
+        },
+      ],
+    }),
+    notFoundComponent: NotFound,
+    shellComponent: RootDocument,
+  }
+)
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="min-h-svh antialiased">
         {children}
         <Scripts />
       </body>
