@@ -1,10 +1,14 @@
-import { useHotkey } from "@tanstack/react-hotkeys"
+import { useHotkey, useHotkeys } from "@tanstack/react-hotkeys"
 import type { RefObject } from "react"
 
 import { HOTKEYS } from "@/hotkeys.ts"
 
 import { useCopied } from "./copied-context.ts"
-import { focusedPackage, focusedResult } from "./focused-result.ts"
+import {
+  focusedPackage,
+  focusedResult,
+  focusInDialog,
+} from "./focused-result.ts"
 
 // Moves focus through result cards in page order; up from the first card
 // returns to the search box.
@@ -48,21 +52,24 @@ function useSearchHotkeys(
   // Arrow keys are list navigation: they act only inside <main>, from the
   // search box or a card (docs/decisions.md D23).
   const inList = { ignoreInputs: false, target: list } as const
-  useHotkey(HOTKEYS.focusSearch.keys, () => searchBox.current?.focus())
-  useHotkey(HOTKEYS.focusSearchMod.keys, () => searchBox.current?.focus())
+  const focusSearch = () => {
+    if (!focusInDialog()) {
+      searchBox.current?.focus()
+    }
+  }
+  useHotkey(HOTKEYS.focusSearch.keys, focusSearch)
+  useHotkey(HOTKEYS.focusSearchMod.keys, focusSearch)
   useHotkey(HOTKEYS.clear.keys, onEscape, inputsToo)
-  useHotkey(
-    HOTKEYS.next.keys,
-    () => {
-      moveFocus(1, searchBox.current)
-    },
-    inList
-  )
-  useHotkey(
-    HOTKEYS.previous.keys,
-    () => {
-      moveFocus(-1, searchBox.current)
-    },
+  const move = (step: 1 | -1) => () => {
+    moveFocus(step, searchBox.current)
+  }
+  useHotkeys(
+    [
+      { callback: move(1), hotkey: HOTKEYS.next.keys },
+      { callback: move(1), hotkey: HOTKEYS.nextAlt.keys },
+      { callback: move(-1), hotkey: HOTKEYS.previous.keys },
+      { callback: move(-1), hotkey: HOTKEYS.previousAlt.keys },
+    ],
     inList
   )
   useHotkey(

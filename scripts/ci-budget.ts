@@ -94,6 +94,22 @@ function env(name: string): string {
   return value
 }
 
+// The job's display name. Matrix jobs share one GITHUB_JOB id, so each
+// shard passes its own name in GERCH_JOB_NAME.
+function jobName(
+  variables: Record<string, string | undefined> = process.env
+): string {
+  const name = variables.GERCH_JOB_NAME
+  if (name !== undefined && name !== "") {
+    return name
+  }
+  const id = variables.GITHUB_JOB
+  if (id === undefined || id === "") {
+    throw new Error("GITHUB_JOB is not set")
+  }
+  return id
+}
+
 async function currentJob(): Promise<ApiJob> {
   const url = `${env("GITHUB_API_URL")}/repos/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}/attempts/${env("GITHUB_RUN_ATTEMPT")}/jobs?per_page=100`
   const response = await fetch(url, {
@@ -103,7 +119,7 @@ async function currentJob(): Promise<ApiJob> {
     throw new Error(`GitHub API ${response.status} for ${url}`)
   }
   const jobs = parseJobs(await response.json())
-  return findJob(jobs, env("GITHUB_JOB"))
+  return findJob(jobs, jobName())
 }
 
 if (import.meta.main) {
@@ -117,7 +133,7 @@ if (import.meta.main) {
     },
     { jobMs: Number(env("GERCH_JOB_BUDGET_MS")), setupMs: 15_000 }
   )
-  const line = `| ${env("GITHUB_JOB")} | ${result.waitingMs} | ${result.setupMs} | ${result.runningMs} | ${result.jobMs} | ${result.failures.join("; ") || "ok"} |`
+  const line = `| ${jobName()} | ${result.waitingMs} | ${result.setupMs} | ${result.runningMs} | ${result.jobMs} | ${result.failures.join("; ") || "ok"} |`
   const summary = `| job | waiting ms (target 5000) | setup ms (budget 15000) | running ms | job ms (budget ${env("GERCH_JOB_BUDGET_MS")}) | result |\n|---|---|---|---|---|---|\n${line}\n`
   await Bun.write(env("GITHUB_STEP_SUMMARY"), summary)
   console.log(summary)
@@ -126,4 +142,4 @@ if (import.meta.main) {
   }
 }
 
-export { evaluate, findJob }
+export { evaluate, findJob, jobName }

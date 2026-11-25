@@ -16,9 +16,11 @@ test("the home page answers without a redirect", async ({ request }) => {
 
 test("Escape clears the query and the URL", async ({ page }) => {
   await interactive(page, "/?q=zod")
-  await page.getByRole("searchbox").focus()
+  await page.getByRole("combobox", { name: "Search packages" }).focus()
   await page.keyboard.press("Escape")
-  await expect(page.getByRole("searchbox")).toHaveValue("")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("")
   await expect(page).toHaveURL(/\/$/u)
 })
 
@@ -32,7 +34,9 @@ test("a direct link renders npm results on the server", async ({
 
   await page.goto("/?q=zod")
   await expect(firstResult(page, "npm").getByRole("heading")).toHaveText("zod")
-  await expect(page.getByRole("searchbox")).toHaveValue("zod")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("zod")
 })
 
 async function typeWithIntermediateSearch(page: Page) {
@@ -48,7 +52,9 @@ test("typing a prefixed query searches only that registry", async ({
 }) => {
   await interactive(page, "/")
   await page.keyboard.press("/")
-  await expect(page.getByRole("searchbox")).toBeFocused()
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toBeFocused()
   const search = page.waitForResponse((response) => {
     const url = new URL(response.url())
     return (
@@ -75,7 +81,7 @@ test("arrow keys move through results and Alt+C copies the install command", asy
   // Streamed results reach the page hidden; React reveals them up to 300 ms
   // later (docs/decisions.md D23). Users press keys once they see results.
   await expect(firstResult(page, "npm")).toBeVisible()
-  await page.getByRole("searchbox").focus()
+  await page.getByRole("combobox", { name: "Search packages" }).focus()
   await page.keyboard.press("ArrowDown")
   await expect(firstResult(page, "npm")).toBeFocused()
   await page.keyboard.press("Alt+C")
@@ -91,7 +97,9 @@ test("a failing registry shows its own error and leaves the page usable", async 
   await page.goto("/?q=npm:no-recorded-fixture")
   const npm = page.getByRole("region", { name: "npm" })
   await expect(npm).toContainText("npm is unavailable")
-  await expect(page.getByRole("searchbox")).toBeEditable()
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toBeEditable()
 })
 
 // Crawlers get the whole page in one response instead of a stream, so the
@@ -112,7 +120,7 @@ test("a search request that never reaches the server can be retried", async ({
 }) => {
   await interactive(page, "/")
   await page.route("**/_serverFn/**", async (route) => route.abort())
-  await page.getByRole("searchbox").fill("npm:zod")
+  await page.getByRole("combobox", { name: "Search packages" }).fill("npm:zod")
   const npm = page.getByRole("region", { name: "npm" })
   await expect(npm).toContainText("npm is unavailable")
   await page.unroute("**/_serverFn/**")

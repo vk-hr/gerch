@@ -2,7 +2,6 @@ import { createFileRoute, notFound } from "@tanstack/react-router"
 
 import { PackageMissing } from "@/components/package/package-missing.tsx"
 import { PackagePage } from "@/components/package/package-page.tsx"
-import { CopiedProvider } from "@/components/search/copied-provider.tsx"
 import { packageQuery } from "@/lib/package.ts"
 import { isAvailable, isRegistry } from "@/shared/registry.ts"
 
@@ -34,11 +33,7 @@ export const Route = createFileRoute("/p/$registry/$name")({
 
 function PackageRoute() {
   const { name, registry } = Route.useParams()
-  return (
-    <CopiedProvider>
-      {isRegistry(registry) ? (
-        <PackagePage name={name} registry={registry} />
-      ) : null}
-    </CopiedProvider>
-  )
+  return isRegistry(registry) ? (
+    <PackagePage name={name} registry={registry} />
+  ) : null
 }

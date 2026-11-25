@@ -7,6 +7,9 @@ import {
 import type { ReactNode } from "react"
 
 import { NotFound } from "@/components/not-found.tsx"
+import { CopiedProvider } from "@/components/search/copied-provider.tsx"
+import { WorkspaceDialogs } from "@/components/workspaces/workspace-dialogs.tsx"
+import { ShortcutList } from "@/components/shortcuts/shortcut-list.tsx"
 import { TabStrip } from "@/components/tabs/tab-strip.tsx"
 import appCss from "@/styles.css?url"
 
@@ -37,8 +40,12 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="min-h-svh antialiased">
-        <TabStrip />
-        {children}
+        <CopiedProvider>
+          <TabStrip />
+          <WorkspaceDialogs />
+          <ShortcutList />
+          {children}
+        </CopiedProvider>
         <Scripts />
       </body>
     </html>

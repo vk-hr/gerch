@@ -1,35 +1,41 @@
-import { Search } from "lucide-react"
-import type { Ref } from "react"
+import type { RefObject } from "react"
 
+import { SuggestionList } from "@/components/suggestions/suggestion-list.tsx"
+import { useCombobox } from "@/components/suggestions/use-combobox.ts"
+import { useSearchHistory } from "@/components/suggestions/use-search-history.ts"
+import { useSuggestions } from "@/components/suggestions/use-suggestions.ts"
+import { splitPrefix } from "@/shared/query.ts"
+
+import { SearchField } from "./search-field.tsx"
+
+// The search input, a combobox over suggestions. A recognized prefix shows
+// as a chip; `value` stays the raw query, prefix included (e.g. "npm:zod").
 function SearchBox({
   onChange,
   ref,
   value,
 }: {
   onChange: (value: string) => void
-  ref: Ref<HTMLInputElement>
+  ref: RefObject<HTMLInputElement | null>
   value: string
 }) {
+  const { prefix, rest } = splitPrefix(value)
+  const suggestions = useSuggestions(value)
+  const combobox = useCombobox(ref, suggestions, onChange)
+  useSearchHistory()
   return (
-    <label className="relative flex-1">
-      <span className="sr-only">Search packages</span>
-      <Search
-        aria-hidden
-        className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+    <div className="relative flex-1">
+      <SearchField
+        box={ref}
+        combobox={combobox}
+        onChange={onChange}
+        prefix={prefix}
+        rest={rest}
       />
-      <input
-        autoComplete="off"
-        className="h-10 w-full rounded-xl border border-input bg-background pr-3 pl-9 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
-        onChange={(event) => {
-          onChange(event.target.value)
-        }}
-        placeholder="Search npm, crates.io, nixpkgs — npm:zod, crate:serde, nix:ripgrep"
-        ref={ref}
-        spellCheck={false}
-        type="search"
-        value={value}
-      />
-    </label>
+      {combobox.shown ? (
+        <SuggestionList combobox={combobox} suggestions={suggestions} />
+      ) : null}
+    </div>
   )
 }
 

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { parseQuery } from "@/shared/query.ts"
+import { joinPrefix, parseQuery, splitPrefix } from "@/shared/query.ts"
 import type { ParsedQuery } from "@/shared/query.ts"
 
 const all = ["npm", "crate", "nix"] as const
@@ -30,5 +30,31 @@ describe("parseQuery()", () => {
   test.each(cases)("%j", (input, expected) => {
     expect.hasAssertions()
     expect(parseQuery(input)).toStrictEqual(expected)
+  })
+})
+
+describe("splitPrefix()", () => {
+  test.each([
+    ["npm:zod", { prefix: "npm", rest: "zod" }],
+    ["NPM:react query ", { prefix: "npm", rest: "react query " }],
+    ["npm:", { prefix: "npm", rest: "" }],
+    ["  crate:serde", { prefix: "crate", rest: "serde" }],
+    ["pypi:requests", { prefix: null, rest: "pypi:requests" }],
+    ["zod ", { prefix: null, rest: "zod " }],
+  ] as const)("%j", (input, expected) => {
+    expect.hasAssertions()
+    expect(splitPrefix(input)).toStrictEqual(expected)
+  })
+})
+
+describe("joinPrefix()", () => {
+  test.each([
+    [null, "zod", "zod"],
+    ["npm", "zod", "npm:zod"],
+    ["npm", "", "npm:"],
+    ["npm", "crate:serde", "crate:serde"],
+  ] as const)("%s + %j", (prefix, rest, expected) => {
+    expect.hasAssertions()
+    expect(joinPrefix(prefix, rest)).toBe(expected)
   })
 })

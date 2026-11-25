@@ -20,6 +20,7 @@ export default defineConfig({
     // Playwright's Chromium (PLAYWRIGHT_BROWSERS_PATH).
     channel: process.env.CI === undefined ? undefined : "chrome",
   },
+  workers: process.env.CI === undefined ? undefined : "100%",
   webServer: {
     command: "bun run build && bun .output/server/index.mjs",
     env: { GERCH_REPLAY_DIR: "test/fixtures", PORT: String(PORT) },
