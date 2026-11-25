@@ -323,9 +323,15 @@
       }
     },
     {
-      "files": ["playwright.config.ts"],
+      "files": ["playwright.config.ts", "vite.config.ts"],
       "rules": {
         "node/no-process-env": "off"
+      }
+    },
+    {
+      "files": ["vite.config.ts"],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off"
       }
     }
   ]

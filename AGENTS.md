@@ -17,6 +17,7 @@ lacks `bun lint`, `bun fmt` and `bun check`.
 | Dev server                 | `bun run dev`                                   |
 | Build                      | `bun run build`                                 |
 | Byte budgets (after build) | `bun scripts/check-budgets.ts`                  |
+| Build with Redact          | `GERCH_RENDERER=redact bun run build`           |
 | End-to-end flows           | `bun x playwright test`                         |
 | Check the Bun pin          | `bun run check-bun`                             |
 | Live smoke test            | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
