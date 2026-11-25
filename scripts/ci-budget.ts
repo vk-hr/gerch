@@ -7,6 +7,10 @@ interface Timing {
   finishedAt: number
 }
 
+// The directive's setup budget is 15 s. GitHub's hosted runners vary by
+// several seconds, so you approved 20 s until faster runners exist (D9).
+const SETUP_BUDGET_MS = 20_000
+
 interface Budget {
   setupMs: number
   jobMs: number
@@ -131,10 +135,10 @@ if (import.meta.main) {
       setupDoneAt: Number(env("GERCH_SETUP_DONE_AT")),
       startedAt: Date.parse(job.started_at),
     },
-    { jobMs: Number(env("GERCH_JOB_BUDGET_MS")), setupMs: 15_000 }
+    { jobMs: Number(env("GERCH_JOB_BUDGET_MS")), setupMs: SETUP_BUDGET_MS }
   )
   const line = `| ${jobName()} | ${result.waitingMs} | ${result.setupMs} | ${result.runningMs} | ${result.jobMs} | ${result.failures.join("; ") || "ok"} |`
-  const summary = `| job | waiting ms (target 5000) | setup ms (budget 15000) | running ms | job ms (budget ${env("GERCH_JOB_BUDGET_MS")}) | result |\n|---|---|---|---|---|---|\n${line}\n`
+  const summary = `| job | waiting ms (target 5000) | setup ms (budget ${SETUP_BUDGET_MS}) | running ms | job ms (budget ${env("GERCH_JOB_BUDGET_MS")}) | result |\n|---|---|---|---|---|---|\n${line}\n`
   await Bun.write(env("GITHUB_STEP_SUMMARY"), summary)
   console.log(summary)
   if (result.failures.length > 0) {

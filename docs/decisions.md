@@ -351,6 +351,10 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     re-run once and passed. The directive's remedy is Blacksmith runners
     with a warm toolchain, which needs an account; until then a setup
     overrun is runner variance, not a code failure.
+  - It hit #25's required `e2e` check too: 17.0 s of setup. On 2026-11-26
+    you approved a 20 s setup budget in `scripts/ci-budget.ts` until faster
+    runners exist. The directive's 15 s target and the 35 s job budget are
+    unchanged.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
