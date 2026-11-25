@@ -532,3 +532,44 @@ The base holds what all three would otherwise each invent:
   `storage` event.
 - `src/hotkeys.ts`: every shortcut from the spec's keyboard map, so the parts
   register keys without editing the same lines.
+
+### D26. Workspaces and pins: implemented in step 5b
+
+- **Where the view lives.** The pin picker (Alt+P) and the workspace view
+  (Alt+W) are modal dialogs. `WorkspaceDialogs` is mounted once in
+  `src/routes/__root.tsx`, so both keys work on every page. A workspace
+  route would need 5a's tab integration (D24), and dialogs need no URL.
+- **Load on intent.** Each dialog is a `React.lazy` chunk loaded on the
+  first Alt+P or Alt+W. Only the hotkey registrations ship on cold entry.
+  Brotli 11, measured on what `/` and `/?q=zod` request: JS 130,925 →
+  132,843 B, CSS 4,842 → 5,699 B. The dialog chunks add 31,692 B on first
+  use: 29,640 B shared, 652 B picker, 1,400 B view.
+- **Base UI directly, not shadcn files.** shadcn's `dialog` and `combobox`
+  put several components in one file, which `react/no-multi-comp`
+  rejects. Its combobox is also a popover. Base UI's `Combobox` in
+  `inline` mode is its documented pattern inside a `Dialog`. The
+  components in `src/components/workspaces/` use base-luma's classes and
+  tokens.
+- **Accessibility.** Both dialogs use the ARIA combobox pattern: a labelled
+  text box (`role="combobox"`) over a `listbox` of `option`s. Typing
+  filters, the arrow keys move, Enter chooses, and Escape closes. The
+  picker offers `Create "<name>"` when no workspace has the typed name
+  exactly, ignoring case and spaces. Creating a name that exists reuses
+  that workspace.
+- **Pins.** A pin is the same package when both registry and name match.
+  Pinning it again leaves the workspace unchanged, including the snapshot.
+- **Freshest card.** A pin shows the newest cached search result for its
+  package (by `dataUpdatedAt`) and falls back to the pin's snapshot. `Pin`
+  has no pin time (D24), so a cached result whose `releasedAt` is older
+  than the snapshot's loses to the snapshot. This matters once 5c restores
+  old caches from IndexedDB.
+- **Focus.** Closing a dialog returns focus to where it was when the first
+  dialog opened, such as the pinned card. `WorkspaceDialogs` does this
+  after the dialog unmounts, with `finalFocus={false}` on the popup. Base
+  UI's own return doesn't run when the dialog unmounts on close; the
+  end-to-end flows first failed 3 of 5 on it.
+- **Lint.** `react(todo)` (React Compiler can't compile `??=`),
+  `typescript/prefer-nullish-coalescing` and
+  `eslint/logical-assignment-operators` together reject every
+  "assign if null" form. The code keeps the return target in state through
+  a pure updater instead. No rule changed.
