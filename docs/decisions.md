@@ -327,6 +327,15 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     (`restore-keys`). When its Bun canary matches the pin, `bun ci`
     installs only the difference; otherwise setup downloads the canary as
     before.
+  - Setup still went over 15 s on cache hits when many runs overlapped:
+    21.4 s, 20.7 s and 15.5 s on #16, #22 and #18. GitHub's cache served
+    the 140 MB `node_modules` archive at 12–190 MB/s. The Bun canary is
+    75 MB of it, compressed. The cache now leaves out `node_modules/bun`
+    and `node_modules/@oven`, which brings it to about 65 MB. Setup
+    downloads the canary from npm in the background while the cache
+    restores, checks it against `bun.lock`, and puts it first on `PATH`.
+    Changing the cache's paths changes its version, so the first run on
+    this PR and the first push to `main` install from scratch once.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
