@@ -38,7 +38,7 @@ const checks: Check[] = [
     cmd: [
       "sh",
       "-c",
-      `"${bun}" run build && git diff --exit-code -- src/routeTree.gen.ts`,
+      `"${bun}" run build && git diff --exit-code -- src/routeTree.gen.ts && "${bun}" scripts/check-budgets.ts`,
     ],
     name: "build",
   },

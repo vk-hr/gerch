@@ -942,3 +942,32 @@ detection.
     cookie, ignoring the router's render timestamps.
 - **Cold entry** grows by 694 B Brotli: 142,523 B on `main`, 143,217 B
   here.
+
+### D31. Byte budgets in CI: implemented in step 7a
+
+- `scripts/check-budgets.ts` runs in `verify`'s build check, so it runs
+  in CI's `build` job and in the pre-push hook. It starts the production
+  build on recorded fixtures with no database. It reads the assets each
+  page's server HTML loads (scripts, module preloads, stylesheets), counts
+  each once per page, and compresses each with Brotli 11.
+- Pages: `/`, `/?q=zod` and `/p/npm/zod`, one per route template plus a
+  search with results. Budgets, from the performance directive, with
+  1 kB = 1,000 B:
+  - Cold-entry JS: at most 150,000 B per page.
+  - Route-specific JS: at most 50,000 B. This is what a page loads beyond
+    the shell that every measured page shares.
+  - First-view CSS: at most 20,000 B.
+- The server HTML is the measure because it is what a cold entry loads.
+  Start's `manifest.json` lists route chunks but not the preloads the
+  router adds. Lazy dialogs (pin picker, workspaces, shortcuts) aren't in
+  the HTML, so they don't count.
+- On `main` today:
+
+  | Page         | Cold-entry JS | Route-specific JS | CSS     |
+  | ------------ | ------------- | ----------------- | ------- |
+  | `/`          | 142,523 B     | 5,254 B           | 6,130 B |
+  | `/?q=zod`    | 142,523 B     | 5,254 B           | 6,130 B |
+  | `/p/npm/zod` | 138,665 B     | 1,396 B           | 6,130 B |
+
+- Lint: Bun has no Brotli API of its own, so `scripts/**` may import
+  `node:zlib` (`import/no-nodejs-modules` allow-list in `.oxlintrc.json`).
