@@ -8,6 +8,7 @@ import {
   nixIndex,
   nixPackages,
   rateSlots,
+  vitals,
 } from "@/server/db/schema.ts"
 
 // An in-process Postgres with the app's migrations applied.
@@ -23,6 +24,7 @@ async function freshDb() {
       await db.delete(rateSlots)
       await db.delete(nixPackages)
       await db.delete(nixIndex)
+      await db.delete(vitals)
     },
   }
 }

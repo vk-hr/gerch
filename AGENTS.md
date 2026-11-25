@@ -38,8 +38,9 @@ message) and on push (`bun run verify`). Install them with `hk install`.
   nix index and its ingest (`nix/`), and the Drizzle schema and connection
   (`src/server/db/`).
 - `src/shared/`: types and pure helpers shared with the browser (no zod).
-- `src/client/`: browser-only state saved in `localStorage` (tabs,
-  workspaces, pins, history). Read it with `useClientState`.
+- `src/client/`: browser-only code: state saved in `localStorage` (tabs,
+  workspaces, pins, history; read it with `useClientState`), the query
+  persister, and the field vitals reporter (`vitals.ts`).
 - `drizzle/`: generated migrations. Edit the schema, then generate.
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
 - `src/components/search/`: the search page, one component per file.

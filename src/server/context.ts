@@ -3,15 +3,19 @@ import { waitUntil } from "@vercel/functions"
 import { createAdapters } from "./adapters.ts"
 import { createCache, memoryStore, postgresStore } from "./cache.ts"
 import { connect } from "./db/index.ts"
-import { databaseUrl, replayDir } from "./env.ts"
+import { databaseUrl, release, replayDir } from "./env.ts"
 import { nixIndexState } from "./nix/store.ts"
 import type { NixIndexState } from "./nix/store.ts"
 import { replayDirectory } from "./replay.ts"
 import type { SearchDeps } from "./search.ts"
+import { postgresVitals } from "./vitals.ts"
+import type { VitalStore } from "./vitals.ts"
 
 interface ServerContext extends SearchDeps {
   // The nix index's release and age, for /api/health; null without one.
   nixState: () => Promise<NixIndexState | null>
+  // Where /api/vitals keeps samples; null drops them (no database).
+  vitals: { release: string; store: VitalStore | null }
 }
 
 function createContext(): ServerContext {
@@ -32,6 +36,10 @@ function createContext(): ServerContext {
       waitUntil,
     }),
     nixState: async () => (db === undefined ? null : nixIndexState(db)),
+    vitals: {
+      release: release(),
+      store: db === undefined ? null : postgresVitals(db),
+    },
   }
 }
 

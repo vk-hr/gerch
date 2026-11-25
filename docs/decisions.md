@@ -1118,6 +1118,36 @@ detection.
   - `redact()` is typed `any` (its `.d.ts`), so `vite.config.ts` turns off
     `typescript/no-unsafe-type-assertion` to type it as a `PluginOption`.
 
+### D33. Field vitals: implemented in step 7c
+
+- **Browser** (`src/client/vitals.ts`, `src/components/vitals-reporter.tsx`).
+  - After hydration, once the browser is idle, the root loads
+    `web-vitals/attribution` (6.2.3, pinned): a 15 KB raw chunk the server
+    HTML doesn't reference, so it isn't part of a cold entry.
+  - CLS, FCP, INP, LCP and TTFB each go out as one `sendBeacon` to
+    `POST /api/vitals`. The body is a JSON string; Chromium hides `Blob`
+    beacon bodies from Playwright.
+  - A sample names the route template (`/` or `/p/$registry/$name`, from
+    the router's last match), never the URL, which can hold the search
+    text. Pages without a template send nothing.
+  - Cold entry grows by 339 B: 142,634 B to 142,973 B on `/`.
+- **Server** (`src/server/vitals.ts`, table `vitals`).
+  - The body may be at most 4 KB (`413` otherwise). It is validated with
+    zod: metric name, a value of 0 or more, rating, navigation type, and a
+    known route template (`400` otherwise).
+  - Attribution keeps only an allow-list per metric
+    (`src/shared/vitals.ts`): timings, element selectors, interaction type
+    and load state. Strings are capped at 200 characters. URLs and raw
+    performance entries are dropped.
+  - Each row stores the release: the first 7 characters of
+    `VERCEL_GIT_COMMIT_SHA`, or `local`.
+  - Without a database, samples are accepted and dropped (`204`).
+- **Retention.** `scripts/prune-vitals.ts` deletes samples older than 30
+  days. It runs in the scheduled `nix-ingest` workflow, so the table stays
+  small against the 500 MB Supabase Free limit.
+- **Reading the data.** No dashboard yet. Step 7d's report reads
+  `vitals` with SQL, grouped by route, release and metric, at p75.
+
 ### D34. Renderer comparison: Redact ships: implemented in step 7d
 
 Measured on one commit with `scripts/measure-renderers.ts`. It builds each
