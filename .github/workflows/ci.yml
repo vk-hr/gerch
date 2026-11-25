@@ -109,7 +109,16 @@ jobs:
           filter: blob:none
       - uses: ./.github/actions/setup
       - name: end-to-end flows (runner's Google Chrome, recorded fixtures)
-        run: bun x playwright test --shard=${{ matrix.shard }}/4
+        run: bun x playwright test --shard=${{ matrix.shard }}/4 --trace=on --reporter=list,json
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/report.json
+      - name: upload traces (diagnostic, not for merge)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-traces-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 3
       - name: the four shards run every flow once
         if: ${{ !cancelled() }}
         run: bun scripts/check-e2e-shards.ts 4
