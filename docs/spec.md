@@ -24,11 +24,15 @@ Status: phase 0 draft, 2026-11-24. Open choices live in
   refreshes. A client cache persists TanStack Query data, history and pins.
 - Suggestions rank frequently searched entries first.
 - Registries: npm, crates.io, nixpkgs packages.
+- Theme: light or dark, following the system preference, through
+  [`start-theme`](https://github.com/vk-hr/start-theme). It is applied before
+  the first paint and follows a change of system theme live.
 
 ### Later
 
 NixOS and Home Manager options, PyPI, Go modules, Docker Hub, side-by-side
-compare, OpenSearch for the browser address bar.
+compare, OpenSearch for the browser address bar, a manual theme switch (see
+[Theme](#theme)).
 
 ### Non-goals
 
@@ -123,6 +127,21 @@ Client: TanStack Query cache persisted to IndexedDB. Tabs, workspaces, pins
 and search history live in `localStorage`. The server can't read them, so the
 tab strip renders on the client into a reserved-height slot (no layout shift),
 and the server renders the active tab's route from the URL.
+
+### Theme
+
+`ThemeProvider` from `start-theme` wraps the app in the root route with the
+theme fixed to `system`. Its inline bootstrap script resolves
+`prefers-color-scheme` and sets `dark` or `light` on `<html>`, plus
+`color-scheme`, before the first paint. The provider then follows changes of
+the system theme. The styles use shadcn's `.dark` tokens.
+
+The server renders the same HTML for every visitor, because Vercel's CDN
+caches HTML without looking at cookies. A manual switch would keep the choice
+in a cookie that the server reads. A cached page would then carry one
+visitor's theme to everyone, and `Vary: Cookie` makes Vercel skip the cache
+altogether. So the switch waits until the bootstrap script can read the
+cookie in the browser (D29).
 
 ### Suggestions
 
