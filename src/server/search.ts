@@ -23,8 +23,9 @@ interface SearchDeps {
   cache: Cache
 }
 
+// "index": read from gerch's own index, without the shared cache.
 type SearchOutcome =
-  | { ok: true; state: CacheState; body: SearchResponse }
+  | { ok: true; state: CacheState | "index"; body: SearchResponse }
   | { ok: false; status: number; message: string }
 
 type Parsed =
@@ -46,6 +47,31 @@ function parse(registry: string, rawQuery: string, deps: SearchDeps): Parsed {
   return { adapter, ok: true, query, registry }
 }
 
+async function searchThroughCache(
+  deps: SearchDeps,
+  {
+    adapter,
+    query,
+    registry,
+  }: { adapter: RegistryAdapter; query: string; registry: Registry }
+): Promise<SearchOutcome> {
+  if (adapter.localIndex === true) {
+    const results = await adapter.search(query)
+    return { body: { query, registry, results }, ok: true, state: "index" }
+  }
+  const found = await deps.cache.get({
+    key: `search:${registry}:${query}`,
+    load: async () => adapter.search(query),
+    parse: (value) => packageSummariesSchema.parse(value),
+    policy: SEARCH_POLICY,
+  })
+  return {
+    body: { query, registry, results: found.value },
+    ok: true,
+    state: found.state,
+  }
+}
+
 // One registry search through the shared cache. /api/search and the app's
 // server function both call this, so they return the same results.
 async function runSearch(
@@ -57,22 +83,11 @@ async function runSearch(
   if (!parsed.ok) {
     return { message: parsed.message, ok: false, status: BAD_REQUEST }
   }
-  const { adapter, query, registry } = parsed
   try {
-    const found = await deps.cache.get({
-      key: `search:${registry}:${query}`,
-      load: async () => adapter.search(query),
-      parse: (value) => packageSummariesSchema.parse(value),
-      policy: SEARCH_POLICY,
-    })
-    return {
-      body: { query, registry, results: found.value },
-      ok: true,
-      state: found.state,
-    }
+    return await searchThroughCache(deps, parsed)
   } catch {
     return {
-      message: `${registry} is unavailable`,
+      message: `${parsed.registry} is unavailable`,
       ok: false,
       status: BAD_GATEWAY,
     }

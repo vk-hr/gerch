@@ -3,6 +3,7 @@
 // `bun run record-fixtures npm`, or `bun run record-fixtures crate package-` to
 // record only the fixtures whose names start with that prefix.
 import { USER_AGENT } from "@/server/http.ts"
+import { CHANNEL_URL, nixDumpSchema } from "@/server/nix/dump.ts"
 
 const FIRST_ARG = 2
 const JSON_INDENT = 2
@@ -55,6 +56,61 @@ const requests: Record<string, Record<string, string>> = {
     "package-rust_decimal":
       "https://crates.io/api/v1/crates/rust_decimal?include=default_version,downloads",
   },
+  nix: { "channel-dump": CHANNEL_URL },
+}
+
+// The nixpkgs dump is 10.6 MB of Brotli (418 MB of JSON). The fixture keeps
+// these real entries, with only the fields gerch reads.
+const NIX_SAMPLE = [
+  "_1password-cli",
+  "appimage-run",
+  "emacsPackages.projectile-ripgrep",
+  "emacsPackages.ripgrep",
+  "firefox",
+  "gitit",
+  "hello",
+  "libserdes",
+  "nodejs_22",
+  "osmctools",
+  "python313Packages.requests",
+  "python313Packages.zodb",
+  "python314Packages.requests",
+  "ripgrep",
+  "ripgrep-all",
+  "rustc",
+  "vimPlugins.blink-ripgrep-nvim",
+  "zod",
+]
+const NIX_META = ["description", "homepage", "license", "mainProgram"]
+
+function pick(
+  value: unknown,
+  keys: readonly string[]
+): Record<string, unknown> {
+  return typeof value === "object" && value !== null
+    ? Object.fromEntries(
+        Object.entries(value).filter(([key]) => keys.includes(key))
+      )
+    : {}
+}
+
+function nixSample(dump: unknown) {
+  const { packages } = nixDumpSchema.parse(dump)
+  return {
+    packages: Object.fromEntries(
+      NIX_SAMPLE.map((attr) => {
+        const picked = pick(packages[attr], ["meta", "pname", "version"])
+        return [attr, { ...picked, meta: pick(picked.meta, NIX_META) }]
+      })
+    ),
+    version: 2,
+  }
+}
+
+// The dump is served with `content-encoding: br`, so fetch decodes it.
+async function bodyOf(response: Response, from: string): Promise<unknown> {
+  const body: unknown = await response.json()
+  return from === "nix" ? nixSample(body) : body
 }
 
 // The crates.io limit is one request per second (docs/spec.md, "Data sources").
@@ -92,7 +148,7 @@ await Object.entries(targets)
     await previous
     await Bun.sleep(SPACING_MS[registry] ?? 0)
     const response = await fetch(url, { headers: { "user-agent": USER_AGENT } })
-    const body = withoutEmails(await response.json())
+    const body = withoutEmails(await bodyOf(response, registry))
     const file = `test/fixtures/${registry}/${name}.json`
     await Bun.write(
       file,

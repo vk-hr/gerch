@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 
-import { isAvailable, REGISTRY_LABELS } from "@/shared/registry.ts"
+import { REGISTRY_LABELS } from "@/shared/registry.ts"
 import type { Registry } from "@/shared/registry.ts"
 
 import { Results } from "./results.tsx"
@@ -19,15 +19,9 @@ function RegistrySection({
   return (
     <section aria-label={label} className="grid gap-3">
       <h2 className="font-heading text-sm text-muted-foreground">{label}</h2>
-      {isAvailable(registry) ? (
-        <Suspense fallback={<ResultsSkeleton />}>
-          <Results registry={registry} text={text} />
-        </Suspense>
-      ) : (
-        <p className="text-sm text-muted-foreground">
-          {label} search is coming soon.
-        </p>
-      )}
+      <Suspense fallback={<ResultsSkeleton />}>
+        <Results registry={registry} text={text} />
+      </Suspense>
     </section>
   )
 }

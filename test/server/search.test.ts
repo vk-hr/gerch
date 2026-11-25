@@ -2,6 +2,8 @@ import { describe, expect, test } from "vitest"
 
 import { createCache, memoryStore } from "@/server/cache.ts"
 import type { Fetch } from "@/server/http.ts"
+import { memoryNixIndex } from "@/server/nix/store.ts"
+import { createNixAdapter } from "@/server/registries/nix.ts"
 import { createNpmAdapter } from "@/server/registries/npm.ts"
 import { handleSearch } from "@/server/search.ts"
 
@@ -30,6 +32,54 @@ function url(query: string): URL {
 }
 
 describe("search route", () => {
+  // The nix index already lives in Postgres; a cache row would copy it.
+  test("a nix search reads the index without the shared cache", async () => {
+    expect.hasAssertions()
+    const writes: string[] = []
+    const store = memoryStore()
+    const handler = {
+      adapters: {
+        nix: createNixAdapter(
+          memoryNixIndex([
+            {
+              attr: "hello",
+              description:
+                "Program that produces a familiar, friendly greeting",
+              homepage: null,
+              license: "GPL-3.0-or-later",
+              mainProgram: "hello",
+              pname: "hello",
+              version: "2.12.3",
+            },
+          ])
+        ),
+      },
+      cache: createCache({
+        now: () => 0,
+        onError: (error) => {
+          throw error
+        },
+        store: {
+          get: store.get,
+          set: async (key, entry) => {
+            writes.push(key)
+            await store.set(key, entry)
+          },
+        },
+        waitUntil: (promise) => {
+          background.push(promise)
+        },
+      }),
+    }
+    const response = await handleSearch(url("registry=nix&q=hello"), handler)
+    const body: unknown = await response.json()
+    expect(body).toMatchObject({
+      results: [{ install: "nix-shell -p hello", name: "hello" }],
+    })
+    expect(response.headers.get("x-gerch-cache")).toBe("index")
+    expect(writes).toStrictEqual([])
+  })
+
   test("returns normalized npm results with CDN cache headers", async () => {
     expect.hasAssertions()
     const { fetch } = await fixtureFetch("npm", ["search-zod"])

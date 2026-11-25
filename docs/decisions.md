@@ -943,6 +943,87 @@ detection.
 - **Cold entry** grows by 694 B Brotli: 142,523 B on `main`, 143,217 B
   here.
 
+### D30. nixpkgs index: implemented in step 6b
+
+- **Dump** (`src/server/nix/dump.ts`). `packages.json.br` from
+  `channels.nixos.org/nixos-unstable` redirects to the current release on
+  releases.nixos.org. That response carries `content-encoding: br` and
+  `application/json`, so `fetch` decodes it and `response.json()` reads it.
+  The 2026-11-21 dump has 152,276 entries, 127,142 of them in package sets
+  such as `python313Packages`. Rows keep the attribute path, `pname`,
+  `version`, description, license, homepage and `mainProgram`. The 165
+  entries without a version are skipped.
+- **Licenses.** nixpkgs uses four shapes. A single object shows its SPDX id,
+  or its full name when it has none ("Unfree"). A compound keeps its
+  operator ("Unlicense OR MIT"). A plain list doesn't say how its licenses
+  combine, so it is listed with commas ("MIT, Apache-2.0"). A plain string
+  is shown as it is.
+- **Index** (`nix_packages`, `nix_index`, `src/server/nix/store.ts`).
+  - Two generated `tsvector` columns. `name_words` holds the attribute
+    path, `pname` and `mainProgram`; `text_words` adds the description. Both
+    are built with `to_tsvector('simple', …)` over runs of letters and
+    digits, and `text_words` has a GIN index.
+  - Every query word matches as a prefix (`ripgr` finds ripgrep). Results
+    are ranked:
+    1. The exact attribute path.
+    2. Every word in the names, before matches only in the description.
+    3. Top-level packages before package sets.
+    4. An exact package or program name.
+    5. An attribute path that starts with the query.
+    6. A shorter path, then alphabetical.
+  - No `pg_trgm`, so no typo matching, unlike D12's plan. The extension
+    needs a migration that drizzle-kit can't generate, and hand-written
+    migrations are banned (AGENTS.md). Prefix matching covers search as you
+    type.
+- **Measured on the full dump** (PGlite, this machine):
+  - The ingest takes 7.4–8.6 s for 152,111 rows.
+  - Size is 69 MB: 51 MB of table and 18 MB of indexes, against the 500 MB
+    Supabase Free limit.
+  - Searches take 1–3 ms for names, 29–41 ms for `python` and 62–81 ms
+    for `r`.
+  - The top results are sensible: `ripgrep`, then `ripgrep-all`, then
+    `emacsPackages.ripgrep`; `python` gives `python3`, `python311`, and so
+    on; `rg` gives `ripgrep`. An earlier order that put top-level packages
+    before name matches ranked `vgrep` above `emacsPackages.ripgrep`.
+- **Ingest** (`scripts/ingest-nix.ts`, `.github/workflows/nix-ingest.yml`).
+  - Every 6 h, a `HEAD` request compares the dump's ETag with
+    `nix_index.etag`. When it changed, one transaction deletes every row,
+    inserts the new ones in batches of 2,000 and records the ETag, release,
+    package count and time. Searches see the old index until it commits.
+    A failed download changes nothing.
+  - Batched inserts instead of D12's `COPY` with a staging table: Bun.SQL
+    has no `COPY`, and one transaction already swaps the index atomically.
+  - The workflow also runs `bun run migrate`, on schedule and on a push to
+    `main` that changes `drizzle/`. It needs the `DATABASE_URL` secret.
+    Without it every step is skipped with a notice, so scheduled runs don't
+    fail before you add it.
+- **No shared cache for nix.** The index already is Postgres, so the
+  adapter sets `localIndex`. Search and package lookups read it directly
+  and report `X-Gerch-Cache: index`. CDN headers are unchanged.
+- **Replay** (e2e). The e2e server has no database. It reads
+  `test/fixtures/nix/channel-dump.json`, 18 real entries recorded by
+  `bun run record-fixtures nix`, into an in-memory index with the same
+  ranking. `test/server/nix-index.test.ts` checks that the in-memory and
+  Postgres indexes return the same results in the same order for 10
+  queries. Local dev without `DATABASE_URL` has no nix index, so its
+  section shows an error.
+- **Health.** `/api/health` reports the nix index's release, package count,
+  `ingestedAt` and age. `stale` turns true after 24 h, four missed runs. It
+  stays `200` either way. The spec's per-registry cache age isn't
+  reported: the shared cache has no per-registry summary, and nothing reads
+  one yet.
+- **All registries built.** `isAvailable` and the "coming soon" sections
+  are gone. Cold entry: 142,634 B, 125 B less than #14.
+- **e2e stays off Supabase.** Bun loads `.env.local` automatically, and
+  that file points at the Supabase transaction pooler. So every local e2e
+  run since step 4 connected the replaying server to production. It wrote
+  cache rows built from recorded fixtures into `cache_entries`. Those rows
+  go stale within 10 min to 6 h, and the next read refreshes them in the
+  background. CI has no `.env.local`, so CI was never affected.
+  `playwright.config.ts` now sets `DATABASE_URL` to an empty string, which
+  Bun leaves alone. The health flow asserts there is no nix index, so it
+  fails if a database leaks in again.
+
 ### D31. Byte budgets in CI: implemented in step 7a
 
 - `scripts/check-budgets.ts` runs in `verify`'s build check, so it runs

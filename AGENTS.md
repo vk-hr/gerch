@@ -22,7 +22,8 @@ lacks `bun lint`, `bun fmt` and `bun check`.
 | End-to-end flows           | `bun x playwright test`                         |
 | Check the Bun pin          | `bun run check-bun`                             |
 | Live smoke test            | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
-| Re-record fixtures         | `bun run record-fixtures npm` (or `crate`)      |
+| Re-record fixtures         | `bun run record-fixtures npm` (`crate`, `nix`)  |
+| Refresh the nix index      | `DATABASE_URL=… bun scripts/ingest-nix.ts`      |
 | New migration              | `bun run drizzle-kit generate --name <change>`  |
 | Migrate the database       | `DATABASE_URL=… bun run migrate`                |
 
@@ -32,8 +33,9 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 ## Structure
 
 - `src/routes/`: TanStack Start file routes and `/api/*` server routes.
-- `src/server/`: server-only code: registry adapters, SWR cache, the
-  rate-limit queue (`rate-slot.ts`), and the Drizzle schema and connection
+- `src/server/`: server-only code: registry adapters (`registries/`, wired
+  in `adapters.ts`), SWR cache, the rate-limit queue (`rate-slot.ts`), the
+  nix index and its ingest (`nix/`), and the Drizzle schema and connection
   (`src/server/db/`).
 - `src/shared/`: types and pure helpers shared with the browser (no zod).
 - `src/client/`: browser-only state saved in `localStorage` (tabs,
@@ -63,6 +65,9 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 - `bun test` without `--isolate=modules`. `bunfig.toml` has no isolate key.
 - Pressing keys in an e2e flow before `body[data-interactive]`, or before
   the element the key acts on is visible (D23).
+- A test or e2e server that can reach a real database. Bun loads
+  `.env.local` (Supabase), so `playwright.config.ts` sets `DATABASE_URL` to
+  an empty string (D30).
 - Network calls in unit tests. Use recorded fixtures; the test preload
   blocks `fetch`.
 - Retries, wider timeouts or skipped tests to make CI pass.

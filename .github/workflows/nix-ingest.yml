@@ -1,0 +1,42 @@
+name: nix-ingest
+
+# Applies migrations and refreshes the nix index in Supabase from the
+# nixos-unstable channel dump (D30). The dump is downloaded only when its
+# ETag changed. Needs the DATABASE_URL secret (Supabase session pooler or a
+# direct connection, D20); without it every step is skipped.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["drizzle/**"]
+
+concurrency:
+  group: nix-ingest
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - if: env.DATABASE_URL == ''
+        run: echo "::notice::The DATABASE_URL secret is not set, so nothing ran (D30)."
+      - if: env.DATABASE_URL != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: blob:none
+      - if: env.DATABASE_URL != ''
+        uses: ./.github/actions/setup
+      - if: env.DATABASE_URL != ''
+        name: migrate
+        run: bun run migrate
+      - if: env.DATABASE_URL != ''
+        name: ingest the nix channel dump
+        run: bun scripts/ingest-nix.ts

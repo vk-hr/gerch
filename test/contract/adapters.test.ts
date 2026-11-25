@@ -4,7 +4,9 @@ import { describe, expect, test } from "vitest"
 
 import { UpstreamError, USER_AGENT } from "@/server/http.ts"
 import type { Fetch } from "@/server/http.ts"
+import { fetchedNixIndex } from "@/server/nix/store.ts"
 import { createCratesAdapter } from "@/server/registries/crates.ts"
+import { createNixAdapter } from "@/server/registries/nix.ts"
 import { createNpmAdapter } from "@/server/registries/npm.ts"
 import type { RegistryAdapter } from "@/server/registries/types.ts"
 import { packageSummarySchema } from "@/server/schema.ts"
@@ -86,6 +88,31 @@ const adapters: readonly AdapterContract[] = [
       { fixtures: ["package-serde_json"], name: "serde_json" },
     ],
     registry: "crate",
+  },
+  {
+    cases: [
+      { expectedFirst: "ripgrep", fixture: "channel-dump", query: "ripgrep" },
+      { expectedFirst: "zod", fixture: "channel-dump", query: "zod" },
+      {
+        expectedFirst: undefined,
+        fixture: "channel-dump",
+        query: "gerch-no-such-package-q7x2",
+      },
+    ],
+    // The recorded dump through the in-memory index, as the e2e server runs
+    // it. test/server/nix-index.test.ts holds the Postgres index to the same
+    // ranking.
+    create: (fetcher: Fetch) => createNixAdapter(fetchedNixIndex(fetcher)),
+    install: (name: string) => `nix-shell -p ${name}`,
+    missing: {
+      fixtures: ["channel-dump"],
+      name: "gerch-no-such-package-q7x2",
+    },
+    packages: [
+      { fixtures: ["channel-dump"], name: "ripgrep" },
+      { fixtures: ["channel-dump"], name: "python313Packages.requests" },
+    ],
+    registry: "nix",
   },
 ]
 

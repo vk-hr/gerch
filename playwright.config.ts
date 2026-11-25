@@ -20,7 +20,14 @@ export default defineConfig({
   workers: process.env.CI === undefined ? undefined : "100%",
   webServer: {
     command: "bun run build && bun .output/server/index.mjs",
-    env: { GERCH_REPLAY_DIR: "test/fixtures", PORT: String(PORT) },
+    // Bun loads .env.local, which points at Supabase. An empty DATABASE_URL
+    // is already set, so Bun leaves it, and gerch reads it as no database:
+    // the flows never touch a real one (D30).
+    env: {
+      DATABASE_URL: "",
+      GERCH_REPLAY_DIR: "test/fixtures",
+      PORT: String(PORT),
+    },
     url: `http://localhost:${PORT}`,
   },
 })

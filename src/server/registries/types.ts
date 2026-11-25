@@ -8,6 +8,9 @@ interface RegistryAdapter {
   // Whether `name` can name a package at all. Other names are reported
   // missing without a request or a cache row.
   isPackageName: (name: string) => boolean
+  // Reads gerch's own index (nix), not a registry, so the shared cache
+  // would only copy it.
+  localIndex?: true
 }
 
 export type { RegistryAdapter }

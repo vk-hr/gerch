@@ -3,7 +3,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router"
 import { PackageMissing } from "@/components/package/package-missing.tsx"
 import { PackagePage } from "@/components/package/package-page.tsx"
 import { packageQuery } from "@/lib/package.ts"
-import { isAvailable, isRegistry } from "@/shared/registry.ts"
+import { isRegistry } from "@/shared/registry.ts"
 
 // The CDN keeps package pages for an hour (docs/spec.md, "Cache").
 const PAGE_CACHE = "public, s-maxage=3600, stale-while-revalidate=86400"
@@ -13,9 +13,6 @@ export const Route = createFileRoute("/p/$registry/$name")({
     const { name, registry } = params
     if (!isRegistry(registry)) {
       throw notFound()
-    }
-    if (!isAvailable(registry)) {
-      return { cacheable: true }
     }
     const result = await context.queryClient.query(packageQuery(registry, name))
     if (result.status === "missing") {
