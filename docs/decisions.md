@@ -971,3 +971,52 @@ detection.
 
 - Lint: Bun has no Brotli API of its own, so `scripts/**` may import
   `node:zlib` (`import/no-nodejs-modules` allow-list in `.oxlintrc.json`).
+
+### D32. React Compiler on; Redact only behind GERCH_RENDERER=redact: implemented in step 7b
+
+- **Plugins** (`vite.config.ts`), in the directive's order:
+  `tanstackStart()` (Start turns on the router's `autoCodeSplitting`
+  itself, and its type rejects the option), `nitro()`, `tailwindcss()`,
+  `viteReact()`, `babel({ presets: [reactCompilerPreset()] })`, then
+  `redact({ environments: ["client"] })` only with `GERCH_RENDERER=redact`.
+- **Packages:** `babel-plugin-react-compiler` 1.0.0 (the directive's
+  version), `@rolldown/plugin-babel` 0.3.1, `@babel/core` 7.29.13 and
+  `@tanstack/redact` 0.3.1, all exact. Redact's optional Next, vinext and
+  Cloudflare peers aren't installed.
+- **Redact breaks required flows.** The production build with Redact
+  passes most flows, but focus in the workspace dialogs is unreliable:
+
+  | Run                                                        | Failed         |
+  | ---------------------------------------------------------- | -------------- |
+  | Workspace flows ×8, before the focus change below          | 14 of 72       |
+  | Workspace flows ×8, after it                               | 3 of 72        |
+  | Workspace, tabs and shortcut flows ×6, after it (two runs) | 4 and 8 of 162 |
+  | The same under React DOM                                   | 0              |
+
+  The failing flows: "shortcuts don't reach the page behind a dialog",
+  "cards in the view and on the page have distinct ids", and "workspaces
+  survive a reload and their pins and workspaces can be removed". The
+  directive says to ship React DOM if Redact breaks a required flow, so
+  React DOM is the default and Redact is opt-in. Step 7d measures both
+  renderers anyway.
+
+- **Focus change** (`workspace-detail.tsx`). Deleting a workspace removed
+  the focused button. Base UI's dialog then refocused itself, racing the
+  list box's focus effect. React DOM runs that effect later, so the box
+  won; under Redact the dialog often did. Delete now focuses the dialog
+  before removing the workspace, so no focused element disappears.
+- **Bytes**, React DOM, Brotli:
+
+  | Page         | Before    | With the compiler    |
+  | ------------ | --------- | -------------------- |
+  | `/`          | 142,523 B | 146,358 B (+3,835 B) |
+  | `/p/npm/zod` | 138,665 B | 141,330 B            |
+
+  The compiler's memoization and `compiler-runtime` cost 3.8 kB, leaving
+  3.6 kB under the 150 kB budget. Redact's browser build is 108,509 B.
+
+- **Lint:**
+  - `vite.config.ts` reads `GERCH_RENDERER`, so it joins
+    `playwright.config.ts` in the `node/no-process-env` override.
+  - `redact()` is typed `any` (its `.d.ts`), so `vite.config.ts` turns off
+    `typescript/no-unsafe-type-assertion` to type it as a `PluginOption`.

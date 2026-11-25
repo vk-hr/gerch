@@ -27,7 +27,11 @@ function WorkspaceDetail({
         </Button>
         <Button
           className="ml-auto"
-          onClick={() => {
+          onClick={(event) => {
+            // This button goes away with the workspace. Focus moves to the
+            // dialog first, so the dialog doesn't refocus itself after the
+            // list's box takes focus (that order differs under Redact, D32).
+            event.currentTarget.closest<HTMLElement>("[role='dialog']")?.focus()
             removeWorkspace(workspace.id)
           }}
           size="sm"
