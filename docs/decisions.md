@@ -342,6 +342,15 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     commit, whose first parent is the base. So `fetch-depth: 2` and
     `GERCH_TEST_BASE: HEAD^1` select the same tests from a two-commit
     fetch.
+  - What's left is variance on GitHub's hosted runners. After these
+    fixes, most jobs set up in 5–9 s. The steps vary: runner setup 0–2 s,
+    checkout 1–5 s, setup action 3–14 s. About one job per run still
+    lands on a slow cache or npm download and goes over 15 s. That hit
+    `main` twice (15.9 s and 20.2 s on the pushes of #21 and #16) and
+    #20's `build` once (16.3 s). With your approval, that one job was
+    re-run once and passed. The directive's remedy is Blacksmith runners
+    with a warm toolchain, which needs an account; until then a setup
+    overrun is runner variance, not a code failure.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
