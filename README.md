@@ -59,7 +59,7 @@ GitHub Actions, every 6 h  ------------->     shared SWR cache, nix index,
 - **TanStack Start** renders pages on the server with React DOM and
   streams each registry's results through its own Suspense boundary. In the
   browser, **Redact** takes over from React DOM: it measured 17–26% faster
-  to a usable page and ships 108 kB of JS instead of 146 kB
+  to a usable page and ships about 110 kB of JS instead of 146 kB
   ([D34](docs/decisions.md)). React Compiler memoizes the components.
 - **A shared cache with stale-while-revalidate**, in Postgres and on
   Vercel's CDN. npm searches stay fresh for 10 minutes and stale for 7 days;
@@ -82,11 +82,11 @@ The full design, with every trade-off and its measurements, is in
 
 Enforced in CI on every PR:
 
-| Budget (Brotli)   | Limit  | Now      |
-| ----------------- | ------ | -------- |
-| Cold-entry JS     | 150 kB | 108.4 kB |
-| Route-specific JS | 50 kB  | 7.3 kB   |
-| First-view CSS    | 20 kB  | 6.1 kB   |
+| Budget (Brotli)   | Limit  | Now          |
+| ----------------- | ------ | ------------ |
+| Cold-entry JS     | 150 kB | about 110 kB |
+| Route-specific JS | 50 kB  | 7.3 kB       |
+| First-view CSS    | 20 kB  | 6.1 kB       |
 
 Measured with `scripts/measure-renderers.ts` (4× CPU slowdown, fast 4G,
 p50 of 9 runs): 685 ms to a usable search page, 98 ms to navigate to a
