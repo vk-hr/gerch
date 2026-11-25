@@ -33,7 +33,7 @@ async function switchSearchTabs(page: Page) {
     query,
   }))
   const saved = { activeTab: "seed-0", closedTabs: [], history: [], tabs }
-  await page.clock.install()
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") })
   await page.addInitScript(
     (value) => {
       localStorage.setItem("gerch:v1", value)
@@ -160,7 +160,7 @@ test("text still waiting on the debounce never replaces the entry back leads to"
   page,
 }) => {
   await switchSearchTabs(page)
-  await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1)
+  await page.clock.pauseAt(new Date("2026-01-02T00:00:00Z"))
   await page.getByRole("searchbox").press("End")
   await page.keyboard.type(" x")
   await page.goBack()
