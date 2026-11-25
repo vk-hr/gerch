@@ -7,16 +7,11 @@ import { HOTKEYS } from "@/hotkeys.ts"
 import { parseQuery } from "@/shared/query.ts"
 
 import { useCopied } from "./copied-context.ts"
+import { focusedPackage, focusedResult } from "./focused-result.ts"
 import { RegistrySection } from "./registry-section.tsx"
 import { SearchBox } from "./search-box.tsx"
 
 const URL_DEBOUNCE_MS = 150
-
-function focusedResult(): HTMLElement | null {
-  return document.activeElement instanceof HTMLElement
-    ? document.activeElement.closest<HTMLElement>("[data-result]")
-    : null
-}
 
 // Moves focus through result cards in page order; up from the first card
 // returns to the search box.
@@ -80,9 +75,9 @@ function useSearchHotkeys(
   useHotkey(
     HOTKEYS.copy.keys,
     () => {
-      const install = focusedResult()?.dataset.install
-      if (install !== undefined) {
-        copy(install)
+      const selected = focusedPackage()
+      if (selected !== null) {
+        copy(selected.install)
       }
     },
     inputsToo

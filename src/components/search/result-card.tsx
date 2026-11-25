@@ -13,6 +13,8 @@ function ResultCard({ result }: { result: PackageSummary }) {
       aria-labelledby={headingId}
       className="rounded-xl border border-border bg-card p-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
       data-install={result.install}
+      data-name={result.name}
+      data-registry={result.registry}
       data-result=""
       tabIndex={-1}
     >
