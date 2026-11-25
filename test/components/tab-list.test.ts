@@ -114,6 +114,16 @@ describe("opening", () => {
     expect(ids(next)).toStrictEqual(["a", "n", "c"])
     expect(next.activeTab).toBe("a")
   })
+
+  test("openNextToActive keeps tabs opened in a row in order", () => {
+    expect.hasAssertions()
+    const next = openNextToActive(
+      state([zodSearch, zodPackage, reactSearch], "a"),
+      { kind: "package", name: "zod-to-json-schema", registry: "npm" },
+      "n"
+    )
+    expect(ids(next)).toStrictEqual(["a", "b", "n", "c"])
+  })
 })
 
 describe("switching and moving", () => {

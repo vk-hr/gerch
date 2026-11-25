@@ -580,7 +580,8 @@ s-maxage=3600, stale-while-revalidate=86400` for a found package or a
   overwriting the current one. On the first load an unmatched route opens a
   new tab instead, so a shared link never overwrites a saved tab, and a
   reload finds its active tab and changes nothing.
-- Shift+Enter opens the package tab right after the current one and leaves
+- Shift+Enter opens each package after the consecutive package tabs following
+  the active tab. It leaves
   the search tab in front, with its query and focused card. Several results
   can be opened in a row, as with a middle click in a browser.
 - Closing the active tab activates its right neighbour, or its left one at
@@ -620,5 +621,5 @@ purpose instead of waiting.
   tab navigated back to search.
 - `GET /api/package/:registry/:name` from the spec's API table isn't built;
   the page uses the server function.
-- Bundle (Brotli 11, all client assets): JS 130,925 → 137,598 B, CSS 4,842 →
+- Bundle (Brotli 11, all client assets): JS 130,925 → 137,601 B, CSS 4,842 →
   5,008 B.

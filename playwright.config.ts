@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test"
 
-const PORT = 4173
+// GERCH_E2E_PORT lets several worktrees run the flows at once.
+const PORT = Number(process.env.GERCH_E2E_PORT ?? "4173")
 
 // End-to-end flows against the production build. The server replays
 // recorded registry responses (GERCH_REPLAY_DIR), so no flow touches npm.

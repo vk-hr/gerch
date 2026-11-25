@@ -99,14 +99,19 @@ function followRoute(
   )
 }
 
-// Opens a tab right after the active one and leaves the active one in front.
+// Keep consecutive background package tabs in opening order.
 function openNextToActive(
   state: ClientState,
   content: TabContent,
   newId: string
 ): ClientState {
   const tabs = [...state.tabs]
-  tabs.splice(activeIndex(state) + 1, 0, { ...content, id: newId })
+  const after = activeIndex(state) + 1
+  const run = tabs.slice(after).findIndex((tab) => tab.kind !== "package")
+  tabs.splice(run === -1 ? tabs.length : after + run, 0, {
+    ...content,
+    id: newId,
+  })
   return withTabs(state, tabs, state.activeTab ?? newId)
 }
 

@@ -1,3 +1,5 @@
+import { z } from "zod"
+
 import { isRegistry } from "@/shared/registry.ts"
 import type { PackageSummary } from "@/shared/registry.ts"
 
@@ -23,7 +25,9 @@ type PackageOutcome =
   | { status: "missing" }
   | { status: "failed"; message: string }
 
-const summaryOrNull = packageSummarySchema.nullable()
+// The cached value wraps the summary: Postgres stores values in a NOT NULL
+// column, so a missing package is `{ summary: null }`, not `null`.
+const lookupSchema = z.object({ summary: packageSummarySchema.nullable() })
 
 function failed(message: string): PackageOutcome {
   return { message, status: "failed" }
@@ -55,19 +59,31 @@ async function runPackage(
   if (typeof adapter === "string") {
     return failed(adapter)
   }
+  if (!adapter.isPackageName(name)) {
+    return { status: "missing" }
+  }
   try {
-    const found = await deps.cache.get({
-      key: `package:${registry}:${name}`,
-      load: async () => adapter.package(name),
-      parse: (value) => summaryOrNull.parse(value),
-      policy: PACKAGE_POLICY,
-    })
-    return found.value === null
-      ? { status: "missing" }
-      : { state: found.state, status: "found", summary: found.value }
+    return await lookup(deps, adapter, name)
   } catch {
     return failed(`${registry} is unavailable`)
   }
+}
+
+async function lookup(
+  deps: SearchDeps,
+  adapter: RegistryAdapter,
+  name: string
+): Promise<PackageOutcome> {
+  const found = await deps.cache.get({
+    key: `package:${adapter.registry}:${name}`,
+    load: async () => ({ summary: await adapter.package(name) }),
+    parse: (value) => lookupSchema.parse(value),
+    policy: PACKAGE_POLICY,
+  })
+  const { summary } = found.value
+  return summary === null
+    ? { status: "missing" }
+    : { state: found.state, status: "found", summary }
 }
 
 export { PACKAGE_CDN_CACHE, runPackage }

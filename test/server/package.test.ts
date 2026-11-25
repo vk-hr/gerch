@@ -1,17 +1,26 @@
-import { describe, expect, test } from "vitest"
+import { afterAll, describe, expect, test } from "vitest"
 
-import { createCache, memoryStore } from "@/server/cache.ts"
+import { createCache, memoryStore, postgresStore } from "@/server/cache.ts"
+import type { CacheStore } from "@/server/cache.ts"
 import type { Fetch } from "@/server/http.ts"
 import { runPackage } from "@/server/package.ts"
 import { createNpmAdapter } from "@/server/registries/npm.ts"
 
 import { fixtureFetch, statusFetch } from "../support/fixtures.ts"
+import { freshDb } from "../support/pglite.ts"
+import type { TestDb } from "../support/pglite.ts"
 
 const background: Promise<unknown>[] = []
 const HOUR_MS = 3_600_000
 const DAY_MS = 86_400_000
 
-function deps(fetcher: Fetch, clock: { now: number }) {
+const database: { db?: TestDb } = {}
+
+function deps(
+  fetcher: Fetch,
+  clock: { now: number },
+  store: CacheStore = memoryStore()
+) {
   return {
     adapters: { npm: createNpmAdapter(fetcher) },
     cache: createCache({
@@ -19,7 +28,7 @@ function deps(fetcher: Fetch, clock: { now: number }) {
       onError: (error) => {
         throw error
       },
-      store: memoryStore(),
+      store,
       waitUntil: (promise) => {
         background.push(promise)
       },
@@ -30,6 +39,10 @@ function deps(fetcher: Fetch, clock: { now: number }) {
 const ZOD = ["package-zod-latest", "package-zod-downloads"]
 
 describe("package lookup", () => {
+  afterAll(async () => {
+    await database.db?.close()
+  })
+
   test("loads a package once and serves it fresh for an hour", async () => {
     expect.hasAssertions()
     const { fetch, requests } = await fixtureFetch("npm", ZOD)
@@ -67,6 +80,35 @@ describe("package lookup", () => {
     const outcome = runPackage(handler, "npm", "gerch-no-such-package-q7x2")
     await expect(outcome).resolves.toStrictEqual({ status: "missing" })
   })
+
+  // Production stores the cache in Postgres, where a value can't be null.
+  test("reports an unknown package as missing from the Postgres cache", async () => {
+    expect.hasAssertions()
+    const { fetch } = await fixtureFetch("npm", [
+      "package-nonsense-latest",
+      "package-nonsense-downloads",
+    ])
+    database.db ??= await freshDb()
+    const handler = deps(fetch, { now: 0 }, postgresStore(database.db.db))
+    const name = "gerch-no-such-package-q7x2"
+    await expect(runPackage(handler, "npm", name)).resolves.toStrictEqual({
+      status: "missing",
+    })
+    await expect(runPackage(handler, "npm", name)).resolves.toStrictEqual({
+      status: "missing",
+    })
+  })
+
+  test.each([[".."], ["."], ["has space"], ["a".repeat(215)], ["@scope/"]])(
+    "reports the invalid npm name %j as missing without asking npm",
+    async (name) => {
+      expect.hasAssertions()
+      const handler = deps(statusFetch(500), { now: 0 })
+      await expect(runPackage(handler, "npm", name)).resolves.toStrictEqual({
+        status: "missing",
+      })
+    }
+  )
 
   test("reports a failing registry", async () => {
     expect.hasAssertions()

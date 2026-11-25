@@ -33,16 +33,27 @@ type SearchObject = z.infer<typeof objectSchema>
 
 // The fields gerch reads from GET /<name>/latest, one version's manifest
 // (~4 KB). The full package document is megabytes (D25).
+// Only name and version must be valid; a malformed optional field reads as
+// missing, so one odd field never fails a package that exists.
 const licenseSchema = z.union([z.string(), z.object({ type: z.string() })])
 const repositorySchema = z.union([z.string(), z.object({ url: z.string() })])
 const manifestSchema = z.object({
-  description: z.string().optional(),
-  homepage: z.string().optional(),
-  license: licenseSchema.optional(),
+  description: z.unknown().optional(),
+  homepage: z.unknown().optional(),
+  license: z.unknown().optional(),
   name: z.string().min(1),
-  repository: repositorySchema.optional(),
+  repository: z.unknown().optional(),
   version: z.string().min(1),
 })
+
+// The npm registry's limits: at most 214 characters, no spaces or extra slashes, and
+// no leading dot or underscore (which also rules out "." and "..").
+const NPM_NAME_MAX = 214
+const NPM_NAME = /^(?:@[^\s/]+\/)?[^\s./_][^\s/]*$/u
+
+function isNpmName(name: string): boolean {
+  return name.length <= NPM_NAME_MAX && NPM_NAME.test(name)
+}
 const pointSchema = z.object({ downloads: z.int().nonnegative() })
 
 type Manifest = z.infer<typeof manifestSchema>
@@ -73,29 +84,44 @@ function summaries(body: unknown): PackageSummary[] {
   })
 }
 
-function licenseOf(license: Manifest["license"]): string | null {
-  const id = typeof license === "object" ? license.type : license
-  return id === undefined || id === "" ? null : id
+function textOf(value: unknown): string | null {
+  return typeof value === "string" && value !== "" ? value : null
+}
+
+function licenseOf(value: unknown): string | null {
+  const parsed = licenseSchema.safeParse(value)
+  if (!parsed.success) {
+    return null
+  }
+  return textOf(
+    typeof parsed.data === "object" ? parsed.data.type : parsed.data
+  )
+}
+
+function repositoryOf(value: unknown): string | null {
+  const parsed = repositorySchema.safeParse(value)
+  if (!parsed.success) {
+    return null
+  }
+  return repositoryUrl(
+    typeof parsed.data === "object" ? parsed.data.url : parsed.data
+  )
 }
 
 function manifestSummary(
   manifest: Manifest,
   weekly: number | null
 ): PackageSummary {
-  const { repository } = manifest
   return {
-    description:
-      manifest.description === "" ? null : (manifest.description ?? null),
+    description: textOf(manifest.description),
     downloads: weekly === null ? null : { count: weekly, window: "week" },
-    homepage: httpUrl(manifest.homepage),
+    homepage: httpUrl(textOf(manifest.homepage) ?? undefined),
     install: `npm i ${manifest.name}`,
     license: licenseOf(manifest.license),
     name: manifest.name,
     registry: "npm",
     releasedAt: null,
-    repository: repositoryUrl(
-      typeof repository === "object" ? repository.url : repository
-    ),
+    repository: repositoryOf(manifest.repository),
     version: manifest.version,
   }
 }
@@ -135,6 +161,7 @@ async function npmPackage(
 
 function createNpmAdapter(fetcher: Fetch): RegistryAdapter {
   return {
+    isPackageName: isNpmName,
     package: async (name) => npmPackage(fetcher, name),
     registry: "npm",
     search: async (query) =>

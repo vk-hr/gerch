@@ -100,4 +100,29 @@ describe("npm package", () => {
     expect(old?.license).toBe(expected)
     expect(old?.repository).toBeNull()
   })
+
+  // One odd field drops that field, not the package.
+  test("a malformed optional field doesn't fail the package", async () => {
+    expect.hasAssertions()
+    const fetcher = splitFetch(
+      async () =>
+        Response.json({
+          description: 7,
+          homepage: 5,
+          license: ["MIT"],
+          name: "odd",
+          repository: { type: "git" },
+          version: "1.0.0",
+        }),
+      async () => Response.json({ downloads: 1 })
+    )
+    const odd = await createNpmAdapter(fetcher).package("odd")
+    expect(odd).toMatchObject({
+      description: null,
+      homepage: null,
+      license: null,
+      repository: null,
+      version: "1.0.0",
+    })
+  })
 })

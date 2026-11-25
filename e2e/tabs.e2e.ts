@@ -58,8 +58,8 @@ test("Shift+Enter opens a package tab next to the search tab, which keeps its qu
   await page.keyboard.press("Shift+Enter")
   await expect(tabLinks(page)).toHaveText([
     "Search zod",
-    "npm package zod-to-json-schema",
     "npm package zod",
+    "npm package zod-to-json-schema",
   ])
 })
 
@@ -169,6 +169,33 @@ test("text still waiting on the debounce never replaces the entry back leads to"
   await expect(page).toHaveURL(ZOD_URL)
   await page.goForward()
   await expect(page).toHaveURL(REACT_QUERY_URL)
+})
+
+test("text waiting on the debounce never lands in the tab switched to", async ({
+  page,
+}) => {
+  await page.clock.install()
+  await twoTabs(page)
+  await page.getByRole("searchbox").press("End")
+  await page.keyboard.type("x")
+  await page.keyboard.press("Alt+.")
+  await page.clock.runFor(PAST_DEBOUNCE_MS)
+  await expect(page).toHaveURL(PACKAGE_URL)
+  await expect(tabLinks(page)).toHaveText(["Search zod", "npm package zod"])
+  await expect(activeTab(page)).toHaveText("npm package zod")
+})
+
+test("closing the last tab while typing drops the typed text", async ({
+  page,
+}) => {
+  await page.clock.install()
+  await interactive(page, "/")
+  await page.getByRole("searchbox").focus()
+  await page.keyboard.type("a")
+  await page.keyboard.press("Alt+X")
+  await page.clock.runFor(PAST_DEBOUNCE_MS)
+  await expect(page.getByRole("searchbox")).toHaveValue("")
+  await expect(page).toHaveURL(/\/$/u)
 })
 
 test("tabs screenshot", async ({ page }, testInfo) => {
