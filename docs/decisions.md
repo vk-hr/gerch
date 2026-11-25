@@ -895,3 +895,36 @@ Vite's default browser targets all have `toSorted`.
   abort signal, so changing the search leaves the old chain's one lookup in
   flight while the new chain starts. The server queue still holds the
   1 req/s limit; a fast typist can briefly hold two places in it.
+  ||||||| parent of 6dc7996 (feat(theme): follow the system theme with start-theme (step 6c) (#15))
+
+### D29. Auto theme with start-theme: implemented in step 6c
+
+Requested 2026-11-25: integrate
+[`start-theme`](https://github.com/vk-hr/start-theme) for automatic theme
+detection.
+
+- `start-theme` 0.1.3, pinned exactly; it was published 2026-10-31.
+  `ThemeProvider theme="system"` wraps the app in `__root.tsx`, and `<html>`
+  gets `suppressHydrationWarning` because the bootstrap script changes its
+  class and style before hydration. The `class` attribute matches shadcn's
+  `.dark` tokens, which `src/styles.css` already had.
+- **No cookie, no server functions.** The library's cookie flow
+  (`getTheme` in the root loader, `setTheme` to switch) makes the HTML
+  depend on a cookie. Vercel's CDN builds its cache key without cookies, so
+  a cached package page would serve one visitor's theme to everyone. And a
+  response with `Vary: Cookie` is not cached at all (`vary_key_denied:cookie`,
+  Vercel changelog 2026-09-30). The theme is always `system`, so the server
+  sends one page for everyone, and the inline script resolves it in the
+  browser before the first paint.
+- **Later, a manual switch.** The bootstrap script would have to read the
+  cookie in the browser (`document.cookie`) instead of taking the server's
+  value. That is a change to `start-theme` itself.
+- **Checks** (`e2e/theme.e2e.ts`):
+  - With every module script blocked, a dark system still gets
+    `class="dark"` and `color-scheme: dark`. So the inline script alone
+    sets them, before React.
+  - A light page turns dark when the system theme changes.
+  - The server sends byte-identical HTML with and without a `theme=dark`
+    cookie, ignoring the router's render timestamps.
+- **Cold entry** grows by 694 B Brotli: 142,523 B on `main`, 143,217 B
+  here.
