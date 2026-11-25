@@ -1020,3 +1020,66 @@ detection.
     `playwright.config.ts` in the `node/no-process-env` override.
   - `redact()` is typed `any` (its `.d.ts`), so `vite.config.ts` turns off
     `typescript/no-unsafe-type-assertion` to type it as a `PluginOption`.
+
+### D34. Renderer comparison: Redact ships: implemented in step 7d
+
+Measured on one commit with `scripts/measure-renderers.ts`. It builds each
+renderer, serves it on recorded fixtures with no database, and measures in
+Chromium's headless shell at 4× CPU slowdown on a fast-4G-like network
+(40 ms latency, 10 Mbit/s down). One unmeasured warm-up round runs first.
+
+- **Cold entry:** navigation start until the first npm result is visible
+  and the hotkeys are registered (`body[data-interactive]`), on `/?q=zod`.
+  LCP is read alongside.
+- **Navigation:** from the Enter key press on the first result to the
+  package page's heading.
+- **Typing:** the longest interaction (Event Timing, as INP counts it)
+  while typing "react query".
+
+Final run, 9 rounds after the focus fix below:
+
+|           | Cold entry p50 / p75 | LCP p50 | Navigation p50 / p75 | Typing worst p50 / p75 |
+| --------- | -------------------- | ------- | -------------------- | ---------------------- |
+| React DOM | 824 / 832 ms         | 276 ms  | 91 / 94 ms           | 24 / 24 ms             |
+| Redact    | 685 / 699 ms         | 268 ms  | 98 / 99 ms           | 16 / 16 ms             |
+
+The two earlier runs, before the focus fix, agree:
+
+- Cold entry: 823 vs 674 ms and 913 vs 678 ms.
+- Navigation: 96 vs 100 ms and 122 vs 99 ms.
+- Typing: 24 vs 24 ms both times.
+
+- **Decision.** Cold entry improves by 139–235 ms at p50, and the
+  interactions hold their baseline:
+  - Navigation is within ±25 ms, under the 200 ms target for both.
+  - Typing is equal or better.
+  - With the focus fix, every flow passes: 171 of 171 for both renderers
+    (full suite ×3), and 324 of 324 for Redact on the focus-heavy files.
+  - Neither renderer logs a console error or hydration warning on `/`,
+    `/?q=zod`, `/p/npm/zod` or `/?q=crate:serde`.
+
+  Under the directive's rule, Redact ships. React DOM stays one switch
+  away (`GERCH_RENDERER=react-dom`), and CI's `build` job builds it on
+  every run so the switch keeps working.
+
+- **Focus fix.** This is what D32's Redact failures were. The workspace
+  dialog set its initial focus (the list's box, the Back button) in
+  `useEffect`. Under Redact those effects run later than under React DOM,
+  so a key press or `focus()` right after the view appeared could land
+  first and then lose focus. Users moving quickly with the keyboard can hit
+  the same race. Both are now `useLayoutEffect`, which sets focus before
+  the first paint under both renderers.
+- **Bytes:** cold entry is now 108,399 B on `/`, against 146,358 B with
+  React DOM. That leaves 41.6 kB under the 150 kB budget instead of 3.6 kB.
+- **Traces.** One Chromium trace of a cold entry per renderer is written
+  to `test-results/trace-cold-<renderer>.json` (about 5.6 MB each, not
+  committed). Open them in Chrome DevTools' Performance panel.
+- **Measurement fix.** The first version of the script read no event
+  timings and used 0 for the keydown time. Playwright serializes an init
+  script function alone, so a constant from the script's module wasn't
+  defined in the page, and the observer setup threw before reaching those
+  observers. Its first numbers were wrong and were thrown away.
+- **React Doctor** (the directive's profiler) isn't installed. Version
+  0.9.23 depends on `oxlint`, which AGENTS.md bans, requires TypeScript
+  below 6 (gerch uses 7), bundles `@sentry/node`, and is 8 days old. It
+  needs your approval before it runs on this project.

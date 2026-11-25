@@ -89,6 +89,10 @@ jobs:
       - uses: ./.github/actions/setup
       - name: build
         run: bun run verify build
+      - name: build with React DOM, the fallback renderer
+        run: bun run build
+        env:
+          GERCH_RENDERER: react-dom
       - name: budget
         if: ${{ !cancelled() }}
         run: bun scripts/ci-budget.ts
