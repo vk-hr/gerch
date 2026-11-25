@@ -299,6 +299,12 @@
       }
     },
     {
+      "files": ["src/components/suggestions/suggestion-list.tsx"],
+      "rules": {
+        "jsx-a11y/prefer-tag-over-role": "off"
+      }
+    },
+    {
       "files": ["playwright.config.ts"],
       "rules": {
         "node/no-process-env": "off"
