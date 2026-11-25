@@ -43,7 +43,9 @@ async function switchSearchTabs(page: Page) {
   await interactive(page, "/?q=zod")
   await tabLink(page, "Search react query").click()
   await expect(page).toHaveURL(REACT_QUERY_URL)
-  await expect(page.getByRole("searchbox")).toHaveValue("react query")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("react query")
 }
 
 test("Shift+Enter opens a package tab next to the search tab, which keeps its query and selection", async ({
@@ -53,7 +55,9 @@ test("Shift+Enter opens a package tab next to the search tab, which keeps its qu
   await expect(page).toHaveURL(ZOD_URL)
   await expect(activeTab(page)).toHaveText("Search zod")
   await expect(firstResult(page, "npm")).toBeFocused()
-  await expect(page.getByRole("searchbox")).toHaveValue("zod")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("zod")
   await page.keyboard.press("ArrowDown")
   await page.keyboard.press("Shift+Enter")
   await expect(tabLinks(page)).toHaveText([
@@ -146,13 +150,17 @@ test("back and forward between search tabs resync the search box", async ({
 }) => {
   await switchSearchTabs(page)
   await page.goBack()
-  await expect(page.getByRole("searchbox")).toHaveValue("zod")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("zod")
   // A debounced write of the old text would fire now and replace this entry.
   await page.clock.runFor(PAST_DEBOUNCE_MS)
   await expect(page).toHaveURL(ZOD_URL)
   await expect(activeTab(page)).toHaveText("Search zod")
   await page.goForward()
-  await expect(page.getByRole("searchbox")).toHaveValue("react query")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("react query")
   await expect(activeTab(page)).toHaveText("Search react query")
 })
 
@@ -161,11 +169,13 @@ test("text still waiting on the debounce never replaces the entry back leads to"
 }) => {
   await switchSearchTabs(page)
   await page.clock.pauseAt(new Date("2026-01-02T00:00:00Z"))
-  await page.getByRole("searchbox").press("End")
+  await page.getByRole("combobox", { name: "Search packages" }).press("End")
   await page.keyboard.type(" x")
   await page.goBack()
   await page.clock.runFor(PAST_DEBOUNCE_MS)
-  await expect(page.getByRole("searchbox")).toHaveValue("zod")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("zod")
   await expect(page).toHaveURL(ZOD_URL)
   await page.goForward()
   await expect(page).toHaveURL(REACT_QUERY_URL)
@@ -176,7 +186,7 @@ test("text waiting on the debounce never lands in the tab switched to", async ({
 }) => {
   await page.clock.install()
   await twoTabs(page)
-  await page.getByRole("searchbox").press("End")
+  await page.getByRole("combobox", { name: "Search packages" }).press("End")
   await page.keyboard.type("x")
   await page.keyboard.press("Alt+.")
   await page.clock.runFor(PAST_DEBOUNCE_MS)
@@ -190,11 +200,13 @@ test("closing the last tab while typing drops the typed text", async ({
 }) => {
   await page.clock.install()
   await interactive(page, "/")
-  await page.getByRole("searchbox").focus()
+  await page.getByRole("combobox", { name: "Search packages" }).focus()
   await page.keyboard.type("a")
   await page.keyboard.press("Alt+X")
   await page.clock.runFor(PAST_DEBOUNCE_MS)
-  await expect(page.getByRole("searchbox")).toHaveValue("")
+  await expect(
+    page.getByRole("combobox", { name: "Search packages" })
+  ).toHaveValue("")
   await expect(page).toHaveURL(/\/$/u)
 })
 

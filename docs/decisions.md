@@ -140,7 +140,10 @@ route HMR), tests (magic numbers, parent imports, function length and statement 
 `no-confusing-void-expression`, which `bun:test`'s `void`-typed `.resolves`
 matchers trip); the vitest plugin runs on test files only, `test/fixtures/**`
 (`require-hook`), `*.d.ts` (`import/unambiguous`), `src/server/env.ts` (the one place that
-reads `process.env`), `playwright.config.ts` (reads `CI` to pick the browser), `test/setup/**` (the preload reads `GERCH_LIVE`).
+reads `process.env`), `playwright.config.ts` (reads `CI` to pick the browser), `test/setup/**` (the preload reads `GERCH_LIVE`), `src/components/suggestions/suggestion-list.tsx`
+(`jsx-a11y/prefer-tag-over-role`: the combobox popup needs `role="listbox"`
+and `role="option"` on custom elements, because `select` and `datalist`
+can't hold styled options that `aria-activedescendant` points at; D27).
 
 `typescript/ban-ts-comment` bans `@ts-expect-error`, `@ts-ignore` and
 `@ts-nocheck` outright (the template allowed `@ts-expect-error`).
@@ -291,6 +294,23 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
   `scripts/check-test-files.ts` already merges JUnit reports, so it proves
   coverage across shards once they exist. Timings (`--timings`,
   `--update-timings` on `main`) come with the second shard.
+- **Step 5 growth (2026-11-25).** PR #11 went over two budgets with every
+  test passing: lint took 1,112 ms (budget 1 s) and the e2e job 48 s
+  (budget 35 s, 57 flows on one runner).
+  - Lint: type-aware lint and `bun check` both type-check the project, and
+    `verify.ts` ran them side by side on the runner's 4 cores. Lint now runs
+    alone first, then the rest in parallel, still listing every failure.
+    Pinned to 4 cores locally: about 500 ms beside typecheck, about 300 ms
+    alone. CI lint ranged 500–1,112 ms across the step 5 branches.
+  - E2E: "buy cores before shards" means paid larger runners, so the flows
+    run as 4 Playwright shards on free runners (`--shard=i/4`). Shard 1
+    keeps the job name `e2e`, the required check; the others are `e2e-2` to
+    `e2e-4`. `scripts/check-e2e-shards.ts` proves in each shard job that
+    the shards list every flow exactly once. The first CI run used 3 shards:
+    jobs took 27.0–33.9 s, and the 33.9 s one had a 13.6 s setup, so a
+    fourth shard leaves room for slow setups. Matrix jobs share one
+    `GITHUB_JOB`, so `ci-budget.ts` reads the shard's name from
+    `GERCH_JOB_NAME`.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
@@ -682,3 +702,130 @@ purpose instead of waiting.
     flows at once.
   - Left open: deleting a workspace asks no confirmation, and the view
     doesn't rerender when a search finishes while it is open.
+
+### D27. History, suggestions, query cache, shortcut list and prefix chip: implemented in step 5c; Ctrl+N needs you
+
+**History.** A committed search (the `q` in the URL) is recorded once it
+has stayed there for 1 s. The URL takes the query 150 ms after typing
+pauses, so typing "react" commits "r", "re", "rea" on the way; recording
+each commit would fill history with fragments. A repeat (same registry,
+text compared without case) adds one to `count` and moves `lastUsed`. The
+list keeps 100 entries and drops the lowest-ranked first.
+
+**Frecency.** `count × 0.5^(age / 7 days)`. Every score shares the same
+decay factor, so the order doesn't depend on the current time: ranking
+measures age from the newest entry, which keeps render pure
+(`react/purity`). Ties go to the most recent use.
+
+**Suggestions.** They appear under the search box once the user types. The
+list holds, in order: up to 3 pins whose name starts with the typed text,
+then up to 5 history entries by frecency, then up to 3 live results, with
+at most 8 in all. A prefix limits all three groups to its registry. Entries
+that would put the same query in the box appear once, and the current query
+is never suggested.
+
+- "Live results" means the first results of the search for the typed text
+  that are already in the query cache (`useQueries` with `enabled: false`).
+  They cost no request and no new endpoint, and they appear when the
+  debounced search answers. The cards below show the rest.
+- Choosing a pin or result puts `registry:name` in the box. Once 5a's
+  package page lands, choosing a pin could open the package instead.
+
+**Keys.** The search box follows the WAI-ARIA combobox pattern:
+`role="combobox"`, `aria-expanded`, `aria-controls`, and
+`aria-activedescendant` on a `listbox` of `option`s. Focus never leaves the
+box. The e2e flows now find the box by its `combobox` role.
+
+- The list opens when the user types, not on focus. Focusing the box and
+  pressing ↓ still moves to the first card, as in D23.
+- While the list is open, the search box and the cards form one vertical
+  list:
+  - ↓ or Ctrl+N moves down the suggestions. Past the last one, it moves to
+    the first card and the list closes.
+  - ↑ or Ctrl+P moves up, back to the typed text.
+  - Enter chooses the active suggestion.
+  - Escape closes the list. The next Escape clears the query, as before.
+- These keys are `useHotkey` registrations from `HOTKEYS`, targeted at the
+  input. The hotkey manager handles the innermost target first and stops
+  propagation (the default), so the `<main>` registrations from D23 don't
+  run. They are enabled only while they apply. That is how ↓ falls through
+  to the cards after the last suggestion.
+- TanStack Hotkeys treats an expanded combobox as an Escape layer, so the
+  document-level Escape also yields while the list is open.
+- With a mouse, pressing an option chooses it. The press is prevented, so
+  focus stays in the box.
+
+**Query cache (flow 3).** `persistQueryClient` from
+`@tanstack/react-query-persist-client` stores the cache in IndexedDB. It
+writes through `@tanstack/query-async-storage-persister` and
+`idb-keyval` 6.3.0. Both persist packages are 5.108.4.
+
+- Why `idb-keyval`: wrapping an `IDBRequest` needs `new Promise`, which
+  `promise/avoid-new` bans. The async persister is typed for strings, so it
+  stores JSON.
+- The router's `Wrap` starts the persister in an effect, after hydration
+  (D15).
+- Only `["search", …]` queries with `ok: true` are saved. `maxAge` is the
+  spec's 7-day stale window. Saving and restoring also check each query's
+  last successful fetch time. After restoring, the first save includes SSR
+  results from direct links. The buster is the `package.json` version.
+- In the browser, `gcTime` is also 7 days. Otherwise an idle search leaves
+  memory after 5 minutes, and the next save drops it from IndexedDB.
+- The search loader waits for a restore in progress. A search typed right
+  after a reload then reads the restored results instead of racing the
+  IndexedDB read and waiting on the network.
+- Revalidation follows `STALE_MS` (60 s). A result restored within 60 s of
+  its fetch is still fresh and sends no request. The e2e flow moves the page
+  clock 2 minutes ahead, blocks every search request without answering it,
+  and checks two things: the reloaded search renders, and a revalidation
+  request goes out.
+- The persister adds 1,256 B Brotli to the entry. That's too little to
+  load it lazily.
+
+**Shortcut list.** Shift+? opens a native modal `<dialog>`, which traps
+focus, closes on Escape and restores focus. It is a lazy chunk (1,059 B).
+The list has one row per label, with every key for it, formatted by
+`useFormatForDisplay`. Like other Shift combos, the key is ignored in text
+fields. `__root.tsx` mounts it with one line.
+
+**Ctrl+N and Ctrl+P.** Both are registered next to ↓ and ↑. Ctrl+P works
+everywhere: the hotkey cancels it, so the print dialog doesn't open
+(asserted in e2e). Ctrl+N can't work in a normal browser window on Windows
+or Linux:
+
+- Chromium (commit `749b032`, `chrome/browser/ui/accelerator_table.cc`):
+  `{VKEY_N, EF_PLATFORM_ACCELERATOR, IDC_NEW_WINDOW}`, and `IDC_NEW_WINDOW`
+  is in `kReservedCommandIds`. `IDC_PRINT` is not.
+  `BrowserCommandController::IsReservedCommandOrKey` reserves nothing in
+  app windows and only Exit and Fullscreen in fullscreen.
+- Firefox: `key_newNavigator` has `modifiers="accel" reserved="true"`
+  (`browser-sets.inc`). Bug 1291706 asked to let pages use Ctrl+N and was
+  closed WONTFIX.
+- Ctrl+N does reach the page on macOS, where the browser shortcut is Cmd+N.
+  It also reaches installed PWA windows and fullscreen.
+- The e2e flow passes Ctrl+N because Playwright's CDP input skips browser
+  accelerators. It proves the handler, not real Windows or Linux behavior.
+
+Proposal, not shipped: add Alt+J and Alt+K as next and previous on every
+platform. Neither is a Firefox menu letter or a Chrome shortcut. This
+changes the spec's keyboard map, so it needs your approval.
+
+**Prefix chip (flow 2).** `splitPrefix` and `joinPrefix` in
+`src/shared/query.ts`. They keep the text after the prefix exactly as
+typed. `parseQuery` trims, and the box would lose a typed space.
+
+- The URL keeps the raw `q`, e.g. `npm:zod`.
+- Text that brings its own prefix (a paste of `crate:serde`) replaces the
+  chip.
+- Backspace on empty text removes the chip. The chip is also a button for
+  the mouse, with `tabIndex={-1}` so it adds no tab stop.
+
+**TypeScript lib.** `unicorn/no-array-sort` requires `toSorted()`, which
+needs `lib: ES2023`. `tsconfig.json` now uses it. This changes types only.
+Vite's default browser targets all have `toSorted`.
+
+**Search outcomes.**
+
+- Failed background revalidation keeps the last successful data and its
+  timestamp. The results stay visible alongside the error and Retry.
+- History counts every committed search, including ones with no results.

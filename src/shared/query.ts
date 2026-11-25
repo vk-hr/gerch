@@ -26,5 +26,26 @@ function parseQuery(input: string): ParsedQuery {
   return { prefix: null, registries: [...REGISTRIES], text: trimmed }
 }
 
-export { parseQuery }
+const LEADING_PREFIX = /^(?<name>[a-z]+):/iu
+
+// Splits a recognized prefix off the raw query and keeps the rest exactly as
+// typed, so the search box can show the prefix as a chip.
+function splitPrefix(raw: string): { prefix: Registry | null; rest: string } {
+  const start = raw.trimStart()
+  const match = LEADING_PREFIX.exec(start)
+  const name = match?.groups?.name?.toLowerCase() ?? ""
+  return isRegistry(name) && match !== null
+    ? { prefix: name, rest: start.slice(match[0].length) }
+    : { prefix: null, rest: raw }
+}
+
+// The raw query for a prefix and the text after it. Text that brings its own
+// prefix replaces the chip's.
+function joinPrefix(prefix: Registry | null, rest: string): string {
+  return prefix === null || splitPrefix(rest).prefix !== null
+    ? rest
+    : `${prefix}:${rest}`
+}
+
+export { joinPrefix, parseQuery, splitPrefix }
 export type { ParsedQuery }

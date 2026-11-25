@@ -1,4 +1,4 @@
-import { useHotkey } from "@tanstack/react-hotkeys"
+import { useHotkey, useHotkeys } from "@tanstack/react-hotkeys"
 import type { RefObject } from "react"
 
 import { HOTKEYS } from "@/hotkeys.ts"
@@ -60,18 +60,16 @@ function useSearchHotkeys(
   useHotkey(HOTKEYS.focusSearch.keys, focusSearch)
   useHotkey(HOTKEYS.focusSearchMod.keys, focusSearch)
   useHotkey(HOTKEYS.clear.keys, onEscape, inputsToo)
-  useHotkey(
-    HOTKEYS.next.keys,
-    () => {
-      moveFocus(1, searchBox.current)
-    },
-    inList
-  )
-  useHotkey(
-    HOTKEYS.previous.keys,
-    () => {
-      moveFocus(-1, searchBox.current)
-    },
+  const move = (step: 1 | -1) => () => {
+    moveFocus(step, searchBox.current)
+  }
+  useHotkeys(
+    [
+      { callback: move(1), hotkey: HOTKEYS.next.keys },
+      { callback: move(1), hotkey: HOTKEYS.nextAlt.keys },
+      { callback: move(-1), hotkey: HOTKEYS.previous.keys },
+      { callback: move(-1), hotkey: HOTKEYS.previousAlt.keys },
+    ],
     inList
   )
   useHotkey(

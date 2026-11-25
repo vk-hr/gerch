@@ -40,7 +40,9 @@ function useWorkspaceHotkeys(open: (dialog: OpenDialog) => void) {
   useHotkey(
     HOTKEYS.workspaces.keys,
     () => {
-      open({ kind: "workspaces" })
+      if (!focusInDialog()) {
+        open({ kind: "workspaces" })
+      }
     },
     inputsToo
   )

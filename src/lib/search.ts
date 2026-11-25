@@ -75,7 +75,16 @@ async function fetchSearch(
 
 function searchQuery(registry: Registry, text: string) {
   return queryOptions({
-    queryFn: async () => fetchSearch(registry, text),
+    queryFn: async ({ client, queryKey }): Promise<SearchResult> => {
+      const result = await fetchSearch(registry, text)
+      if (
+        !result.ok &&
+        client.getQueryData<SearchResult>(queryKey)?.ok === true
+      ) {
+        throw new Error(result.message)
+      }
+      return result
+    },
     queryKey: ["search", registry, text.trim().toLowerCase()],
     // A failure is stale at once, so coming back to it searches again.
     staleTime: ({ state }) => (state.data?.ok === false ? 0 : STALE_MS),
@@ -92,9 +101,12 @@ async function startSearch(
   try {
     await queryClient.query(searchQuery(registry, text))
   } catch (error) {
-    // The query function returns failures as data, so only a cancelled
-    // query rejects here; anything else is a bug worth logging.
-    if (!(error instanceof CancelledError)) {
+    // Results handles revalidation errors alongside the last successful data.
+    if (
+      !(error instanceof CancelledError) &&
+      queryClient.getQueryData(searchQuery(registry, text).queryKey)?.ok !==
+        true
+    ) {
       console.error(error)
     }
   }

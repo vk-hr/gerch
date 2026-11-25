@@ -13,7 +13,7 @@ function focusedResult(): HTMLElement | null {
 function focusInDialog(): boolean {
   return (
     document.activeElement instanceof Element &&
-    document.activeElement.closest('[role="dialog"]') !== null
+    document.activeElement.closest('dialog[open], [role="dialog"]') !== null
   )
 }
 

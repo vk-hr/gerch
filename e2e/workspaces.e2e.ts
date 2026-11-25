@@ -23,7 +23,7 @@ async function showZodResults(page: Page) {
 
 async function focusFirstResult(page: Page) {
   await showZodResults(page)
-  await page.getByRole("searchbox").focus()
+  await page.getByRole("combobox", { name: "Search packages" }).focus()
   await page.keyboard.press("ArrowDown")
   await expect(firstResult(page)).toBeFocused()
 }
@@ -202,6 +202,7 @@ test("shortcuts don't reach the page behind a dialog", async ({ page }) => {
   const card = await focusPinnedCard(page)
   await page.keyboard.press("/")
   await expect(card).toBeFocused()
+  await page.keyboard.press("Shift+?")
   await page.keyboard.press("Alt+P")
   await expect(
     workspacesDialog(page).getByRole("heading", { level: 2, name: "deps" })
