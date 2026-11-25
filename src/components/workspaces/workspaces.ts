@@ -120,13 +120,21 @@ function matchingWorkspaces(
   input: string
 ): Workspace[] {
   const typed = normalizeName(input)
-  return workspaces.filter((workspace) =>
+  const matches = workspaces.filter((workspace) =>
     normalizeName(workspace.name).includes(typed)
   )
+  // An exact name comes first, so Enter on "deps" never picks "deps-dev".
+  const exact = matches.filter(
+    (workspace) => normalizeName(workspace.name) === typed
+  )
+  return [
+    ...exact,
+    ...matches.filter((workspace) => !exact.includes(workspace)),
+  ]
 }
 
-// Workspaces whose names contain the typed text, then an offer to create
-// one with that name when none has it exactly.
+// Workspaces whose names contain the typed text, the exact name first, then
+// an offer to create one with that name when none has it exactly.
 function pickerOptions(
   workspaces: Workspace[],
   input: string,

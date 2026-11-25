@@ -7,6 +7,7 @@ import {
 import type { ReactNode } from "react"
 
 import { NotFound } from "@/components/not-found.tsx"
+import { CopiedProvider } from "@/components/search/copied-provider.tsx"
 import { WorkspaceDialogs } from "@/components/workspaces/workspace-dialogs.tsx"
 import appCss from "@/styles.css?url"
 
@@ -37,8 +38,10 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="min-h-svh antialiased">
-        <WorkspaceDialogs />
-        {children}
+        <CopiedProvider>
+          <WorkspaceDialogs />
+          {children}
+        </CopiedProvider>
         <Scripts />
       </body>
     </html>

@@ -9,6 +9,14 @@ function focusedResult(): HTMLElement | null {
     : null
 }
 
+// True while focus is inside a dialog: page shortcuts leave it alone.
+function focusInDialog(): boolean {
+  return (
+    document.activeElement instanceof Element &&
+    document.activeElement.closest('[role="dialog"]') !== null
+  )
+}
+
 interface FocusedPackage {
   registry: Registry
   name: string
@@ -29,5 +37,5 @@ function focusedPackage(): FocusedPackage | null {
   return { install, name, registry }
 }
 
-export { focusedPackage, focusedResult }
+export { focusedPackage, focusedResult, focusInDialog }
 export type { FocusedPackage }

@@ -1,3 +1,5 @@
+import { useId } from "react"
+
 import { formatDownloads, formatReleaseDate } from "@/shared/format.ts"
 import type { PackageSummary } from "@/shared/registry.ts"
 
@@ -7,7 +9,7 @@ import { ResultLinks } from "./result-links.tsx"
 function ResultCard({ result }: { result: PackageSummary }) {
   const downloads = formatDownloads(result.downloads)
   const released = formatReleaseDate(result.releasedAt)
-  const headingId = `${result.registry}-${result.name}`
+  const headingId = useId()
   return (
     <article
       aria-labelledby={headingId}

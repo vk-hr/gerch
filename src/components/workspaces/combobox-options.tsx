@@ -4,10 +4,12 @@ import type { ReactNode } from "react"
 // The combobox's listbox, or the empty text when nothing matches.
 function ComboboxOptions<TOption>({
   empty,
+  optionDisabled,
   optionKey,
   renderOption,
 }: {
   empty: string
+  optionDisabled: ((option: TOption) => boolean) | undefined
   optionKey: (option: TOption) => string
   renderOption: (option: TOption) => ReactNode
 }) {
@@ -19,7 +21,8 @@ function ComboboxOptions<TOption>({
       <Combobox.List className="grid max-h-72 gap-1 overflow-y-auto overscroll-contain data-empty:hidden">
         {(option: TOption) => (
           <Combobox.Item
-            className="flex cursor-default items-center gap-2.5 rounded-2xl px-3 py-2 font-medium outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground"
+            className="flex cursor-default items-center gap-2.5 rounded-2xl px-3 py-2 font-medium outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:text-muted-foreground"
+            disabled={optionDisabled?.(option) ?? false}
             key={optionKey(option)}
             value={option}
           >

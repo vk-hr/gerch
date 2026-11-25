@@ -66,14 +66,24 @@ async function pressOn(page: Page, name: string) {
   await page.keyboard.press("Enter")
 }
 
+// A workspace that already holds the package can't be picked again.
+async function expectAlreadyPinned(page: Page, name: string) {
+  await openPicker(page)
+  await page.keyboard.type(name)
+  const pinned = picker(page).getByRole("option")
+  await expect(pinned).toHaveText([new RegExp(`${name}.*pinned`, "u")])
+  await expect(pinned).toHaveAttribute("aria-disabled", "true")
+  await page.keyboard.press("Escape")
+  await expect(firstResult(page)).toBeFocused()
+}
+
 test("Alt+P pins the focused result to a new workspace, once", async ({
   page,
 }) => {
   await focusFirstResult(page)
   await pinFocusedTo(page, "portfolio deps", /Create "portfolio deps"/u)
   await expect(firstResult(page)).toBeFocused()
-  await pinFocusedTo(page, "portfolio deps", /portfolio deps.*pinned/u)
-  await expect(firstResult(page)).toBeFocused()
+  await expectAlreadyPinned(page, "portfolio deps")
 
   await page.keyboard.press("Alt+W")
   await expect(
@@ -176,6 +186,60 @@ test("a pin shows the cached version, else its snapshot", async ({ page }) => {
   expect(current).not.toBe(SNAPSHOT_VERSION)
   await openWorkspace(page, "deps")
   await expect(versionOf(pinned)).toHaveText(current ?? "")
+})
+
+async function focusPinnedCard(page: Page) {
+  await focusFirstResult(page)
+  await pinFocusedTo(page, "deps", /Create "deps"/u)
+  await openWorkspace(page, "deps")
+  const card = workspacesDialog(page).getByRole("article")
+  await card.focus()
+  await expect(card).toBeFocused()
+  return card
+}
+
+test("shortcuts don't reach the page behind a dialog", async ({ page }) => {
+  const card = await focusPinnedCard(page)
+  await page.keyboard.press("/")
+  await expect(card).toBeFocused()
+  await page.keyboard.press("Alt+P")
+  await expect(
+    workspacesDialog(page).getByRole("heading", { level: 2, name: "deps" })
+  ).toBeVisible()
+  await expect(card).toBeFocused()
+})
+
+test("Alt+C in the workspace view marks the card there", async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"])
+  const card = await focusPinnedCard(page)
+  await page.keyboard.press("Alt+C")
+  await expect(card.getByText("Copied")).toBeVisible()
+})
+
+test("cards in the view and on the page have distinct ids", async ({
+  page,
+}) => {
+  await focusPinnedCard(page)
+  const duplicates = await page.evaluate(() => {
+    const ids = [...document.querySelectorAll("[id]")].map(
+      (element) => element.id
+    )
+    return ids.filter((id, index) => ids.indexOf(id) !== index)
+  })
+  expect(duplicates).toStrictEqual([])
+})
+
+test("a dialog that fails to load leaves the page usable", async ({ page }) => {
+  await page.route(/\/assets\/(?:pin-picker|workspace-view)-/u, async (route) =>
+    route.abort()
+  )
+  await focusFirstResult(page)
+  await page.keyboard.press("Alt+P")
+  await expect(page.getByRole("alert")).toContainText("didn't load")
+  await expect(firstResult(page)).toBeVisible()
 })
 
 test("picker and workspace view screenshots", async ({ page }, testInfo) => {

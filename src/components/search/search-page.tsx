@@ -7,7 +7,11 @@ import { HOTKEYS } from "@/hotkeys.ts"
 import { parseQuery } from "@/shared/query.ts"
 
 import { useCopied } from "./copied-context.ts"
-import { focusedPackage, focusedResult } from "./focused-result.ts"
+import {
+  focusedPackage,
+  focusedResult,
+  focusInDialog,
+} from "./focused-result.ts"
 import { RegistrySection } from "./registry-section.tsx"
 import { SearchBox } from "./search-box.tsx"
 
@@ -55,8 +59,13 @@ function useSearchHotkeys(
   // Arrow keys are list navigation: they act only inside <main>, from the
   // search box or a card (docs/decisions.md D23).
   const inList = { ignoreInputs: false, target: list } as const
-  useHotkey(HOTKEYS.focusSearch.keys, () => searchBox.current?.focus())
-  useHotkey(HOTKEYS.focusSearchMod.keys, () => searchBox.current?.focus())
+  const focusSearch = () => {
+    if (!focusInDialog()) {
+      searchBox.current?.focus()
+    }
+  }
+  useHotkey(HOTKEYS.focusSearch.keys, focusSearch)
+  useHotkey(HOTKEYS.focusSearchMod.keys, focusSearch)
   useHotkey(HOTKEYS.clear.keys, onEscape, inputsToo)
   useHotkey(
     HOTKEYS.next.keys,

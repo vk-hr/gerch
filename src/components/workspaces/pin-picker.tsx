@@ -29,6 +29,9 @@ function PinPicker({ onClose, pin }: { onClose: () => void; pin: Pin }) {
           onClose()
         }}
         onInputChange={setInput}
+        optionDisabled={(option) =>
+          option.kind === "workspace" && option.pinned
+        }
         optionKey={(option) =>
           option.kind === "create" ? "create" : option.workspace.id
         }

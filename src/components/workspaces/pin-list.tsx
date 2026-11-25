@@ -3,7 +3,6 @@ import { useRef } from "react"
 import type { RefObject } from "react"
 
 import type { Workspace } from "@/client/state.ts"
-import { CopiedProvider } from "@/components/search/copied-provider.tsx"
 
 import { cachedResults } from "./cached-results.ts"
 import { PinnedCard } from "./pinned-card.tsx"
@@ -35,21 +34,19 @@ function PinList({
   const cached = cachedResults(useQueryClient())
   const list = useRef<HTMLUListElement>(null)
   return (
-    <CopiedProvider>
-      <ul className="grid gap-3 overflow-y-auto overscroll-contain" ref={list}>
-        {workspace.pins.map((pin, index) => (
-          <PinnedCard
-            key={`${pin.registry}:${pin.name}`}
-            onRemove={() => {
-              focusAfterRemoving(list.current, index, fallbackFocus.current)
-              unpin(workspace.id, pin)
-            }}
-            summary={freshestSummary(pin, cached)}
-            workspaceName={workspace.name}
-          />
-        ))}
-      </ul>
-    </CopiedProvider>
+    <ul className="grid gap-3 overflow-y-auto overscroll-contain" ref={list}>
+      {workspace.pins.map((pin, index) => (
+        <PinnedCard
+          key={`${pin.registry}:${pin.name}`}
+          onRemove={() => {
+            focusAfterRemoving(list.current, index, fallbackFocus.current)
+            unpin(workspace.id, pin)
+          }}
+          summary={freshestSummary(pin, cached)}
+          workspaceName={workspace.name}
+        />
+      ))}
+    </ul>
   )
 }
 

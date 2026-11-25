@@ -9,6 +9,7 @@ interface WorkspaceComboboxProps<TOption> {
   input: string
   label: string
   onChoose: (option: TOption) => void
+  optionDisabled?: (option: TOption) => boolean
   onInputChange: (input: string) => void
   optionKey: (option: TOption) => string
   optionLabel: (option: TOption) => string
@@ -58,6 +59,7 @@ function WorkspaceCombobox<TOption>(props: WorkspaceComboboxProps<TOption>) {
         />
         <ComboboxOptions
           empty={props.empty}
+          optionDisabled={props.optionDisabled}
           optionKey={props.optionKey}
           renderOption={props.renderOption}
         />

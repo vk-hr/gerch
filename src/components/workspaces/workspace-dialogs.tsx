@@ -1,4 +1,7 @@
+import { CatchBoundary } from "@tanstack/react-router"
 import { lazy, Suspense, useEffect, useState } from "react"
+
+import { DialogLoadError } from "./dialog-load-error.tsx"
 
 import { useWorkspaceHotkeys } from "./use-workspace-hotkeys.ts"
 import type { OpenDialog } from "./use-workspace-hotkeys.ts"
@@ -53,12 +56,19 @@ function WorkspaceDialogs() {
     setDialogs((current) => ({ ...current, dialog: CLOSED }))
   }
   return (
-    <Suspense fallback={null}>
-      {dialog.kind === "pin" ? (
-        <PinPicker onClose={close} pin={dialog.pin} />
-      ) : null}
-      {dialog.kind === "workspaces" ? <WorkspaceView onClose={close} /> : null}
-    </Suspense>
+    <CatchBoundary
+      errorComponent={DialogLoadError}
+      getResetKey={() => dialog.kind}
+    >
+      <Suspense fallback={null}>
+        {dialog.kind === "pin" ? (
+          <PinPicker onClose={close} pin={dialog.pin} />
+        ) : null}
+        {dialog.kind === "workspaces" ? (
+          <WorkspaceView onClose={close} />
+        ) : null}
+      </Suspense>
+    </CatchBoundary>
   )
 }
 

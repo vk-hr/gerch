@@ -145,6 +145,15 @@ describe("picker options", () => {
     ])
   })
 
+  test("puts an exact name match first", () => {
+    expect.hasAssertions()
+    const portfolio: Workspace = { id: "w3", name: "portfolio", pins: [] }
+    expect(pickerOptions([deps, portfolio], "portfolio", zod)).toStrictEqual([
+      { kind: "workspace", pinned: false, workspace: portfolio },
+      { kind: "workspace", pinned: true, workspace: deps },
+    ])
+  })
+
   test("does not offer to create a name that exists", () => {
     expect.hasAssertions()
     expect(pickerOptions([deps], "PORTFOLIO DEPS", zod)).toStrictEqual([

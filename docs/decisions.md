@@ -573,3 +573,21 @@ The base holds what all three would otherwise each invent:
   `eslint/logical-assignment-operators` together reject every
   "assign if null" form. The code keeps the return target in state through
   a pure updater instead. No rule changed.
+- **Review fixes (lead).**
+  - The picker lists an exact name first. Enter on "portfolio" used to pin
+    into "portfolio deps".
+  - A workspace that already holds the package is a disabled option
+    instead of a silent no-op.
+  - Page shortcuts skip focus inside a dialog (`focusInDialog()`): `/` and
+    Mod+K no longer move focus behind the dialog, and Alt+P on a card in
+    the workspace view no longer swaps the view for the picker.
+  - One `CopiedProvider` at the root serves both the page and the dialogs,
+    so Alt+C marks the card it copied from.
+  - Result cards take their heading ids from `useId()`, so a card shown in
+    the view and on the page no longer shares an id.
+  - A boundary around the lazy dialogs shows an alert when their code fails
+    to load. The search page used to be replaced by the root error screen.
+  - `GERCH_E2E_PORT` sets the Playwright port, so worktrees can run the
+    flows at once.
+  - Left open: deleting a workspace asks no confirmation, and the view
+    doesn't rerender when a search finishes while it is open.
