@@ -37,6 +37,8 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 - `drizzle/`: generated migrations. Edit the schema, then generate.
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
 - `src/components/search/`: the search page, one component per file.
+- `src/components/tabs/`, `src/components/package/`: the tab strip and the
+  package page `/p/$registry/$name`.
 - `src/components/workspaces/`: the pin picker and workspace view dialogs.
 - `e2e/`: Playwright flows against the production build, which answers
   registry requests from `test/fixtures/` (`GERCH_REPLAY_DIR`).

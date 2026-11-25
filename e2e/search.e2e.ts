@@ -35,14 +35,28 @@ test("a direct link renders npm results on the server", async ({
   await expect(page.getByRole("searchbox")).toHaveValue("zod")
 })
 
+async function typeWithIntermediateSearch(page: Page) {
+  await page.keyboard.type("npm:rea")
+  await expect(page.getByRole("region", { name: "npm" })).toContainText(
+    "npm is unavailable"
+  )
+  await page.keyboard.type("ct query")
+}
+
 test("typing a prefixed query searches only that registry", async ({
   page,
 }) => {
   await interactive(page, "/")
   await page.keyboard.press("/")
   await expect(page.getByRole("searchbox")).toBeFocused()
-  const search = page.waitForResponse("**/_serverFn/**")
-  await page.keyboard.type("npm:react query")
+  const search = page.waitForResponse((response) => {
+    const url = new URL(response.url())
+    return (
+      url.pathname.includes("/_serverFn/") &&
+      url.searchParams.get("payload")?.includes('"react query"') === true
+    )
+  })
+  await typeWithIntermediateSearch(page)
   await expect(page).toHaveURL(/q=npm%3Areact(?:\+|%20)query/u)
   const response = await search
   expect(response.headers()["cache-control"]).toContain("s-maxage")
