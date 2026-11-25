@@ -2,14 +2,17 @@ import { waitUntil } from "@vercel/functions"
 
 import { createCache, memoryStore, postgresStore } from "./cache.ts"
 import { connect } from "./db/index.ts"
-import { databaseUrl } from "./env.ts"
+import { databaseUrl, replayDir } from "./env.ts"
 import { createNpmAdapter } from "./registries/npm.ts"
+import { replayDirectory } from "./replay.ts"
 import type { SearchDeps } from "./search.ts"
 
 function createContext(): SearchDeps {
   const url = databaseUrl()
+  const replay = replayDir()
+  const upstream = replay === undefined ? fetch : replayDirectory(replay)
   return {
-    adapters: { npm: createNpmAdapter(fetch) },
+    adapters: { npm: createNpmAdapter(upstream) },
     cache: createCache({
       now: Date.now,
       onError: (error) => {

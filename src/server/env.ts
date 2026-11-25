@@ -4,4 +4,10 @@ function databaseUrl(): string | undefined {
   return url === undefined || url === "" ? undefined : url
 }
 
-export { databaseUrl }
+// Set only by the end-to-end server: serve recorded fixtures, no network.
+function replayDir(): string | undefined {
+  const dir = process.env.GERCH_REPLAY_DIR
+  return dir === undefined || dir === "" ? undefined : dir
+}
+
+export { databaseUrl, replayDir }

@@ -53,6 +53,9 @@
             pkgs.hk
             pkgs.pkl
           ];
+          # Browsers for @playwright/test, matching its pinned version.
+          PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
+          PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
         };
       });
     };

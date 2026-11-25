@@ -16,6 +16,7 @@ lacks `bun lint`, `bun fmt` and `bun check`.
 | Test                     | `bun test --isolate=modules`                    |
 | Dev server               | `bun run dev`                                   |
 | Build                    | `bun run build`                                 |
+| End-to-end flows         | `bun x playwright test`                         |
 | Check the Bun pin        | `bun run check-bun`                             |
 | Live smoke test (npm)    | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
 | Re-record fixtures       | `bun run record-fixtures npm`                   |
@@ -30,8 +31,12 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 - `src/routes/`: TanStack Start file routes and `/api/*` server routes.
 - `src/server/`: server-only code: registry adapters, SWR cache, and the
   Drizzle schema and connection (`src/server/db/`).
-- `drizzle/`: generated migrations. Edit the schema, then generate. `src/shared/`: types shared with the browser (no zod).
+- `src/shared/`: types and pure helpers shared with the browser (no zod).
+- `drizzle/`: generated migrations. Edit the schema, then generate.
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
+- `src/components/search/`: the search page, one component per file.
+- `e2e/`: Playwright flows against the production build, which answers
+  registry requests from `test/fixtures/` (`GERCH_REPLAY_DIR`).
 - `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
   budgets), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
   `check-test-files.ts`, `check-commits.ts`).
@@ -45,6 +50,8 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 ## Banned patterns
 
 - `bun test` without `--isolate=modules`. `bunfig.toml` has no isolate key.
+- Pressing keys in an e2e flow before `body[data-interactive]`, or before
+  the element the key acts on is visible (D23).
 - Network calls in unit tests. Use recorded fixtures; the test preload
   blocks `fetch`.
 - Retries, wider timeouts or skipped tests to make CI pass.
