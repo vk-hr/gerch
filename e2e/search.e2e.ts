@@ -9,6 +9,19 @@ async function interactive(page: Page, url: string) {
 const firstResult = (page: Page, registry: string) =>
   page.getByRole("region", { name: registry }).getByRole("article").first()
 
+test("the home page answers without a redirect", async ({ request }) => {
+  const response = await request.get("/", { maxRedirects: 0 })
+  expect(response.ok()).toBe(true)
+})
+
+test("Escape clears the query and the URL", async ({ page }) => {
+  await interactive(page, "/?q=zod")
+  await page.getByRole("searchbox").focus()
+  await page.keyboard.press("Escape")
+  await expect(page.getByRole("searchbox")).toHaveValue("")
+  await expect(page).toHaveURL(/\/$/u)
+})
+
 test("a direct link renders npm results on the server", async ({
   page,
   request,

@@ -7,10 +7,10 @@ import { parseQuery } from "@/shared/query.ts"
 import { isAvailable } from "@/shared/registry.ts"
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    q: typeof search.q === "string" ? search.q : "",
-  }),
-  loaderDeps: ({ search }) => ({ query: search.q }),
+  // `q` is optional: a required key makes the router redirect `/` to `/?q=`.
+  validateSearch: (search: Record<string, unknown>): { q?: string } =>
+    typeof search.q === "string" && search.q !== "" ? { q: search.q } : {},
+  loaderDeps: ({ search }) => ({ query: search.q ?? "" }),
   // Start every registry's search while the page streams; each section
   // suspends on its own query, so the slowest registry never blocks the rest.
   loader: ({ context, deps }) => {
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 })
 
 function SearchRoute() {
-  const { q: query } = Route.useSearch()
+  const { q: query = "" } = Route.useSearch()
   return (
     <CopiedProvider>
       <SearchPage query={query} />

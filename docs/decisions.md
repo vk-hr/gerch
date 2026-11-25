@@ -246,6 +246,7 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
   date before merging. `test` runs the full suite with no selection on every
   PR, and "up to date" means it ran on the exact tree that lands on `main`.
   `test-changed` (selection) is not required.
+- `e2e` joined the required checks on 2026-11-25, at your request.
 - Block force pushes and deletion of `main`.
 
 ### D9. Directive budgets on a new repo: implemented in step 2

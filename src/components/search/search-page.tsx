@@ -95,7 +95,10 @@ function useQueryInUrl(input: string, query: string) {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (input !== query) {
-        void navigate({ replace: true, search: { q: input } })
+        void navigate({
+          replace: true,
+          search: input === "" ? {} : { q: input },
+        })
       }
     }, URL_DEBOUNCE_MS)
     return () => {
