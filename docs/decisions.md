@@ -336,6 +336,12 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     restores, checks it against `bun.lock`, and puts it first on `PATH`.
     Changing the cache's paths changes its version, so the first run on
     this PR and the first push to `main` install from scratch once.
+  - `test-changed` fetched the whole history (`fetch-depth: 0`, about 5 s)
+    to diff against the PR's base, and once went 1.2 s over the setup
+    budget on a cold install. A pull request checks out GitHub's merge
+    commit, whose first parent is the base. So `fetch-depth: 2` and
+    `GERCH_TEST_BASE: HEAD^1` select the same tests from a two-commit
+    fetch.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
