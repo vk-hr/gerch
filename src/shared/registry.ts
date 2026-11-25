@@ -26,7 +26,7 @@ interface SearchResponse {
 }
 
 // Registries the server can search today; the rest show "coming soon".
-const AVAILABLE_REGISTRIES: ReadonlySet<Registry> = new Set(["npm"])
+const AVAILABLE_REGISTRIES: ReadonlySet<Registry> = new Set(["npm", "crate"])
 
 const REGISTRY_LABELS: Record<Registry, string> = {
   crate: "crates.io",

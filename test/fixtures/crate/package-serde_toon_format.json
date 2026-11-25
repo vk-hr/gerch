@@ -1,0 +1,121 @@
+{
+  "body": {
+    "crate": {
+      "id": "serde_toon_format",
+      "name": "serde_toon_format",
+      "updated_at": "2026-09-29T07:13:15.375524Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2026-01-19T22:07:33.472018Z",
+      "downloads": 436985,
+      "recent_downloads": 291341,
+      "default_version": "0.2.0",
+      "num_versions": 4,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "Serde-compatible TOON v4.1 encoder/decoder",
+      "homepage": "https://toonformat.dev",
+      "documentation": "https://docs.rs/serde_toon_format",
+      "repository": "https://github.com/bnomei/serde_toon",
+      "links": {
+        "version_downloads": "/api/v1/crates/serde_toon_format/downloads",
+        "versions": "/api/v1/crates/serde_toon_format/versions",
+        "owners": "/api/v1/crates/serde_toon_format/owners",
+        "owner_team": "/api/v1/crates/serde_toon_format/owner_team",
+        "owner_user": "/api/v1/crates/serde_toon_format/owner_user",
+        "reverse_dependencies": "/api/v1/crates/serde_toon_format/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 3353756,
+        "crate": "serde_toon_format",
+        "num": "0.2.0",
+        "dl_path": "/api/v1/crates/serde_toon_format/0.2.0/download",
+        "readme_path": "/api/v1/crates/serde_toon_format/0.2.0/readme",
+        "updated_at": "2026-09-29T07:13:15.375524Z",
+        "created_at": "2026-09-29T07:13:15.375524Z",
+        "downloads": 81615,
+        "features": {
+          "default": [],
+          "parallel": ["dep:rayon"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT",
+        "links": {
+          "dependencies": "/api/v1/crates/serde_toon_format/0.2.0/dependencies",
+          "version_downloads": "/api/v1/crates/serde_toon_format/0.2.0/downloads",
+          "authors": "/api/v1/crates/serde_toon_format/0.2.0/authors"
+        },
+        "crate_size": 297121,
+        "published_by": {
+          "id": 288034,
+          "login": "bnomei",
+          "name": "Bruno Meilick",
+          "avatar": "https://avatars.githubusercontent.com/u/3265642?v=4",
+          "url": "https://github.com/bnomei",
+          "github_username_matches": true,
+          "created_at": "2013-01-14T14:13:50Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 288034,
+              "login": "bnomei",
+              "name": "Bruno Meilick",
+              "avatar": "https://avatars.githubusercontent.com/u/3265642?v=4",
+              "url": "https://github.com/bnomei",
+              "github_username_matches": true,
+              "created_at": "2013-01-14T14:13:50Z"
+            },
+            "time": "2026-09-29T07:13:15.375524Z"
+          }
+        ],
+        "checksum": "83047917cd35d3cf33b1cfa3085e048546c8fb0f1f86ab90aa8e680196679fc3",
+        "rust_version": null,
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2021",
+        "description": "Serde-compatible TOON v4.1 encoder/decoder",
+        "homepage": "https://toonformat.dev",
+        "documentation": "https://docs.rs/serde_toon_format",
+        "repository": "https://github.com/bnomei/serde_toon",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "Python": {
+              "code_lines": 156,
+              "comment_lines": 1,
+              "files": 1
+            },
+            "Rust": {
+              "code_lines": 7501,
+              "comment_lines": 14,
+              "files": 18
+            },
+            "Shell": {
+              "code_lines": 39,
+              "comment_lines": 1,
+              "files": 1
+            }
+          },
+          "total_code_lines": 7696,
+          "total_comment_lines": 16
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/serde_toon_format?include=default_version,downloads"
+}

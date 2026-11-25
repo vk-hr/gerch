@@ -18,8 +18,8 @@ lacks `bun lint`, `bun fmt` and `bun check`.
 | Build                    | `bun run build`                                 |
 | End-to-end flows         | `bun x playwright test`                         |
 | Check the Bun pin        | `bun run check-bun`                             |
-| Live smoke test (npm)    | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
-| Re-record fixtures       | `bun run record-fixtures npm`                   |
+| Live smoke test          | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
+| Re-record fixtures       | `bun run record-fixtures npm` (or `crate`)      |
 | New migration            | `bun run drizzle-kit generate --name <change>`  |
 | Migrate the database     | `DATABASE_URL=… bun run migrate`                |
 
@@ -29,8 +29,9 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 ## Structure
 
 - `src/routes/`: TanStack Start file routes and `/api/*` server routes.
-- `src/server/`: server-only code: registry adapters, SWR cache, and the
-  Drizzle schema and connection (`src/server/db/`).
+- `src/server/`: server-only code: registry adapters, SWR cache, the
+  rate-limit queue (`rate-slot.ts`), and the Drizzle schema and connection
+  (`src/server/db/`).
 - `src/shared/`: types and pure helpers shared with the browser (no zod).
 - `src/client/`: browser-only state saved in `localStorage` (tabs,
   workspaces, pins, history). Read it with `useClientState`.

@@ -1,0 +1,118 @@
+{
+  "body": {
+    "crate": {
+      "id": "serde_valid",
+      "name": "serde_valid",
+      "updated_at": "2026-10-04T03:10:38.836129Z",
+      "versions": null,
+      "keywords": null,
+      "categories": null,
+      "badges": [],
+      "created_at": "2022-05-10T14:28:30.423002Z",
+      "downloads": 5369505,
+      "recent_downloads": 1221381,
+      "default_version": "3.2.0",
+      "num_versions": 65,
+      "yanked": false,
+      "max_version": "0.0.0",
+      "newest_version": "0.0.0",
+      "max_stable_version": null,
+      "description": "JSON Schema based validation tool using serde.",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/ya7010/serde_valid.git",
+      "links": {
+        "version_downloads": "/api/v1/crates/serde_valid/downloads",
+        "versions": "/api/v1/crates/serde_valid/versions",
+        "owners": "/api/v1/crates/serde_valid/owners",
+        "owner_team": "/api/v1/crates/serde_valid/owner_team",
+        "owner_user": "/api/v1/crates/serde_valid/owner_user",
+        "reverse_dependencies": "/api/v1/crates/serde_valid/reverse_dependencies"
+      },
+      "exact_match": false,
+      "trustpub_only": false
+    },
+    "versions": [
+      {
+        "id": 3397754,
+        "crate": "serde_valid",
+        "num": "3.2.0",
+        "dl_path": "/api/v1/crates/serde_valid/3.2.0/download",
+        "readme_path": "/api/v1/crates/serde_valid/3.2.0/readme",
+        "updated_at": "2026-10-04T03:10:38.836129Z",
+        "created_at": "2026-10-04T03:10:38.836129Z",
+        "downloads": 180452,
+        "features": {
+          "default": ["i128"],
+          "fluent": ["dep:fluent", "serde_valid_derive/fluent"],
+          "i128": [
+            "indexmap/std",
+            "num-traits/i128",
+            "serde_valid_literal/i128"
+          ],
+          "toml": ["serde_toml"],
+          "yaml": ["serde_yaml"]
+        },
+        "yanked": false,
+        "yank_message": null,
+        "lib_links": null,
+        "license": "MIT",
+        "links": {
+          "dependencies": "/api/v1/crates/serde_valid/3.2.0/dependencies",
+          "version_downloads": "/api/v1/crates/serde_valid/3.2.0/downloads",
+          "authors": "/api/v1/crates/serde_valid/3.2.0/authors"
+        },
+        "crate_size": 63422,
+        "published_by": {
+          "id": 126758,
+          "login": "ya7010",
+          "name": "ya7010",
+          "avatar": "https://avatars.githubusercontent.com/u/47286750?v=4",
+          "url": "https://github.com/ya7010",
+          "github_username_matches": true,
+          "created_at": "2019-02-03T01:17:29Z"
+        },
+        "audit_actions": [
+          {
+            "action": "publish",
+            "user": {
+              "id": 126758,
+              "login": "ya7010",
+              "name": "ya7010",
+              "avatar": "https://avatars.githubusercontent.com/u/47286750?v=4",
+              "url": "https://github.com/ya7010",
+              "github_username_matches": true,
+              "created_at": "2019-02-03T01:17:29Z"
+            },
+            "time": "2026-10-04T03:10:38.836129Z"
+          }
+        ],
+        "checksum": "a812672d5d6c94c0fa540e62dc318728410c78f40d60ae6c07afc845616da5f6",
+        "rust_version": null,
+        "has_lib": true,
+        "bin_names": [],
+        "edition": "2021",
+        "description": "JSON Schema based validation tool using serde.",
+        "homepage": null,
+        "documentation": null,
+        "repository": "https://github.com/ya7010/serde_valid.git",
+        "trustpub_data": null,
+        "linecounts": {
+          "languages": {
+            "Rust": {
+              "code_lines": 4609,
+              "comment_lines": 18,
+              "files": 74
+            }
+          },
+          "total_code_lines": 4609,
+          "total_comment_lines": 18
+        }
+      }
+    ],
+    "keywords": null,
+    "categories": null
+  },
+  "status": 200,
+  "url": "https://crates.io/api/v1/crates/serde_valid?include=default_version,downloads"
+}

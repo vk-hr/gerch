@@ -128,10 +128,10 @@ test("a search request that never reaches the server can be retried", async ({
   await expect(firstResult(page, "npm").getByRole("heading")).toHaveText("zod")
 })
 
-test("registries that are not built yet say so", async ({ page }) => {
+test("a search without a prefix covers npm and crates.io", async ({ page }) => {
   await page.goto("/?q=zod")
-  await expect(page.getByRole("region", { name: "crates.io" })).toContainText(
-    "coming soon"
+  await expect(firstResult(page, "crates.io").getByRole("heading")).toHaveText(
+    "zod"
   )
   await expect(page.getByRole("region", { name: "nixpkgs" })).toContainText(
     "coming soon"

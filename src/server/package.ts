@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { isRegistry } from "@/shared/registry.ts"
-import type { PackageSummary } from "@/shared/registry.ts"
+import type { PackageSummary, Registry } from "@/shared/registry.ts"
 
 import type { RegistryAdapter } from "./registries/types.ts"
 
@@ -12,13 +12,21 @@ import type { SearchDeps } from "./search.ts"
 const HOUR_MS = 3_600_000
 const DAY_MS = 86_400_000
 const STALE_DAYS = 30
-// The spec's cache table: an npm package is fresh for 1 h, stale up to 30 d.
-const PACKAGE_POLICY: CachePolicy = {
-  freshMs: HOUR_MS,
-  staleMs: STALE_DAYS * DAY_MS,
+const CRATE_FRESH_HOURS = 6
+// The spec's cache table: an npm package is fresh for 1 h and a crate for
+// 6 h (each crates.io request waits for the 1 req/s slot); both are served
+// stale up to 30 d. nix packages come from the local index.
+const PACKAGE_POLICIES: Record<Registry, CachePolicy> = {
+  crate: { freshMs: CRATE_FRESH_HOURS * HOUR_MS, staleMs: STALE_DAYS * DAY_MS },
+  nix: { freshMs: HOUR_MS, staleMs: STALE_DAYS * DAY_MS },
+  npm: { freshMs: HOUR_MS, staleMs: STALE_DAYS * DAY_MS },
 }
 const MS_PER_S = 1000
-const PACKAGE_CDN_CACHE = `public, max-age=0, s-maxage=${PACKAGE_POLICY.freshMs / MS_PER_S}, stale-while-revalidate=${PACKAGE_POLICY.staleMs / MS_PER_S}`
+
+function packageCdnCache(registry: Registry): string {
+  const { freshMs, staleMs } = PACKAGE_POLICIES[registry]
+  return `public, max-age=0, s-maxage=${freshMs / MS_PER_S}, stale-while-revalidate=${staleMs / MS_PER_S}`
+}
 
 type PackageOutcome =
   | { status: "found"; state: CacheState; summary: PackageSummary }
@@ -78,7 +86,7 @@ async function lookup(
     key: `package:${adapter.registry}:${name}`,
     load: async () => ({ summary: await adapter.package(name) }),
     parse: (value) => lookupSchema.parse(value),
-    policy: PACKAGE_POLICY,
+    policy: PACKAGE_POLICIES[adapter.registry],
   })
   const { summary } = found.value
   return summary === null
@@ -86,5 +94,5 @@ async function lookup(
     : { state: found.state, status: "found", summary }
 }
 
-export { PACKAGE_CDN_CACHE, runPackage }
+export { packageCdnCache, runPackage }
 export type { PackageOutcome }

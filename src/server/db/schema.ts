@@ -12,4 +12,12 @@ const cacheEntries = pgTable("cache_entries", {
   value: jsonb("value").notNull(),
 })
 
-export { cacheEntries }
+// One row per rate-limited upstream: the earliest time (epoch ms, database
+// clock) the next request may go out. Every function instance reserves its
+// turn here, so the limit holds across instances (src/server/rate-slot.ts).
+const rateSlots = pgTable("rate_slots", {
+  key: text("key").primaryKey(),
+  nextAt: bigint("next_at", { mode: "number" }).notNull(),
+})
+
+export { cacheEntries, rateSlots }
