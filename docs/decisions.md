@@ -342,6 +342,15 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     commit, whose first parent is the base. So `fetch-depth: 2` and
     `GERCH_TEST_BASE: HEAD^1` select the same tests from a two-commit
     fetch.
+  - What's left is variance on GitHub's hosted runners. After these
+    fixes, most jobs set up in 5–9 s. The steps vary: runner setup 0–2 s,
+    checkout 1–5 s, setup action 3–14 s. About one job per run still
+    lands on a slow cache or npm download and goes over 15 s. That hit
+    `main` twice (15.9 s and 20.2 s on the pushes of #21 and #16) and
+    #20's `build` once (16.3 s). With your approval, that one job was
+    re-run once and passed. The directive's remedy is Blacksmith runners
+    with a warm toolchain, which needs an account; until then a setup
+    overrun is runner variance, not a code failure.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
@@ -1227,3 +1236,19 @@ The two earlier runs, before the focus fix, agree:
   registry". It sends a `HEAD` request for the channel dump and checks the
   ETag and the release name in the redirect target. The dump itself
   (10.6 MB) is read only by the scheduled ingest.
+
+### D36. Failed cache refreshes in /api/health: implemented
+
+The spec's cache section says upstream errors on a stale key "keep serving
+stale data and report the error in `/api/health`". Serving stale data was
+built in step 3; the report wasn't.
+
+- `cache_entries` gains `refresh_error` and `refresh_failed_at` (generated
+  migration). A failed background refresh records them on its row, and the
+  next successful store clears them. They live in Postgres, so every
+  function instance sees them. The memory store, for local dev and tests,
+  keeps them in a map.
+- `/api/health` lists `refreshFailures`: the latest failure per registry in
+  the last hour, as `{ registry, message, at }`. The registry is the second
+  part of the cache key (`search:npm:zod`). If the cache can't be read, it
+  says so and still answers `200`.

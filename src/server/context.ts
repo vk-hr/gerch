@@ -6,6 +6,7 @@ import { connect } from "./db/index.ts"
 import { databaseUrl, release, replayDir } from "./env.ts"
 import { nixIndexState } from "./nix/store.ts"
 import type { NixIndexState } from "./nix/store.ts"
+import type { RefreshFailure } from "./cache.ts"
 import { replayDirectory } from "./replay.ts"
 import type { SearchDeps } from "./search.ts"
 import { postgresVitals } from "./vitals.ts"
@@ -14,6 +15,8 @@ import type { VitalStore } from "./vitals.ts"
 interface ServerContext extends SearchDeps {
   // The nix index's release and age, for /api/health; null without one.
   nixState: () => Promise<NixIndexState | null>
+  // Failed background refreshes, for /api/health.
+  refreshFailures: (since: number) => Promise<RefreshFailure[]>
   // Where /api/vitals keeps samples; null drops them (no database).
   vitals: { release: string; store: VitalStore | null }
 }
@@ -22,6 +25,7 @@ function createContext(): ServerContext {
   const url = databaseUrl()
   const replay = replayDir()
   const db = url === undefined ? undefined : connect(url)
+  const store = db === undefined ? memoryStore() : postgresStore(db)
   return {
     adapters: createAdapters(
       db,
@@ -32,9 +36,10 @@ function createContext(): ServerContext {
       onError: (error) => {
         console.error("cache refresh failed", error)
       },
-      store: db === undefined ? memoryStore() : postgresStore(db),
+      store,
       waitUntil,
     }),
+    refreshFailures: store.failures,
     nixState: async () => (db === undefined ? null : nixIndexState(db)),
     vitals: {
       release: release(),

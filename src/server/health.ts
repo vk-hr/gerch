@@ -1,3 +1,4 @@
+import type { RefreshFailure } from "./cache.ts"
 import type { NixIndexState } from "./nix/store.ts"
 
 const HOUR_MS = 3_600_000
@@ -7,6 +8,8 @@ const NIX_STALE_HOURS = 24
 interface HealthDeps {
   nixState: () => Promise<NixIndexState | null>
   now: () => number
+  // Failed background refreshes at or after a time (cache.ts).
+  refreshFailures: (since: number) => Promise<RefreshFailure[]>
 }
 
 // Liveness, plus the nix index's release and age (docs/spec.md, "API"). It
@@ -31,8 +34,18 @@ async function handleHealth(deps: HealthDeps): Promise<Response> {
     (state) => nixReport(state, deps.now()),
     () => ({ error: "the nix index can't be read" })
   )
+  // Stale data keeps being served while a registry fails; this says which
+  // registries failed to refresh in the last hour (docs/spec.md, "Cache").
+  const refreshFailures = await deps.refreshFailures(deps.now() - HOUR_MS).then(
+    (failures) =>
+      failures.map((failure) => ({
+        ...failure,
+        at: new Date(failure.at).toISOString(),
+      })),
+    () => ({ error: "the cache can't be read" })
+  )
   return Response.json(
-    { nix, ok: true },
+    { nix, ok: true, refreshFailures },
     { headers: { "cache-control": "no-store" } }
   )
 }

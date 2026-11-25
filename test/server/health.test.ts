@@ -20,6 +20,7 @@ describe("health route", () => {
     const response = await handleHealth({
       nixState: async () => state(),
       now: () => INGESTED.getTime() + 7 * HOUR_MS,
+      refreshFailures: async () => [],
     })
     expect(response.headers.get("cache-control")).toBe("no-store")
     await expect(response.json()).resolves.toStrictEqual({
@@ -31,6 +32,7 @@ describe("health route", () => {
         stale: false,
       },
       ok: true,
+      refreshFailures: [],
     })
   })
 
@@ -39,6 +41,7 @@ describe("health route", () => {
     const response = await handleHealth({
       nixState: async () => state(),
       now: () => INGESTED.getTime() + 24 * HOUR_MS,
+      refreshFailures: async () => [],
     })
     await expect(response.json()).resolves.toMatchObject({
       nix: { stale: true },
@@ -53,11 +56,15 @@ describe("health route", () => {
         throw new Error("connection refused")
       },
       now: () => 0,
+      refreshFailures: async () => {
+        throw new Error("connection refused")
+      },
     })
     expect(response.status).toBe(200)
     await expect(response.json()).resolves.toStrictEqual({
       nix: { error: "the nix index can't be read" },
       ok: true,
+      refreshFailures: { error: "the cache can't be read" },
     })
   })
 
@@ -66,10 +73,36 @@ describe("health route", () => {
     const response = await handleHealth({
       nixState: async () => null,
       now: () => 0,
+      refreshFailures: async () => [],
     })
     await expect(response.json()).resolves.toStrictEqual({
       nix: null,
       ok: true,
+      refreshFailures: [],
+    })
+  })
+
+  test("lists the last hour's failed refreshes per registry", async () => {
+    expect.hasAssertions()
+    const since: number[] = []
+    const failedAt = 10 * HOUR_MS - 60_000
+    const response = await handleHealth({
+      nixState: async () => null,
+      now: () => 10 * HOUR_MS,
+      refreshFailures: async (from) => {
+        since.push(from)
+        return [{ at: failedAt, message: "upstream 503", registry: "crate" }]
+      },
+    })
+    expect(since).toStrictEqual([9 * HOUR_MS])
+    await expect(response.json()).resolves.toMatchObject({
+      refreshFailures: [
+        {
+          at: new Date(failedAt).toISOString(),
+          message: "upstream 503",
+          registry: "crate",
+        },
+      ],
     })
   })
 })

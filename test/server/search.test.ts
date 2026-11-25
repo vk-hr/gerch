@@ -60,7 +60,7 @@ describe("search route", () => {
           throw error
         },
         store: {
-          get: store.get,
+          ...store,
           set: async (key, entry) => {
             writes.push(key)
             await store.set(key, entry)

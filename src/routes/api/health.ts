@@ -6,8 +6,10 @@ import { handleHealth } from "@/server/health.ts"
 export const Route = createFileRoute("/api/health")({
   server: {
     handlers: {
-      GET: async () =>
-        handleHealth({ nixState: serverContext().nixState, now: Date.now }),
+      GET: async () => {
+        const { nixState, refreshFailures } = serverContext()
+        return handleHealth({ nixState, now: Date.now, refreshFailures })
+      },
     },
   },
 })
