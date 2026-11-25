@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { evaluate, findJob } from "../../scripts/ci-budget.ts"
+import { evaluate, findJob, jobName } from "../../scripts/ci-budget.ts"
 
 const budget = { jobMs: 35_000, setupMs: 15_000 }
 
@@ -70,6 +70,16 @@ describe("findJob()", () => {
     expect.hasAssertions()
     expect(() => findJob([job("checks", "in_progress")], "build")).toThrow(
       "no job named build in this run attempt"
+    )
+  })
+})
+
+describe("jobName()", () => {
+  test("is the job id unless a matrix job names itself", () => {
+    expect.hasAssertions()
+    expect(jobName({ GERCH_JOB_NAME: "", GITHUB_JOB: "e2e" })).toBe("e2e")
+    expect(jobName({ GERCH_JOB_NAME: "e2e-2", GITHUB_JOB: "e2e" })).toBe(
+      "e2e-2"
     )
   })
 })

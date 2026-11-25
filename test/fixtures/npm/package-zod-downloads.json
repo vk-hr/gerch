@@ -1,0 +1,10 @@
+{
+  "body": {
+    "downloads": 468631616,
+    "start": "2026-11-17",
+    "end": "2026-11-23",
+    "package": "zod"
+  },
+  "status": 200,
+  "url": "https://api.npmjs.org/downloads/point/last-week/zod"
+}

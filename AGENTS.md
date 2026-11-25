@@ -32,9 +32,16 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 - `src/server/`: server-only code: registry adapters, SWR cache, and the
   Drizzle schema and connection (`src/server/db/`).
 - `src/shared/`: types and pure helpers shared with the browser (no zod).
+- `src/client/`: browser-only state saved in `localStorage` (tabs,
+  workspaces, pins, history). Read it with `useClientState`.
 - `drizzle/`: generated migrations. Edit the schema, then generate.
 - `src/components/ui/`: shadcn components (style `base-luma`, Base UI).
 - `src/components/search/`: the search page, one component per file.
+- `src/components/tabs/`, `src/components/package/`: the tab strip and the
+  package page `/p/$registry/$name`.
+- `src/components/workspaces/`: the pin picker and workspace view dialogs.
+- `src/components/suggestions/`, `src/components/shortcuts/`: search
+  suggestions with history ranking, and the `?` shortcut list.
 - `e2e/`: Playwright flows against the production build, which answers
   registry requests from `test/fixtures/` (`GERCH_REPLAY_DIR`).
 - `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with

@@ -117,14 +117,14 @@ skipped silently, measured). The first run flagged 99
 problems on template code. Code was fixed where the finding was real.
 Rules were turned off only for these reasons:
 
-| Reason                                 | Rules off                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Bans a language feature the stack uses | `unicorn/no-null` (the API's JSON contract uses `null`), `eslint/no-undefined`, `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`, `eslint/no-ternary`                                                                                                                                                                                                                                                                                                                                                                                               |
-| Contradicts another enabled rule       | `unicorn/no-array-reduce` (vs `eslint/no-await-in-loop`: no allowed way to run async steps in order); `typescript/require-await` (same as `eslint/require-await`); `vitest/no-hooks` (vs `vitest/require-hook`); `vitest/prefer-describe-function-title` (vs `vitest/valid-title` and the `bun:test` types); `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`) |
-| Contradicts a directive                | `vitest/no-importing-vitest-globals` (test files keep their `vitest` imports); `vitest/require-test-timeout` (no per-test timeouts)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Doesn't fit the stack                  | `react/react-in-jsx-scope` (automatic JSX runtime); `react/forbid-component-props` (Tailwind `className`); `react/jsx-no-literals` (no i18n); `typescript/explicit-function-return-type`, `typescript/explicit-module-boundary-types` (Router and Query rely on inferred types); `typescript/prefer-readonly-parameter-types` (library prop types aren't deep-readonly); `unicorn/text-encoding-identifier-case` (HTML `charSet` must be `utf-8`)                                                                                                                                    |
-| React Compiler does it (D10)           | `react-perf/jsx-no-new-function-as-prop`, `jsx-no-new-object-as-prop`, `jsx-no-new-array-as-prop`, `jsx-no-jsx-as-prop` (they ask for hand-written `useCallback` and `useMemo` on every prop; the directive's React Compiler memoizes them, and step 7 adds it)                                                                                                                                                                                                                                                                                                                      |
-| Template had it off                    | `eslint/sort-keys`, `eslint/sort-imports`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Reason                                 | Rules off                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bans a language feature the stack uses | `unicorn/no-null` (the API's JSON contract uses `null`), `eslint/no-undefined`, `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`, `eslint/no-ternary`                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Contradicts another enabled rule       | `unicorn/no-array-reduce` (vs `eslint/no-await-in-loop`: no allowed way to run async steps in order); `typescript/require-await` (same as `eslint/require-await`); `vitest/no-hooks` (vs `vitest/require-hook`); `vitest/prefer-called-times` (vs `vitest/prefer-called-once`); `vitest/prefer-describe-function-title` (vs `vitest/valid-title` and the `bun:test` types); `import/no-named-export` and `import/prefer-default-export` (vs `import/no-default-export`); `import/exports-last` and `import/group-exports` (vs the file-route layout); `eslint/require-await` (vs `typescript/promise-function-async` and `typescript/return-await`) |
+| Contradicts a directive                | `vitest/no-importing-vitest-globals` (test files keep their `vitest` imports); `vitest/require-test-timeout` (no per-test timeouts)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Doesn't fit the stack                  | `react/react-in-jsx-scope` (automatic JSX runtime); `react/forbid-component-props` (Tailwind `className`); `react/jsx-no-literals` (no i18n); `typescript/explicit-function-return-type`, `typescript/explicit-module-boundary-types` (Router and Query rely on inferred types); `typescript/prefer-readonly-parameter-types` (library prop types aren't deep-readonly); `unicorn/text-encoding-identifier-case` (HTML `charSet` must be `utf-8`)                                                                                                                                                                                                   |
+| React Compiler does it (D10)           | `react-perf/jsx-no-new-function-as-prop`, `jsx-no-new-object-as-prop`, `jsx-no-new-array-as-prop`, `jsx-no-jsx-as-prop` (they ask for hand-written `useCallback` and `useMemo` on every prop; the directive's React Compiler memoizes them, and step 7 adds it)                                                                                                                                                                                                                                                                                                                                                                                     |
+| Template had it off                    | `eslint/sort-keys`, `eslint/sort-imports`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 Configured rather than turned off: `no-console` (allows `console.error` and
 `console.warn` for Vercel logs), `func-style` (declarations, arrows
@@ -132,7 +132,7 @@ allowed), `one-var` (`never`), `no-use-before-define` (hoisted functions
 allowed), `no-magic-numbers` (ignores -1, 0, 1), `jsx-max-depth` (5),
 `jsx-filename-extension` (`.tsx`), `capitalized-comments` (consecutive lines
 allowed), `no-duplicate-imports` (separate `import type` allowed),
-`vitest/consistent-test-it` (`test`), `id-length` (allows `q`, the search URL parameter), `no-void` (allowed as a statement: the way `no-floating-promises` accepts a promise an event handler starts and doesn't wait for). Scoped overrides: `scripts/**`
+`vitest/consistent-test-it` (`test`), `id-length` (allows `q`, the search URL parameter), `no-void` (allowed as a statement: the way `no-floating-promises` accepts a promise an event handler starts and doesn't wait for), `only-throw-error` (allows the router's `NotFoundError`: a loader throws `notFound()`, a plain object, to get a 404). Scoped overrides: `scripts/**`
 (console, `process.exit`, sync calls, top-level await, `process.env`), `*.config.ts`
 (default export), `src/components/ui/**` (shadcn prop spreading and variant
 exports), `src/routes/**` (`only-export-components`; the Start plugin handles
@@ -140,7 +140,10 @@ route HMR), tests (magic numbers, parent imports, function length and statement 
 `no-confusing-void-expression`, which `bun:test`'s `void`-typed `.resolves`
 matchers trip); the vitest plugin runs on test files only, `test/fixtures/**`
 (`require-hook`), `*.d.ts` (`import/unambiguous`), `src/server/env.ts` (the one place that
-reads `process.env`), `playwright.config.ts` (reads `CI` to pick the browser), `test/setup/**` (the preload reads `GERCH_LIVE`).
+reads `process.env`), `playwright.config.ts` (reads `CI` to pick the browser), `test/setup/**` (the preload reads `GERCH_LIVE`), `src/components/suggestions/suggestion-list.tsx`
+(`jsx-a11y/prefer-tag-over-role`: the combobox popup needs `role="listbox"`
+and `role="option"` on custom elements, because `select` and `datalist`
+can't hold styled options that `aria-activedescendant` points at; D27).
 
 `typescript/ban-ts-comment` bans `@ts-expect-error`, `@ts-ignore` and
 `@ts-nocheck` outright (the template allowed `@ts-expect-error`).
@@ -291,6 +294,23 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
   `scripts/check-test-files.ts` already merges JUnit reports, so it proves
   coverage across shards once they exist. Timings (`--timings`,
   `--update-timings` on `main`) come with the second shard.
+- **Step 5 growth (2026-11-25).** PR #11 went over two budgets with every
+  test passing: lint took 1,112 ms (budget 1 s) and the e2e job 48 s
+  (budget 35 s, 57 flows on one runner).
+  - Lint: type-aware lint and `bun check` both type-check the project, and
+    `verify.ts` ran them side by side on the runner's 4 cores. Lint now runs
+    alone first, then the rest in parallel, still listing every failure.
+    Pinned to 4 cores locally: about 500 ms beside typecheck, about 300 ms
+    alone. CI lint ranged 500–1,112 ms across the step 5 branches.
+  - E2E: "buy cores before shards" means paid larger runners, so the flows
+    run as 4 Playwright shards on free runners (`--shard=i/4`). Shard 1
+    keeps the job name `e2e`, the required check; the others are `e2e-2` to
+    `e2e-4`. `scripts/check-e2e-shards.ts` proves in each shard job that
+    the shards list every flow exactly once. The first CI run used 3 shards:
+    jobs took 27.0–33.9 s, and the 33.9 s one had a 13.6 s setup, so a
+    fourth shard leaves room for slow setups. Matrix jobs share one
+    `GITHUB_JOB`, so `ci-budget.ts` reads the shard's name from
+    `GERCH_JOB_NAME`.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
@@ -505,4 +525,307 @@ Decided 2026-11-24, at your request.
 - Known gap: the search box isn't resynced when `q` changes from outside
   (back, forward, a link). Nothing can trigger it yet, because typing
   replaces the history entry and the page has no links to queries. Step 5
-  adds such links, so it fixes this with a test.
+  adds such links, so it fixes this with a test. Fixed in step 5a (D25).
+
+### D24. Client state for step 5: implemented
+
+Decided 2026-11-25. At your request, step 5 runs as three PRs, built in
+parallel by three agents in separate worktrees on top of this shared base:
+
+- 5a (D25): the npm package page, tabs, and the back/forward resync of the
+  search box.
+- 5b (D26): workspaces and pins.
+- 5c (D27): history, frecency suggestions, the IndexedDB query cache, the
+  `?` shortcut list, Ctrl+N/Ctrl+P and the prefix chip.
+
+The base holds what all three would otherwise each invent:
+
+- `src/client/state.ts`: the saved state's types (`Tab`, `Workspace`,
+  `Pin`, `HistoryEntry`, `ClientState`) and `parseState`, which keeps every
+  valid entry of a saved value and drops the rest, so one bad entry never
+  costs the user their tabs. No zod: the browser bundle stays small (D5).
+- `src/client/store.ts`: one in-memory copy saved to `localStorage` under
+  `gerch:v1`. A write that storage refuses still updates the page.
+- `src/client/use-client-state.ts`: `useClientState(select)` through
+  `useSyncExternalStore`. The server and the hydrating render see the empty
+  state, so markup matches (D15). Other windows' changes arrive through the
+  `storage` event.
+- `src/hotkeys.ts`: every shortcut from the spec's keyboard map, so the parts
+  register keys without editing the same lines.
+
+### D25. Package page, tabs and the search box resync: implemented in step 5a
+
+**npm package data ("option 1").**
+
+- The adapter fetches `GET registry.npmjs.org/<name>/latest` (one version's
+  manifest, ~4–6 KB) and `GET api.npmjs.org/downloads/point/last-week/<name>`
+  in parallel. Names are URL-encoded; both hosts accept
+  `%40trpc%2Ftanstack-react-query` (verified). The full package document is
+  never fetched: 4.2 MB for zod, 7.2 MB for react.
+- A 404 from `/latest` means no such package: `null`, cached like any value.
+  A 404 from the downloads API means no count. Any other upstream error
+  throws, so the SWR cache keeps serving stale data.
+- The release date exists only in the full document, so the server returns
+  `releasedAt: null`. The page borrows the date from a cached TanStack Query
+  search result for the same package (`cachedReleaseDate`), read through
+  `useSyncExternalStore` with a `null` server snapshot. SSR and hydration
+  match, and the date appears once the client cache has it. A direct link
+  shows no date.
+- Cache key `package:<registry>:<name>`, fresh 1 h, stale up to 30 d. The
+  server function's own browser call gets `public, max-age=0, s-maxage=3600,
+stale-while-revalidate=2592000` for a found package and `no-store`
+  otherwise, the same pattern as search (D23).
+- `bun run record-fixtures npm package-` records only the package fixtures,
+  so the search fixtures stay as they are.
+
+**Package page `/p/$registry/$name`.**
+
+- The loader awaits the package. An unknown registry or package throws
+  `notFound()`, so the server answers 404. The page sends `public,
+s-maxage=3600, stale-while-revalidate=86400` for a found package or a
+  "coming soon" registry (crates.io, nixpkgs) and `no-store` for a failure,
+  which shows its error and a Retry button.
+- `$name` holds the whole name, so a scoped package lives at
+  `/p/npm/%40trpc%2Ftanstack-react-query` (the router encodes the slash).
+
+**Tabs.** The active tab always shows the current route.
+
+- Tab actions (Enter, Shift+Enter, the Alt shortcuts, clicks and typing in
+  the search box) save the change first, then navigate when the active tab's
+  route changed. Switching and reopening push a history entry; closing
+  replaces it.
+- Routes the actions didn't start (back, forward, links) follow the route: a
+  tab that already shows it becomes active, otherwise the active tab shows
+  it. So Back after a tab switch activates the previous tab instead of
+  overwriting the current one. On the first load an unmatched route opens a
+  new tab instead, so a shared link never overwrites a saved tab, and a
+  reload finds its active tab and changes nothing.
+- Shift+Enter opens each package after the consecutive package tabs following
+  the active tab. It leaves
+  the search tab in front, with its query and focused card. Several results
+  can be opened in a row, as with a middle click in a browser.
+- Closing the active tab activates its right neighbour, or its left one at
+  the end. Closing the last tab leaves an empty search tab. `closedTabs`
+  keeps the last 20. Reopening inserts the tab after the active one, because
+  the saved state has no original position. Next and previous wrap around;
+  moving stops at the ends.
+- Tab shortcuts pass `ignoreInputs: false`: TanStack Hotkeys' `'auto'`
+  default skips Alt combos in text inputs, and these work anywhere.
+- `Alt+Shift+.` and `Alt+Shift+,` fire as defined in `src/hotkeys.ts`. On a
+  US layout the browser reports `>` and `<` with codes `Period` and `Comma`,
+  and TanStack Hotkeys 0.27.2 falls back to the key's position for ASCII
+  symbols typed with Shift (its matcher, and verified in Playwright).
+- The strip renders from `useClientState`, so the server and the hydrating
+  render show an empty `h-10` slot. A Playwright flow compares `<main>`'s top
+  with JavaScript off and on: equal.
+- The `body[data-interactive]` marker moved to
+  `src/components/use-interactive-marker.ts`, used by the search and package
+  pages. Setting it from the tab strip failed "typing a prefixed query" 1 of
+  1: the strip sits outside the route's Suspense boundary, hydrates in an
+  earlier commit, and marked the page before the search page's hotkeys
+  existed.
+
+**Search box resync (D23's known gap).** Typing writes `q` from the change
+handler once typing pauses (150 ms), through the tab actions. The hook
+remembers the last value it wrote, so a `q` that differs came from outside
+(back, forward, a tab switch). It then replaces the text and cancels any
+write still waiting. Before the fix, switching between two search tabs kept
+the old text, and its debounced write replaced the new history entry. Two
+flows cover it; they use Playwright's clock to fire any pending write on
+purpose instead of waiting.
+
+**Left open.**
+
+- No shortcut or button opens an empty search tab; the keyboard map has
+  none. A second search tab comes from a link, a reopened tab, or a package
+  tab navigated back to search.
+- `GET /api/package/:registry/:name` from the spec's API table isn't built;
+  the page uses the server function.
+- Bundle (Brotli 11, all client assets): JS 130,925 → 137,601 B, CSS 4,842 →
+  5,008 B.
+
+### D26. Workspaces and pins: implemented in step 5b
+
+- **Where the view lives.** The pin picker (Alt+P) and the workspace view
+  (Alt+W) are modal dialogs. `WorkspaceDialogs` is mounted once in
+  `src/routes/__root.tsx`, so both keys work on every page. A workspace
+  route would need 5a's tab integration (D24), and dialogs need no URL.
+- **Load on intent.** Each dialog is a `React.lazy` chunk loaded on the
+  first Alt+P or Alt+W. Only the hotkey registrations ship on cold entry.
+  Brotli 11, measured on what `/` and `/?q=zod` request: JS 130,925 →
+  132,843 B, CSS 4,842 → 5,699 B. The dialog chunks add 31,692 B on first
+  use: 29,640 B shared, 652 B picker, 1,400 B view.
+- **Base UI directly, not shadcn files.** shadcn's `dialog` and `combobox`
+  put several components in one file, which `react/no-multi-comp`
+  rejects. Its combobox is also a popover. Base UI's `Combobox` in
+  `inline` mode is its documented pattern inside a `Dialog`. The
+  components in `src/components/workspaces/` use base-luma's classes and
+  tokens.
+- **Accessibility.** Both dialogs use the ARIA combobox pattern: a labelled
+  text box (`role="combobox"`) over a `listbox` of `option`s. Typing
+  filters, the arrow keys move, Enter chooses, and Escape closes. The
+  picker offers `Create "<name>"` when no workspace has the typed name
+  exactly, ignoring case and spaces. Creating a name that exists reuses
+  that workspace.
+- **Pins.** A pin is the same package when both registry and name match.
+  Pinning it again leaves the workspace unchanged, including the snapshot.
+- **Freshest card.** A pin shows the newest cached search result for its
+  package (by `dataUpdatedAt`) and falls back to the pin's snapshot. `Pin`
+  has no pin time (D24), so a cached result whose `releasedAt` is older
+  than the snapshot's loses to the snapshot. This matters once 5c restores
+  old caches from IndexedDB.
+- **Focus.** Closing a dialog returns focus to where it was when the first
+  dialog opened, such as the pinned card. `WorkspaceDialogs` does this
+  after the dialog unmounts, with `finalFocus={false}` on the popup. Base
+  UI's own return doesn't run when the dialog unmounts on close; the
+  end-to-end flows first failed 3 of 5 on it.
+- **Lint.** `react(todo)` (React Compiler can't compile `??=`),
+  `typescript/prefer-nullish-coalescing` and
+  `eslint/logical-assignment-operators` together reject every
+  "assign if null" form. The code keeps the return target in state through
+  a pure updater instead. No rule changed.
+- **Review fixes (lead).**
+  - The picker lists an exact name first. Enter on "portfolio" used to pin
+    into "portfolio deps".
+  - A workspace that already holds the package is a disabled option
+    instead of a silent no-op.
+  - Page shortcuts skip focus inside a dialog (`focusInDialog()`): `/` and
+    Mod+K no longer move focus behind the dialog, and Alt+P on a card in
+    the workspace view no longer swaps the view for the picker.
+  - One `CopiedProvider` at the root serves both the page and the dialogs,
+    so Alt+C marks the card it copied from.
+  - Result cards take their heading ids from `useId()`, so a card shown in
+    the view and on the page no longer shares an id.
+  - A boundary around the lazy dialogs shows an alert when their code fails
+    to load. The search page used to be replaced by the root error screen.
+  - `GERCH_E2E_PORT` sets the Playwright port, so worktrees can run the
+    flows at once.
+  - Left open: deleting a workspace asks no confirmation, and the view
+    doesn't rerender when a search finishes while it is open.
+
+### D27. History, suggestions, query cache, shortcut list and prefix chip: implemented in step 5c; Ctrl+N needs you
+
+**History.** A committed search (the `q` in the URL) is recorded once it
+has stayed there for 1 s. The URL takes the query 150 ms after typing
+pauses, so typing "react" commits "r", "re", "rea" on the way; recording
+each commit would fill history with fragments. A repeat (same registry,
+text compared without case) adds one to `count` and moves `lastUsed`. The
+list keeps 100 entries and drops the lowest-ranked first.
+
+**Frecency.** `count × 0.5^(age / 7 days)`. Every score shares the same
+decay factor, so the order doesn't depend on the current time: ranking
+measures age from the newest entry, which keeps render pure
+(`react/purity`). Ties go to the most recent use.
+
+**Suggestions.** They appear under the search box once the user types. The
+list holds, in order: up to 3 pins whose name starts with the typed text,
+then up to 5 history entries by frecency, then up to 3 live results, with
+at most 8 in all. A prefix limits all three groups to its registry. Entries
+that would put the same query in the box appear once, and the current query
+is never suggested.
+
+- "Live results" means the first results of the search for the typed text
+  that are already in the query cache (`useQueries` with `enabled: false`).
+  They cost no request and no new endpoint, and they appear when the
+  debounced search answers. The cards below show the rest.
+- Choosing a pin or result puts `registry:name` in the box. Once 5a's
+  package page lands, choosing a pin could open the package instead.
+
+**Keys.** The search box follows the WAI-ARIA combobox pattern:
+`role="combobox"`, `aria-expanded`, `aria-controls`, and
+`aria-activedescendant` on a `listbox` of `option`s. Focus never leaves the
+box. The e2e flows now find the box by its `combobox` role.
+
+- The list opens when the user types, not on focus. Focusing the box and
+  pressing ↓ still moves to the first card, as in D23.
+- While the list is open, the search box and the cards form one vertical
+  list:
+  - ↓ or Ctrl+N moves down the suggestions. Past the last one, it moves to
+    the first card and the list closes.
+  - ↑ or Ctrl+P moves up, back to the typed text.
+  - Enter chooses the active suggestion.
+  - Escape closes the list. The next Escape clears the query, as before.
+- These keys are `useHotkey` registrations from `HOTKEYS`, targeted at the
+  input. The hotkey manager handles the innermost target first and stops
+  propagation (the default), so the `<main>` registrations from D23 don't
+  run. They are enabled only while they apply. That is how ↓ falls through
+  to the cards after the last suggestion.
+- TanStack Hotkeys treats an expanded combobox as an Escape layer, so the
+  document-level Escape also yields while the list is open.
+- With a mouse, pressing an option chooses it. The press is prevented, so
+  focus stays in the box.
+
+**Query cache (flow 3).** `persistQueryClient` from
+`@tanstack/react-query-persist-client` stores the cache in IndexedDB. It
+writes through `@tanstack/query-async-storage-persister` and
+`idb-keyval` 6.3.0. Both persist packages are 5.108.4.
+
+- Why `idb-keyval`: wrapping an `IDBRequest` needs `new Promise`, which
+  `promise/avoid-new` bans. The async persister is typed for strings, so it
+  stores JSON.
+- The router's `Wrap` starts the persister in an effect, after hydration
+  (D15).
+- Only `["search", …]` queries with `ok: true` are saved. `maxAge` is the
+  spec's 7-day stale window. Saving and restoring also check each query's
+  last successful fetch time. After restoring, the first save includes SSR
+  results from direct links. The buster is the `package.json` version.
+- In the browser, `gcTime` is also 7 days. Otherwise an idle search leaves
+  memory after 5 minutes, and the next save drops it from IndexedDB.
+- The search loader waits for a restore in progress. A search typed right
+  after a reload then reads the restored results instead of racing the
+  IndexedDB read and waiting on the network.
+- Revalidation follows `STALE_MS` (60 s). A result restored within 60 s of
+  its fetch is still fresh and sends no request. The e2e flow moves the page
+  clock 2 minutes ahead, blocks every search request without answering it,
+  and checks two things: the reloaded search renders, and a revalidation
+  request goes out.
+- The persister adds 1,256 B Brotli to the entry. That's too little to
+  load it lazily.
+
+**Shortcut list.** Shift+? opens a native modal `<dialog>`, which traps
+focus, closes on Escape and restores focus. It is a lazy chunk (1,059 B).
+The list has one row per label, with every key for it, formatted by
+`useFormatForDisplay`. Like other Shift combos, the key is ignored in text
+fields. `__root.tsx` mounts it with one line.
+
+**Ctrl+N and Ctrl+P.** Both are registered next to ↓ and ↑. Ctrl+P works
+everywhere: the hotkey cancels it, so the print dialog doesn't open
+(asserted in e2e). Ctrl+N can't work in a normal browser window on Windows
+or Linux:
+
+- Chromium (commit `749b032`, `chrome/browser/ui/accelerator_table.cc`):
+  `{VKEY_N, EF_PLATFORM_ACCELERATOR, IDC_NEW_WINDOW}`, and `IDC_NEW_WINDOW`
+  is in `kReservedCommandIds`. `IDC_PRINT` is not.
+  `BrowserCommandController::IsReservedCommandOrKey` reserves nothing in
+  app windows and only Exit and Fullscreen in fullscreen.
+- Firefox: `key_newNavigator` has `modifiers="accel" reserved="true"`
+  (`browser-sets.inc`). Bug 1291706 asked to let pages use Ctrl+N and was
+  closed WONTFIX.
+- Ctrl+N does reach the page on macOS, where the browser shortcut is Cmd+N.
+  It also reaches installed PWA windows and fullscreen.
+- The e2e flow passes Ctrl+N because Playwright's CDP input skips browser
+  accelerators. It proves the handler, not real Windows or Linux behavior.
+
+Proposal, not shipped: add Alt+J and Alt+K as next and previous on every
+platform. Neither is a Firefox menu letter or a Chrome shortcut. This
+changes the spec's keyboard map, so it needs your approval.
+
+**Prefix chip (flow 2).** `splitPrefix` and `joinPrefix` in
+`src/shared/query.ts`. They keep the text after the prefix exactly as
+typed. `parseQuery` trims, and the box would lose a typed space.
+
+- The URL keeps the raw `q`, e.g. `npm:zod`.
+- Text that brings its own prefix (a paste of `crate:serde`) replaces the
+  chip.
+- Backspace on empty text removes the chip. The chip is also a button for
+  the mouse, with `tabIndex={-1}` so it adds no tab stop.
+
+**TypeScript lib.** `unicorn/no-array-sort` requires `toSorted()`, which
+needs `lib: ES2023`. `tsconfig.json` now uses it. This changes types only.
+Vite's default browser targets all have `toSorted`.
+
+**Search outcomes.**
+
+- Failed background revalidation keeps the last successful data and its
+  timestamp. The results stay visible alongside the error and Retry.
+- History counts every committed search, including ones with no results.

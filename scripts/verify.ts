@@ -94,9 +94,14 @@ if (unknown.length > 0) {
 const selected = checks.filter(
   (check) => names.length === 0 || names.includes(check.name)
 )
-const failures = report(
-  await Promise.all(selected.map(async (check) => run(check)))
-)
+// Type-aware lint and `bun check` both type-check the project, so lint runs
+// on its own first and its 1 s budget measures lint, not the two competing
+// for cores (docs/decisions.md D9). The rest run in parallel.
+const lint = selected.filter((check) => check.name === "lint")
+const rest = selected.filter((check) => check.name !== "lint")
+const lintResults = await Promise.all(lint.map(async (check) => run(check)))
+const restResults = await Promise.all(rest.map(async (check) => run(check)))
+const failures = report([...lintResults, ...restResults])
 if (failures.length > 0) {
   console.error(`\n${failures.join("\n\n")}`)
   process.exit(1)

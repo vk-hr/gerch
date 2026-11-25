@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { CopiedProvider } from "@/components/search/copied-provider.tsx"
+import { queryCacheRestored } from "@/client/query-persister.ts"
 import { SearchPage } from "@/components/search/search-page.tsx"
 import { startSearch } from "@/lib/search.ts"
 import { parseQuery } from "@/shared/query.ts"
@@ -13,11 +13,13 @@ export const Route = createFileRoute("/")({
   loaderDeps: ({ search }) => ({ query: search.q ?? "" }),
   // Start every registry's search while the page streams; each section
   // suspends on its own query, so the slowest registry never blocks the rest.
-  loader: ({ context, deps }) => {
+  loader: async ({ context, deps }) => {
     const { registries, text } = parseQuery(deps.query)
     if (text === "") {
       return
     }
+    // A search right after a reload reads the restored cache (D27).
+    await queryCacheRestored()
     for (const registry of registries.filter((candidate) =>
       isAvailable(candidate)
     )) {
@@ -29,9 +31,5 @@ export const Route = createFileRoute("/")({
 
 function SearchRoute() {
   const { q: query = "" } = Route.useSearch()
-  return (
-    <CopiedProvider>
-      <SearchPage query={query} />
-    </CopiedProvider>
-  )
+  return <SearchPage query={query} />
 }

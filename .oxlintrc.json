@@ -211,6 +211,18 @@
     "react-perf/jsx-no-new-object-as-prop": "off",
     "react-perf/jsx-no-new-array-as-prop": "off",
     "react-perf/jsx-no-jsx-as-prop": "off",
+    "typescript/only-throw-error": [
+      "error",
+      {
+        "allow": [
+          {
+            "from": "package",
+            "package": "@tanstack/router-core",
+            "name": "NotFoundError"
+          }
+        ]
+      }
+    ],
     "eslint/no-void": [
       "error",
       {
@@ -267,7 +279,8 @@
         "vitest/no-hooks": "off",
         "eslint/max-lines-per-function": "off",
         "eslint/max-statements": "off",
-        "typescript/no-confusing-void-expression": "off"
+        "typescript/no-confusing-void-expression": "off",
+        "vitest/prefer-called-times": "off"
       },
       "plugins": ["vitest"]
     },
@@ -295,6 +308,12 @@
       "rules": {
         "node/no-process-env": "off",
         "import/unambiguous": "off"
+      }
+    },
+    {
+      "files": ["src/components/suggestions/suggestion-list.tsx"],
+      "rules": {
+        "jsx-a11y/prefer-tag-over-role": "off"
       }
     },
     {
