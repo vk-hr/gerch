@@ -7,6 +7,7 @@ import {
 import type { ReactNode } from "react"
 
 import { NotFound } from "@/components/not-found.tsx"
+import { ShortcutList } from "@/components/shortcuts/shortcut-list.tsx"
 import appCss from "@/styles.css?url"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -37,6 +38,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-svh antialiased">
         {children}
+        <ShortcutList />
         <Scripts />
       </body>
     </html>
