@@ -132,7 +132,7 @@ allowed), `one-var` (`never`), `no-use-before-define` (hoisted functions
 allowed), `no-magic-numbers` (ignores -1, 0, 1), `jsx-max-depth` (5),
 `jsx-filename-extension` (`.tsx`), `capitalized-comments` (consecutive lines
 allowed), `no-duplicate-imports` (separate `import type` allowed),
-`vitest/consistent-test-it` (`test`), `id-length` (allows `q`, the search URL parameter), `no-void` (allowed as a statement: the way `no-floating-promises` accepts a promise an event handler starts and doesn't wait for). Scoped overrides: `scripts/**`
+`vitest/consistent-test-it` (`test`), `id-length` (allows `q`, the search URL parameter), `no-void` (allowed as a statement: the way `no-floating-promises` accepts a promise an event handler starts and doesn't wait for), `only-throw-error` (allows the router's `NotFoundError`: a loader throws `notFound()`, a plain object, to get a 404). Scoped overrides: `scripts/**`
 (console, `process.exit`, sync calls, top-level await, `process.env`), `*.config.ts`
 (default export), `src/components/ui/**` (shadcn prop spreading and variant
 exports), `src/routes/**` (`only-export-components`; the Start plugin handles
@@ -505,7 +505,7 @@ Decided 2026-11-24, at your request.
 - Known gap: the search box isn't resynced when `q` changes from outside
   (back, forward, a link). Nothing can trigger it yet, because typing
   replaces the history entry and the page has no links to queries. Step 5
-  adds such links, so it fixes this with a test.
+  adds such links, so it fixes this with a test. Fixed in step 5a (D25).
 
 ### D24. Client state for step 5: implemented
 
@@ -532,3 +532,93 @@ The base holds what all three would otherwise each invent:
   `storage` event.
 - `src/hotkeys.ts`: every shortcut from the spec's keyboard map, so the parts
   register keys without editing the same lines.
+
+### D25. Package page, tabs and the search box resync: implemented in step 5a
+
+**npm package data ("option 1").**
+
+- The adapter fetches `GET registry.npmjs.org/<name>/latest` (one version's
+  manifest, ~4–6 KB) and `GET api.npmjs.org/downloads/point/last-week/<name>`
+  in parallel. Names are URL-encoded; both hosts accept
+  `%40trpc%2Ftanstack-react-query` (verified). The full package document is
+  never fetched: 4.2 MB for zod, 7.2 MB for react.
+- A 404 from `/latest` means no such package: `null`, cached like any value.
+  A 404 from the downloads API means no count. Any other upstream error
+  throws, so the SWR cache keeps serving stale data.
+- The release date exists only in the full document, so the server returns
+  `releasedAt: null`. The page borrows the date from a cached TanStack Query
+  search result for the same package (`cachedReleaseDate`), read through
+  `useSyncExternalStore` with a `null` server snapshot. SSR and hydration
+  match, and the date appears once the client cache has it. A direct link
+  shows no date.
+- Cache key `package:<registry>:<name>`, fresh 1 h, stale up to 30 d. The
+  server function's own browser call gets `public, max-age=0, s-maxage=3600,
+stale-while-revalidate=2592000` for a found package and `no-store`
+  otherwise, the same pattern as search (D23).
+- `bun run record-fixtures npm package-` records only the package fixtures,
+  so the search fixtures stay as they are.
+
+**Package page `/p/$registry/$name`.**
+
+- The loader awaits the package. An unknown registry or package throws
+  `notFound()`, so the server answers 404. The page sends `public,
+s-maxage=3600, stale-while-revalidate=86400` for a found package or a
+  "coming soon" registry (crates.io, nixpkgs) and `no-store` for a failure,
+  which shows its error and a Retry button.
+- `$name` holds the whole name, so a scoped package lives at
+  `/p/npm/%40trpc%2Ftanstack-react-query` (the router encodes the slash).
+
+**Tabs.** The active tab always shows the current route.
+
+- Tab actions (Enter, Shift+Enter, the Alt shortcuts, clicks and typing in
+  the search box) save the change first, then navigate when the active tab's
+  route changed. Switching and reopening push a history entry; closing
+  replaces it.
+- Routes the actions didn't start (back, forward, links) follow the route: a
+  tab that already shows it becomes active, otherwise the active tab shows
+  it. So Back after a tab switch activates the previous tab instead of
+  overwriting the current one. On the first load an unmatched route opens a
+  new tab instead, so a shared link never overwrites a saved tab, and a
+  reload finds its active tab and changes nothing.
+- Shift+Enter opens the package tab right after the current one and leaves
+  the search tab in front, with its query and focused card. Several results
+  can be opened in a row, as with a middle click in a browser.
+- Closing the active tab activates its right neighbour, or its left one at
+  the end. Closing the last tab leaves an empty search tab. `closedTabs`
+  keeps the last 20. Reopening inserts the tab after the active one, because
+  the saved state has no original position. Next and previous wrap around;
+  moving stops at the ends.
+- Tab shortcuts pass `ignoreInputs: false`: TanStack Hotkeys' `'auto'`
+  default skips Alt combos in text inputs, and these work anywhere.
+- `Alt+Shift+.` and `Alt+Shift+,` fire as defined in `src/hotkeys.ts`. On a
+  US layout the browser reports `>` and `<` with codes `Period` and `Comma`,
+  and TanStack Hotkeys 0.27.2 falls back to the key's position for ASCII
+  symbols typed with Shift (its matcher, and verified in Playwright).
+- The strip renders from `useClientState`, so the server and the hydrating
+  render show an empty `h-10` slot. A Playwright flow compares `<main>`'s top
+  with JavaScript off and on: equal.
+- The `body[data-interactive]` marker moved to
+  `src/components/use-interactive-marker.ts`, used by the search and package
+  pages. Setting it from the tab strip failed "typing a prefixed query" 1 of
+  1: the strip sits outside the route's Suspense boundary, hydrates in an
+  earlier commit, and marked the page before the search page's hotkeys
+  existed.
+
+**Search box resync (D23's known gap).** Typing writes `q` from the change
+handler once typing pauses (150 ms), through the tab actions. The hook
+remembers the last value it wrote, so a `q` that differs came from outside
+(back, forward, a tab switch). It then replaces the text and cancels any
+write still waiting. Before the fix, switching between two search tabs kept
+the old text, and its debounced write replaced the new history entry. Two
+flows cover it; they use Playwright's clock to fire any pending write on
+purpose instead of waiting.
+
+**Left open.**
+
+- No shortcut or button opens an empty search tab; the keyboard map has
+  none. A second search tab comes from a link, a reopened tab, or a package
+  tab navigated back to search.
+- `GET /api/package/:registry/:name` from the spec's API table isn't built;
+  the page uses the server function.
+- Bundle (Brotli 11, all client assets): JS 130,925 → 137,598 B, CSS 4,842 →
+  5,008 B.

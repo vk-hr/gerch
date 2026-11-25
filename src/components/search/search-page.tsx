@@ -1,8 +1,9 @@
 import { useHotkey } from "@tanstack/react-hotkeys"
-import { useNavigate } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react"
 import type { RefObject } from "react"
 
+import { useTabActions } from "@/components/tabs/use-tab-actions.ts"
+import { useInteractiveMarker } from "@/components/use-interactive-marker.ts"
 import { HOTKEYS } from "@/hotkeys.ts"
 import { parseQuery } from "@/shared/query.ts"
 
@@ -84,53 +85,93 @@ function useSearchHotkeys(
   )
 }
 
-// Writes the typed query to the URL once typing pauses.
-function useQueryInUrl(input: string, query: string) {
-  const navigate = useNavigate({ from: "/" })
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (input !== query) {
-        void navigate({
-          replace: true,
-          search: input === "" ? {} : { q: input },
-        })
+// Enter opens the focused result in the current tab; Shift+Enter opens it in
+// a new tab next to this one and leaves the search, its query and its
+// selection, in front (docs/spec.md, flow 4).
+function useOpenHotkeys(list: RefObject<HTMLElement | null>) {
+  const tabs = useTabActions()
+  const inList = { target: list } as const
+  useHotkey(
+    HOTKEYS.open.keys,
+    () => {
+      const selected = focusedPackage()
+      if (selected !== null) {
+        tabs.show({ kind: "package", ...selected })
       }
-    }, URL_DEBOUNCE_MS)
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [input, query, navigate])
+    },
+    inList
+  )
+  useHotkey(
+    HOTKEYS.openInNewTab.keys,
+    () => {
+      const selected = focusedPackage()
+      if (selected !== null) {
+        tabs.openNext({ kind: "package", ...selected })
+      }
+    },
+    inList
+  )
 }
 
-// Marks the page interactive once the hotkeys are registered. End-to-end
-// flows wait on it before pressing keys.
-function useInteractiveMarker() {
+type Timer = ReturnType<typeof setTimeout>
+
+function cancel(pending: RefObject<Timer | null>) {
+  if (pending.current !== null) {
+    clearTimeout(pending.current)
+  }
+}
+
+// The search box's text, kept in step with the URL's `q`. Typing writes `q`
+// once typing pauses, in the current tab. A `q` that changes from outside
+// (back, forward, a tab switch) replaces the text and drops any write still
+// waiting, so it never overwrites the history entry the user went to.
+function useQueryInput(query: string) {
+  const tabs = useTabActions()
+  const [input, setInput] = useState(query)
+  const written = useRef(query)
+  const pending = useRef<Timer>(null)
   useEffect(() => {
-    document.body.dataset.interactive = ""
-    return () => {
-      delete document.body.dataset.interactive
+    if (query !== written.current) {
+      written.current = query
+      cancel(pending)
+      setInput(query)
     }
-  }, [])
+  }, [query])
+  useEffect(
+    () => () => {
+      cancel(pending)
+    },
+    []
+  )
+  const change = (value: string) => {
+    setInput(value)
+    cancel(pending)
+    pending.current = setTimeout(() => {
+      written.current = value
+      tabs.show({ kind: "search", query: value }, true)
+    }, URL_DEBOUNCE_MS)
+  }
+  return [input, change] as const
 }
 
 function SearchPage({ query }: { query: string }) {
   const searchBox = useRef<HTMLInputElement>(null)
   const list = useRef<HTMLElement>(null)
-  const [input, setInput] = useState(query)
+  const [input, change] = useQueryInput(query)
   const parsed = parseQuery(query)
-  useQueryInUrl(input, query)
   useSearchHotkeys(searchBox, list, () => {
     escape(searchBox.current, input, () => {
-      setInput("")
+      change("")
     })
   })
+  useOpenHotkeys(list)
   useInteractiveMarker()
 
   return (
     <main className="mx-auto grid max-w-3xl gap-6 p-4 sm:p-6" ref={list}>
       <header className="flex items-center gap-3">
         <span className="font-heading text-lg font-medium">gerch</span>
-        <SearchBox onChange={setInput} ref={searchBox} value={input} />
+        <SearchBox onChange={change} ref={searchBox} value={input} />
       </header>
       {parsed.text === "" ? (
         <p className="text-sm text-muted-foreground">
