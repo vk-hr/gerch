@@ -1,0 +1,7 @@
+{
+  "body": {
+    "error": "package gerch-no-such-package-q7x2 not found"
+  },
+  "status": 404,
+  "url": "https://api.npmjs.org/downloads/point/last-week/gerch-no-such-package-q7x2"
+}

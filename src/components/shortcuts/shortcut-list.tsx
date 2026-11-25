@@ -1,6 +1,7 @@
 import { useHotkey } from "@tanstack/react-hotkeys"
 import { lazy, Suspense, useState } from "react"
 
+import { focusInDialog } from "@/components/search/focused-result.ts"
 import { HOTKEYS } from "@/hotkeys.ts"
 
 // A rarely used tool, so its dialog loads when first opened.
@@ -14,7 +15,9 @@ const ShortcutDialog = lazy(async () => {
 function ShortcutList() {
   const [open, setOpen] = useState(false)
   useHotkey(HOTKEYS.shortcuts.keys, () => {
-    setOpen(true)
+    if (!focusInDialog()) {
+      setOpen(true)
+    }
   })
   return open ? (
     <Suspense fallback={null}>

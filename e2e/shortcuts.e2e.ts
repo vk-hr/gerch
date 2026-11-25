@@ -48,6 +48,18 @@ test("? lists every shortcut and Escape closes the list", async ({ page }) => {
   await expect(shortcutList(page)).toBeHidden()
 })
 
+test("workspace shortcuts stay behind the keyboard shortcut dialog", async ({
+  page,
+}) => {
+  await interactive(page, "/")
+  await page.keyboard.press("Shift+?")
+  await expect(shortcutList(page)).toBeVisible()
+  await page.keyboard.press("Alt+W")
+  await expect(page.locator('[role="dialog"]')).toHaveCount(0)
+  await page.keyboard.press("Escape")
+  await expect(page.getByRole("dialog")).toHaveCount(0)
+})
+
 test("? types into the search box instead of opening the list", async ({
   page,
 }) => {

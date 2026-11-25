@@ -1,0 +1,10 @@
+{
+  "body": {
+    "downloads": 1864330,
+    "start": "2026-11-17",
+    "end": "2026-11-23",
+    "package": "@trpc/tanstack-react-query"
+  },
+  "status": 200,
+  "url": "https://api.npmjs.org/downloads/point/last-week/%40trpc%2Ftanstack-react-query"
+}

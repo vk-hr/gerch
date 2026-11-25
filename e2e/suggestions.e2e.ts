@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test"
 import type { Page } from "@playwright/test"
 
+import { parseState } from "@/client/state.ts"
+
 import {
   firstResult,
   interactive,
@@ -66,8 +68,11 @@ async function searchAndRecord(page: Page, text: string) {
   await typeSearch(page, text)
   await expect(firstResult(page, "npm")).toBeVisible()
   await expect
-    .poll(async () => page.evaluate(() => localStorage.getItem("gerch:v1")))
-    .toContain(`"query":"${text}"`)
+    .poll(async () => {
+      const saved = await page.evaluate(() => localStorage.getItem("gerch:v1"))
+      return parseState(saved).history.map((entry) => entry.query)
+    })
+    .toContain(text)
 }
 
 // The first Escape closes the suggestions, the second clears the query.
@@ -170,7 +175,7 @@ test("clicking the search icon focuses the input with its prefix intact", async 
   page,
 }) => {
   await interactive(page, "/?q=npm:zod")
-  await page.locator("svg.lucide-search").click()
+  await page.getByRole("main").locator("label svg.lucide-search").click()
   await expect(searchBox(page)).toBeFocused()
   await expect(npmChip(page)).toBeVisible()
 })

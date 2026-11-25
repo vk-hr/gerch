@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
 import { queryCacheRestored } from "@/client/query-persister.ts"
-import { CopiedProvider } from "@/components/search/copied-provider.tsx"
 import { SearchPage } from "@/components/search/search-page.tsx"
 import { startSearch } from "@/lib/search.ts"
 import { parseQuery } from "@/shared/query.ts"
@@ -32,9 +31,5 @@ export const Route = createFileRoute("/")({
 
 function SearchRoute() {
   const { q: query = "" } = Route.useSearch()
-  return (
-    <CopiedProvider>
-      <SearchPage query={query} />
-    </CopiedProvider>
-  )
+  return <SearchPage query={query} />
 }
