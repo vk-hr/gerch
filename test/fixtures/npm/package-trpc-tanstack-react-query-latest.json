@@ -1,0 +1,139 @@
+{
+  "body": {
+    "dist": {
+      "shasum": "0824364de8f084a8d575c29fc9a3630361b2a06e",
+      "tarball": "https://registry.npmjs.org/@trpc/tanstack-react-query/-/tanstack-react-query-11.31.3.tgz",
+      "fileCount": 58,
+      "integrity": "sha512-1QSQL58CBxiEbldkd/tr59yO9i/2V9lEJmyr9XZpDWS2Ip/vykG8cpazB7xXrrUvP5VvlqHTjBXbYHXOA8Xw9A==",
+      "signatures": [
+        {
+          "sig": "MEQCIHGFMZAs0xp1eQ3ANPa1D4ukKL0tU+YUqqUhN7oi0x5tAiA9kh7nh0yfjo87Xl8ltkf7hkYjsJE6eKflCzCymfCeGg==",
+          "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+        },
+        {
+          "sig": "MEYCIQDq93e+yHuPhmrdapNpKIUFisMzZmAovVZIdq5RcBbuFAIhAItTiWnEXnQviwBB3gA8G1ndI2gw9NuVmYFLuHZqxK/E",
+          "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+        }
+      ],
+      "attestations": {
+        "url": "https://registry.npmjs.org/-/npm/v1/attestations/@trpc%2ftanstack-react-query@11.31.3",
+        "provenance": {
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      "unpackedSize": 526009
+    },
+    "main": "./dist/index.cjs",
+    "name": "@trpc/tanstack-react-query",
+    "type": "module",
+    "types": "./dist/index.d.cts",
+    "author": "juliusmarminge",
+    "module": "./dist/index.mjs",
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.mts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        },
+        "react-server": {
+          "import": {
+            "types": "./dist/index.react-server.d.mts",
+            "default": "./dist/index.react-server.mjs"
+          },
+          "require": {
+            "types": "./dist/index.react-server.d.cts",
+            "default": "./dist/index.react-server.cjs"
+          }
+        }
+      },
+      "./package.json": "./package.json",
+      "./unstable-handles": {
+        "import": {
+          "types": "./dist/unstable-handles/index.d.mts",
+          "default": "./dist/unstable-handles/index.mjs"
+        },
+        "require": {
+          "types": "./dist/unstable-handles/index.d.cts",
+          "default": "./dist/unstable-handles/index.cjs"
+        }
+      }
+    },
+    "funding": ["https://trpc.io/sponsor"],
+    "license": "MIT",
+    "scripts": {
+      "dev": "tsdown --watch",
+      "lint": "oxlint src",
+      "build": "tsdown",
+      "typecheck": "tsc --noEmit --preserveWatchOutput --pretty"
+    },
+    "_npmUser": {
+      "name": "GitHub Actions",
+      "trustedPublisher": {
+        "id": "github",
+        "oidcConfigId": "49cac4fc-0b22-47b9-85d4-54cb5d41bc3c"
+      }
+    },
+    "homepage": "https://trpc.io/docs/client/tanstack-react-query/setup",
+    "keywords": ["tanstack-intent"],
+    "repository": {
+      "url": "git+https://github.com/trpc/trpc.git",
+      "type": "git",
+      "directory": "packages/tanstack-react-query"
+    },
+    "description": "TanStack React Query Integration for tRPC",
+    "directories": {},
+    "maintainers": [
+      {
+        "name": "katt"
+      },
+      {
+        "name": "juliusmarminge"
+      },
+      {
+        "name": "nick-lucas"
+      }
+    ],
+    "publishConfig": {
+      "access": "public"
+    },
+    "_hasShrinkwrap": false,
+    "devDependencies": {
+      "ws": "^8.22.1",
+      "zod": "^4.2.1",
+      "react": "^19.3.1",
+      "oxlint": "^1.92.0",
+      "tsdown": "0.23.7",
+      "vitest": "^5.0.5",
+      "react-dom": "^19.3.1",
+      "superjson": "^2.2.6",
+      "typescript": "7.1.0-beta",
+      "@types/node": "^24.19.2",
+      "@trpc/client": "11.31.3",
+      "@trpc/server": "11.31.3",
+      "@types/react": "^19.3.0",
+      "oxlint-tsgolint": "^7.0.2006",
+      "@tanstack/intent": "0.5.6",
+      "@tanstack/react-query": "^5.107.1",
+      "event-source-polyfill": "^1.0.31"
+    },
+    "peerDependencies": {
+      "react": ">=18.2.0",
+      "typescript": ">=5.7.2",
+      "@trpc/client": "11.31.3",
+      "@trpc/server": "11.31.3",
+      "@tanstack/react-query": "^5.106.0"
+    },
+    "_npmOperationalInternal": {
+      "tmp": "tmp/tanstack-react-query_11.31.3_1795548664357_0.35875366956081534",
+      "host": "s3://npm-registry-packages-npm-production"
+    },
+    "_id": "@trpc/tanstack-react-query@11.31.3",
+    "version": "11.31.3"
+  },
+  "status": 200,
+  "url": "https://registry.npmjs.org/%40trpc%2Ftanstack-react-query/latest"
+}

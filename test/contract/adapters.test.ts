@@ -27,13 +27,30 @@ const adapters = [
     ],
     create: createNpmAdapter,
     install: (name: string) => `npm i ${name}`,
+    missing: {
+      fixtures: ["package-nonsense-latest", "package-nonsense-downloads"],
+      name: "gerch-no-such-package-q7x2",
+    },
+    packages: [
+      {
+        fixtures: ["package-zod-latest", "package-zod-downloads"],
+        name: "zod",
+      },
+      {
+        fixtures: [
+          "package-trpc-tanstack-react-query-latest",
+          "package-trpc-tanstack-react-query-downloads",
+        ],
+        name: "@trpc/tanstack-react-query",
+      },
+    ],
     registry: "npm",
   },
 ] as const
 
 describe.each(adapters)(
   "$registry adapter contract",
-  ({ cases, create, install, registry }) => {
+  ({ cases, create, install, missing, packages, registry }) => {
     test.each(cases)(
       "$query returns valid summaries in registry order",
       async ({ expectedFirst, fixture, query }) => {
@@ -65,10 +82,40 @@ describe.each(adapters)(
       }
     )
 
+    test.each(packages)(
+      "package $name returns a valid summary",
+      async ({ fixtures, name }) => {
+        expect.hasAssertions()
+        const recorded = await fixtureFetch(registry, fixtures)
+        const summary = await create(recorded.fetch).package(name)
+        const parsed: unknown = packageSummarySchema.parse(summary)
+        expect(parsed).toStrictEqual(summary)
+        expect(summary).toMatchObject({
+          install: install(name),
+          name,
+          registry,
+        })
+        expect(
+          recorded.requests.filter(
+            (request) => request.userAgent !== USER_AGENT
+          )
+        ).toStrictEqual([])
+      }
+    )
+
+    test("an unknown package returns null", async () => {
+      expect.hasAssertions()
+      const { fetch } = await fixtureFetch(registry, missing.fixtures)
+      await expect(create(fetch).package(missing.name)).resolves.toBeNull()
+    })
+
     test("an upstream error rejects with UpstreamError", async () => {
       expect.hasAssertions()
       const adapter = create(statusFetch(UNAVAILABLE))
       await expect(adapter.search("anything")).rejects.toBeInstanceOf(
+        UpstreamError
+      )
+      await expect(adapter.package("anything")).rejects.toBeInstanceOf(
         UpstreamError
       )
     })
