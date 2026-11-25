@@ -6,22 +6,23 @@ Run everything inside the Nix dev shell (`direnv` loads it from `.envrc`).
 The shell provides the pinned Bun canary; the global `bun` is stable and
 lacks `bun lint`, `bun fmt` and `bun check`.
 
-| Task                     | Command                                         |
-| ------------------------ | ----------------------------------------------- |
-| Install                  | `bun ci`                                        |
-| All checks (as pre-push) | `bun run verify`                                |
-| Format                   | `bun fmt`                                       |
-| Lint                     | `bun lint`                                      |
-| Typecheck                | `bun check`                                     |
-| Test                     | `bun test --isolate=modules`                    |
-| Dev server               | `bun run dev`                                   |
-| Build                    | `bun run build`                                 |
-| End-to-end flows         | `bun x playwright test`                         |
-| Check the Bun pin        | `bun run check-bun`                             |
-| Live smoke test          | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
-| Re-record fixtures       | `bun run record-fixtures npm` (or `crate`)      |
-| New migration            | `bun run drizzle-kit generate --name <change>`  |
-| Migrate the database     | `DATABASE_URL=… bun run migrate`                |
+| Task                       | Command                                         |
+| -------------------------- | ----------------------------------------------- |
+| Install                    | `bun ci`                                        |
+| All checks (as pre-push)   | `bun run verify`                                |
+| Format                     | `bun fmt`                                       |
+| Lint                       | `bun lint`                                      |
+| Typecheck                  | `bun check`                                     |
+| Test                       | `bun test --isolate=modules`                    |
+| Dev server                 | `bun run dev`                                   |
+| Build                      | `bun run build`                                 |
+| Byte budgets (after build) | `bun scripts/check-budgets.ts`                  |
+| End-to-end flows           | `bun x playwright test`                         |
+| Check the Bun pin          | `bun run check-bun`                             |
+| Live smoke test            | `GERCH_LIVE=1 bun test ./test/live/npm.live.ts` |
+| Re-record fixtures         | `bun run record-fixtures npm` (or `crate`)      |
+| New migration              | `bun run drizzle-kit generate --name <change>`  |
+| Migrate the database       | `DATABASE_URL=… bun run migrate`                |
 
 hk hooks run on commit (format and lint staged files, Conventional Commits
 message) and on push (`bun run verify`). Install them with `hk install`.
@@ -46,7 +47,7 @@ message) and on push (`bun run verify`). Install them with `hk install`.
 - `e2e/`: Playwright flows against the production build, which answers
   registry requests from `test/fixtures/` (`GERCH_REPLAY_DIR`).
 - `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
-  budgets), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
+  budgets), `check-budgets.ts` (byte budgets of a cold entry), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
   `check-test-files.ts`, `check-commits.ts`).
 - `.github/`: CI workflow and the setup action.
 - `test/`: tests, recorded fixtures (`test/fixtures/`), the shared adapter
