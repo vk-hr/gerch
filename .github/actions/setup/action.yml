@@ -1,23 +1,44 @@
 name: setup
 description: >
-  Restore node_modules, which holds the pinned Bun canary, or install it from
-  the npm tarball checked against bun.lock. Fails unless bun is the canary.
+  Puts the pinned Bun canary on PATH, from the npm tarball checked against
+  bun.lock, and restores node_modules from the cache. When bun.lock changed,
+  it starts from main's latest node_modules and installs only the
+  difference. Fails unless bun is the canary.
 runs:
   using: composite
   steps:
-    - id: cache
-      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-      with:
-        path: node_modules
-        key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
-    - if: steps.cache.outputs.cache-hit != 'true'
-      shell: bash
+    # The canary is 75 MB of a 140 MB node_modules cache, so it stays out of
+    # the cache and downloads from npm while the cache restores (D9).
+    - shell: bash
       run: |
         set -euo pipefail
         version=$(jq -r .devDependencies.bun package.json)
-        pkg=bun-linux-x64
-        expected=$(grep "\"@oven/$pkg\": \[" bun.lock | grep -o 'sha512-[^"]*')
-        curl -fsSL "https://registry.npmjs.org/@oven/$pkg/-/$pkg-$version.tgz" -o "$RUNNER_TEMP/bun.tgz"
+        url="https://registry.npmjs.org/@oven/bun-linux-x64/-/bun-linux-x64-$version.tgz"
+        nohup sh -c "curl -fsSL '$url' -o '$RUNNER_TEMP/bun.tgz'; echo \$? > '$RUNNER_TEMP/bun.status'" \
+          > /dev/null 2>&1 &
+    - id: cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: |
+          node_modules
+          !node_modules/bun
+          !node_modules/@oven
+        key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+        # A PR that changes bun.lock has no exact cache; main's latest one
+        # still holds almost every package (D9).
+        restore-keys: node-modules-${{ runner.os }}-${{ runner.arch }}-
+    - shell: bash
+      run: |
+        set -euo pipefail
+        for _ in $(seq 600); do
+          [ -f "$RUNNER_TEMP/bun.status" ] && break
+          sleep 0.1
+        done
+        if [ "$(cat "$RUNNER_TEMP/bun.status" 2>/dev/null)" != 0 ]; then
+          echo "the Bun canary download failed"
+          exit 1
+        fi
+        expected=$(grep '"@oven/bun-linux-x64": \[' bun.lock | grep -o 'sha512-[^"]*')
         actual="sha512-$(openssl dgst -sha512 -binary "$RUNNER_TEMP/bun.tgz" | base64 -w0)"
         if [ "$actual" != "$expected" ]; then
           echo "bun tarball integrity mismatch: got $actual, bun.lock has $expected"
@@ -25,18 +46,33 @@ runs:
         fi
         mkdir -p "$RUNNER_TEMP/bun"
         tar xzf "$RUNNER_TEMP/bun.tgz" -C "$RUNNER_TEMP/bun"
+    - if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        MATCHED: ${{ steps.cache.outputs.cache-matched-key }}
+      run: |
+        set -euo pipefail
+        echo "restored: ${MATCHED:-nothing}; installing the difference"
         "$RUNNER_TEMP/bun/package/bin/bun" ci
     - if: steps.cache.outputs.cache-hit != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: node_modules
+        path: |
+          node_modules
+          !node_modules/bun
+          !node_modules/@oven
         key: ${{ steps.cache.outputs.cache-primary-key }}
+    # The canary's directory goes last, so it comes first on PATH: the cache
+    # has no node_modules/bun for node_modules/.bin/bun to point at.
     - shell: bash
-      run: echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+      run: |
+        echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+        echo "$RUNNER_TEMP/bun/package/bin" >> "$GITHUB_PATH"
     - shell: bash
       run: |
         set -euo pipefail
         echo "cache hit: ${{ steps.cache.outputs.cache-hit }}"
+        command -v bun
         bun --version
         bun scripts/check-bun.ts
         echo "GERCH_SETUP_DONE_AT=$(date +%s%3N)" >> "$GITHUB_ENV"

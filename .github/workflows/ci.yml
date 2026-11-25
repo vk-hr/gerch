@@ -64,14 +64,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # A pull request checks out GitHub's merge commit, whose first parent
+      # is the base: two commits of history give the PR's whole diff (D9).
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           filter: blob:none
-          fetch-depth: 0
+          fetch-depth: 2
       - uses: ./.github/actions/setup
       - name: tests the diff can reach
         env:
-          GERCH_TEST_BASE: ${{ github.event.pull_request.base.sha }}
+          GERCH_TEST_BASE: HEAD^1
         run: bun scripts/select-tests.ts
       - name: budget
         if: ${{ !cancelled() }}

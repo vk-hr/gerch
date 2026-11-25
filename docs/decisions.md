@@ -320,6 +320,28 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     headless Chromium without a `channel`, cached in `~/.cache/ms-playwright`
     per Playwright version (saved only from `main`). Locally the Nix shell's
     browsers are unchanged.
+  - A PR that changes `bun.lock` missed the `node_modules` cache, which is
+    saved only from `main`, and installed from scratch: 15.1 s setup on
+    `test-changed` (step 5) and 15.4 s on `e2e-4` (#15), over the 15 s
+    budget. The cache now falls back to `main`'s newest `node_modules`
+    (`restore-keys`). When its Bun canary matches the pin, `bun ci`
+    installs only the difference; otherwise setup downloads the canary as
+    before.
+  - Setup still went over 15 s on cache hits when many runs overlapped:
+    21.4 s, 20.7 s and 15.5 s on #16, #22 and #18. GitHub's cache served
+    the 140 MB `node_modules` archive at 12–190 MB/s. The Bun canary is
+    75 MB of it, compressed. The cache now leaves out `node_modules/bun`
+    and `node_modules/@oven`, which brings it to about 65 MB. Setup
+    downloads the canary from npm in the background while the cache
+    restores, checks it against `bun.lock`, and puts it first on `PATH`.
+    Changing the cache's paths changes its version, so the first run on
+    this PR and the first push to `main` install from scratch once.
+  - `test-changed` fetched the whole history (`fetch-depth: 0`, about 5 s)
+    to diff against the PR's base, and once went 1.2 s over the setup
+    budget on a cold install. A pull request checks out GitHub's merge
+    commit, whose first parent is the base. So `fetch-depth: 2` and
+    `GERCH_TEST_BASE: HEAD^1` select the same tests from a two-commit
+    fetch.
 - **Later.** The 150-run audit runs once 150 runs exist. The test-failure log
   (`docs/test-failures.md`) starts with the first fixed test failure.
 
@@ -888,3 +910,35 @@ Vite's default browser targets all have `toSorted`.
   abort signal, so changing the search leaves the old chain's one lookup in
   flight while the new chain starts. The server queue still holds the
   1 req/s limit; a fast typist can briefly hold two places in it.
+
+### D29. Auto theme with start-theme: implemented in step 6c
+
+Requested 2026-11-25: integrate
+[`start-theme`](https://github.com/vk-hr/start-theme) for automatic theme
+detection.
+
+- `start-theme` 0.1.3, pinned exactly; it was published 2026-10-31.
+  `ThemeProvider theme="system"` wraps the app in `__root.tsx`, and `<html>`
+  gets `suppressHydrationWarning` because the bootstrap script changes its
+  class and style before hydration. The `class` attribute matches shadcn's
+  `.dark` tokens, which `src/styles.css` already had.
+- **No cookie, no server functions.** The library's cookie flow
+  (`getTheme` in the root loader, `setTheme` to switch) makes the HTML
+  depend on a cookie. Vercel's CDN builds its cache key without cookies, so
+  a cached package page would serve one visitor's theme to everyone. And a
+  response with `Vary: Cookie` is not cached at all (`vary_key_denied:cookie`,
+  Vercel changelog 2026-09-30). The theme is always `system`, so the server
+  sends one page for everyone, and the inline script resolves it in the
+  browser before the first paint.
+- **Later, a manual switch.** The bootstrap script would have to read the
+  cookie in the browser (`document.cookie`) instead of taking the server's
+  value. That is a change to `start-theme` itself.
+- **Checks** (`e2e/theme.e2e.ts`):
+  - With every module script blocked, a dark system still gets
+    `class="dark"` and `color-scheme: dark`. So the inline script alone
+    sets them, before React.
+  - A light page turns dark when the system theme changes.
+  - The server sends byte-identical HTML with and without a `theme=dark`
+    cookie, ignoring the router's render timestamps.
+- **Cold entry** grows by 694 B Brotli: 142,523 B on `main`, 143,217 B
+  here.
