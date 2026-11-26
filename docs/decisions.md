@@ -1295,3 +1295,37 @@ Playwright's `--shard=i/N` splits by test order instead.
 - **Measured locally** (72 flows, 4 shards). Split by recorded times, each
   shard carries 6,806–6,818 ms of flows. Split by count alone, the shards
   carry 6,022–8,165 ms, so the slowest shard gets about 16% faster.
+
+### D38. CI timing audit: implemented
+
+The CI directive starts with an audit: pull the last 150 runs and split
+every job into waiting, setup and running, at p50 and p95.
+`scripts/ci-audit.ts` does that through the GitHub API
+(`GITHUB_TOKEN=$(gh auth token) bun scripts/ci-audit.ts [runs]`).
+
+- **Phases.** Waiting runs from the job's creation until a runner starts
+  it. Setup runs from then until `./.github/actions/setup` finishes, which
+  covers runner set-up, checkout and toolchain. Running is the rest. The
+  four e2e shards count as one family.
+- **PR result** is the time from a `pull_request` run's creation until its
+  last job finishes. The directive's targets are under 60 s at p50 and
+  under 120 s at p95.
+- **First audit**, 2026-11-26. Only 96 completed runs exist, not 150, so
+  re-run it once there are 150. The runs include those from before the
+  cache fixes in D9.
+
+  | Job            | Jobs | Waiting p50 / p95 | Setup p50 / p95 | Running p50 / p95 |
+  | -------------- | ---- | ----------------- | --------------- | ----------------- |
+  | build          | 91   | 2 / 3 s           | 7 / 13 s        | 7 / 13 s          |
+  | checks         | 91   | 2 / 2 s           | 7 / 14 s        | 4 / 6 s           |
+  | e2e (4 shards) | 280  | 2 / 3 s           | 7 / 14 s        | 20 / 28 s         |
+  | test           | 91   | 2 / 3 s           | 7 / 14 s        | 8 / 16 s          |
+  | test-changed   | 73   | 2 / 3 s           | 7 / 14 s        | 8 / 16 s          |
+
+  PR result over 74 runs: 34 s at p50 and 103 s at p95, within both
+  targets.
+
+- **Biggest bucket:** e2e running time, which D37's balanced shards
+  address. Setup comes next; its p95 of 13–14 s is the hosted-runner
+  variance from D9, and Blacksmith runners are the directive's fix.
+  Waiting is already within the 5 s target.
