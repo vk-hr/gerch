@@ -18,3 +18,8 @@ todos.json
 
 # typescript
 *.tsbuildinfo
+
+# e2e shard reports and the timings main records (D37)
+e2e-report.json
+e2e-report-*.json
+.e2e-timings.json
