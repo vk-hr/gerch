@@ -53,7 +53,8 @@ message) and on push (`bun run verify`). Install them with `hk install`.
   registry requests from `test/fixtures/` (`GERCH_REPLAY_DIR`).
 - `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
   budgets), `check-budgets.ts` (byte budgets of a cold entry), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
-  `check-test-files.ts`, `check-commits.ts`).
+  `check-test-files.ts`, `check-commits.ts`, `e2e-shards.ts`: e2e shards
+  balanced by main's flow times).
 - `.github/`: CI workflow and the setup action.
 - `test/`: tests, recorded fixtures (`test/fixtures/`), the shared adapter
   contract (`test/contract/adapters.test.ts`), and opt-in live smoke tests

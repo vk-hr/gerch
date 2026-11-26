@@ -303,10 +303,11 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
     Pinned to 4 cores locally: about 500 ms beside typecheck, about 300 ms
     alone. CI lint ranged 500–1,112 ms across the step 5 branches.
   - E2E: "buy cores before shards" means paid larger runners, so the flows
-    run as 4 Playwright shards on free runners (`--shard=i/4`). Shard 1
-    keeps the job name `e2e`, the required check; the others are `e2e-2` to
-    `e2e-4`. `scripts/check-e2e-shards.ts` proves in each shard job that
-    the shards list every flow exactly once. The first CI run used 3 shards:
+    run as 4 shards on free runners, split by main's flow times since D37
+    (at first Playwright's `--shard=i/4`). Shard 1 keeps the job name
+    `e2e`; the others are `e2e-2` to `e2e-4`, all four required since
+    2026-11-26. Each shard job proves that the shards run every flow exactly
+    once. The first CI run used 3 shards:
     jobs took 27.0–33.9 s, and the 33.9 s one had a 13.6 s setup, so a
     fourth shard leaves room for slow setups. Matrix jobs share one
     `GITHUB_JOB`, so `ci-budget.ts` reads the shard's name from
@@ -1259,3 +1260,38 @@ built in step 3; the report wasn't.
   the last hour, as `{ registry, message, at }`. The registry is the second
   part of the cache key (`search:npm:zod`). If the cache can't be read, it
   says so and still answers `200`.
+
+### D37. E2E shards balanced by main's flow times: implemented
+
+The CI directive asks to "balance shards from file times that main records
+on every full run, and prove the shards together ran every file".
+Playwright's `--shard=i/N` splits by test order instead.
+
+- **Plan** (`scripts/e2e-shards.ts run <shard> <total>`).
+  - Every shard lists the flows (`playwright test --list`) and reads
+    `.e2e-timings.json`. It assigns the longest flow first to the least
+    loaded shard, ties going to the lower one, and runs its own flows by
+    `file:line`.
+  - The plan is deterministic, so the four jobs agree without talking to
+    each other.
+  - A flow main hasn't timed yet counts the median time; with no timings
+    at all, the flows split evenly by count.
+  - Flows are keyed by file, describe and title rather than line, so
+    timings survive edits that move lines.
+- **Proof** (`check <shard> <total>`). Each shard proves the plan runs every
+  listed flow exactly once. It also proves its own JSON report ran exactly
+  its planned flows, none missing and none extra, so the four shards
+  together ran every flow. This replaces `check-e2e-shards.ts`, which only
+  compared Playwright's own shard lists.
+- **Recording.** On a push to `main`, each shard uploads its JSON report
+  (`actions/upload-artifact` v7.0.2, kept 1 day). The `e2e-timings` job
+  merges them (`record`) and saves `.e2e-timings.json` to the cache under
+  `e2e-timings-<run id>`. Shards restore the newest one through
+  `restore-keys`, and PRs read main's. `e2e-timings` runs only on `main`,
+  isn't required, and no job waits on it.
+- **Split rule.** `record` fails when one e2e file's flows add up to more
+  than 20 s, the directive's "split any test file over 20 seconds". The
+  largest today is `suggestions.e2e.ts`, at about 5.6 s.
+- **Measured locally** (72 flows, 4 shards). Split by recorded times, each
+  shard carries 6,806–6,818 ms of flows. Split by count alone, the shards
+  carry 6,022–8,165 ms, so the slowest shard gets about 16% faster.
