@@ -6,13 +6,12 @@
 //   bun scripts/e2e-shards.ts check <shard> <total>  prove the plan covers
 //     every flow once and this shard ran exactly its own
 //   bun scripts/e2e-shards.ts record <report.json…>  merge shard reports into
-//     timings (stdout); fails on an e2e file over 20 s
+//     timings (stdout)
 import { z } from "zod"
 
 const TIMINGS_FILE = ".e2e-timings.json"
 const REPORT_FILE = "e2e-report.json"
 const DEFAULT_MS = 1000
-const FILE_BUDGET_MS = 20_000
 const FIRST_ARG = 2
 const JSON_INDENT = 2
 const HALF = 2
@@ -147,20 +146,6 @@ function ranProblems(planned: readonly string[], report: Report): string[] {
   ]
 }
 
-function oversizedFiles(timings: Timings): string[] {
-  const perFile = new Map<string, number>()
-  for (const [key, ms] of Object.entries(timings)) {
-    const file = key.split(" › ")[0] ?? key
-    perFile.set(file, (perFile.get(file) ?? 0) + ms)
-  }
-  return [...perFile]
-    .filter(([, ms]) => ms > FILE_BUDGET_MS)
-    .map(
-      ([file, ms]) =>
-        `${file} takes ${ms} ms; split it (over ${FILE_BUDGET_MS} ms)`
-    )
-}
-
 const resultSchema = z.object({ duration: z.number(), status: z.string() })
 const runSchema = z.object({ results: z.array(resultSchema) })
 const specSchema = z.object({ tests: z.array(runSchema), title: z.string() })
@@ -228,7 +213,7 @@ async function checkShard(shard: number, total: number): Promise<string[]> {
   return [...partitionProblems(all, shards), ...ranProblems(keys, shardReport)]
 }
 
-async function record(paths: readonly string[]): Promise<string[]> {
+async function record(paths: readonly string[]): Promise<number> {
   const reports = await Promise.all(
     paths.map(async (path) => reportSchema.parse(await readJson(path)))
   )
@@ -237,7 +222,8 @@ async function record(paths: readonly string[]): Promise<string[]> {
     Object.assign(timings, durationsFromReport(shardReport))
   }
   console.log(JSON.stringify(timings, null, JSON_INDENT))
-  return oversizedFiles(timings)
+  console.error(`recorded ${paths.length} reports`)
+  return 0
 }
 
 function exitWith(problems: readonly string[], success: string): number {
@@ -253,7 +239,7 @@ function exitWith(problems: readonly string[], success: string): number {
 async function main(args: readonly string[]): Promise<number> {
   const [command, ...rest] = args
   if (command === "record") {
-    return exitWith(await record(rest), `recorded ${rest.length} reports`)
+    return record(rest)
   }
   const [shard, total] = rest.map(Number)
   if (shard === undefined || total === undefined || !(shard >= 1)) {
@@ -275,7 +261,6 @@ if (import.meta.main) {
 export {
   durationsFromReport,
   listedFlows,
-  oversizedFiles,
   partitionProblems,
   planShards,
   ranProblems,

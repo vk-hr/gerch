@@ -75,4 +75,3 @@ runs:
         command -v bun
         bun --version
         bun scripts/check-bun.ts
-        echo "GERCH_SETUP_DONE_AT=$(date +%s%3N)" >> "$GITHUB_ENV"

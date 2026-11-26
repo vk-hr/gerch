@@ -3,7 +3,6 @@ import { describe, expect, test } from "vitest"
 import {
   durationsFromReport,
   listedFlows,
-  oversizedFiles,
   partitionProblems,
   planShards,
   ranProblems,
@@ -164,18 +163,5 @@ describe("ranProblems()", () => {
       "planned but not run: tabs.e2e.ts › x",
       "ran but not planned: theme.e2e.ts › on a dark system › the page is dark from the first paint",
     ])
-  })
-})
-
-describe("oversizedFiles()", () => {
-  test("names each e2e file whose flows add up to more than 20 s", () => {
-    expect.hasAssertions()
-    expect(
-      oversizedFiles({
-        "a.e2e.ts › one": 12_000,
-        "a.e2e.ts › two": 9000,
-        "b.e2e.ts › one": 19_000,
-      })
-    ).toStrictEqual(["a.e2e.ts takes 21000 ms; split it (over 20000 ms)"])
   })
 })

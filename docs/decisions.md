@@ -264,7 +264,7 @@ The closest equivalent is a ruleset on `main` (id `28017666`), applied
   - `test-changed` (PRs only): the selected tests.
   - `build`: the build, plus a check that the route tree is unchanged.
   - Byte budgets, Playwright and React Doctor join in step 7, as planned.
-- **Budgets.** Every job ends with `scripts/ci-budget.ts`. It reads the job's
+- **Budgets** (removed 2026-11-26, D39). Every job ended with `scripts/ci-budget.ts`. It reads the job's
   `created_at` and `started_at` from the GitHub API and the end of setup from
   the setup action. It fails the job when setup exceeds 15 s or the job
   exceeds 35 s, and writes waiting, setup, running and job time to the job
@@ -1289,7 +1289,7 @@ Playwright's `--shard=i/N` splits by test order instead.
   `e2e-timings-<run id>`. Shards restore the newest one through
   `restore-keys`, and PRs read main's. `e2e-timings` runs only on `main`,
   isn't required, and no job waits on it.
-- **Split rule.** `record` fails when one e2e file's flows add up to more
+- **Split rule** (removed 2026-11-26, D39). `record` failed when one e2e file's flows add up to more
   than 20 s, the directive's "split any test file over 20 seconds". The
   largest today is `suggestions.e2e.ts`, at about 5.6 s.
 - **Measured locally** (72 flows, 4 shards). Split by recorded times, each
@@ -1329,3 +1329,32 @@ every job into waiting, setup and running, at p50 and p95.
   address. Setup comes next; its p95 of 13–14 s is the hosted-runner
   variance from D9, and Blacksmith runners are the directive's fix.
   Waiting is already within the 5 s target.
+
+### D39. No time budgets in CI: approved
+
+Decided 2026-11-26, at your request: "the goal was to make ci optimal, not
+to stick to timings". The CI directive changed to match.
+
+- **Why.** On the hosted runners, the fixed cost of each job (runner set-up,
+  checkout, toolchain, the production build) varies by several seconds. On
+  `main`, the e2e shards went over the 35 s job budget on `e295a4c` and
+  `7772017` (37.2 s, 39.2 s and 35.5 s) with every flow passing. A budget
+  that fails on runner variance turns CI red for reasons no commit can fix.
+- **Removed.**
+  - `scripts/ci-budget.ts` and its step at the end of every job, with
+    `GERCH_JOB_BUDGET_MS`, `GERCH_JOB_NAME`, `GERCH_SETUP_DONE_AT` and the
+    workflow's `actions: read` permission, which only the budget's API
+    call used.
+  - The time limits in `scripts/verify.ts` (lint and format 1 s, typecheck
+    5 s, tests and build 30 s). It still prints each check's time.
+  - The 20 s per-file rule in `scripts/e2e-shards.ts record`. Shards are
+    balanced per flow, so a long file doesn't unbalance them.
+- **Blacksmith: skipped for good.** The directive no longer names it; jobs
+  stay on GitHub's hosted runners at $0/month (D8).
+- **Lint runs in parallel again.** It ran alone first only so its 1 s budget
+  measured lint by itself (D9). Pinned to 4 cores, pin, format, lint and
+  typecheck took 447–589 ms with lint first and 371–384 ms all together
+  (3 runs each).
+- **Kept.** `scripts/ci-audit.ts` still measures waiting, setup and running
+  per job at p50 and p95, without targets. Speed work goes after the
+  biggest bucket it shows.

@@ -93,10 +93,10 @@ Measured with `scripts/measure-renderers.ts` (4× CPU slowdown, fast 4G,
 p50 of 9 runs): 685 ms to a usable search page, 98 ms to navigate to a
 cached package, 16 ms worst key press while typing.
 
-CI aims at a result in under a minute. Every job has a time budget that
-fails it when exceeded: 35 s per job, 15 s of setup, 1 s each for lint and
-format. The full suite runs on every PR, the end-to-end flows in four
-shards.
+CI aims to be as fast as it can while checking everything; no check fails
+on time. The full suite runs on every PR, the end-to-end flows in four
+shards balanced by main's flow times, and `scripts/ci-audit.ts` measures
+waiting, setup and running per job.
 
 ## Stack
 
