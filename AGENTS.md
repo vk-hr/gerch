@@ -51,9 +51,9 @@ message) and on push (`bun run verify`). Install them with `hk install`.
   suggestions with history ranking, and the `?` shortcut list.
 - `e2e/`: Playwright flows against the production build, which answers
   registry requests from `test/fixtures/` (`GERCH_REPLAY_DIR`).
-- `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, with
-  budgets), `check-budgets.ts` (byte budgets of a cold entry), and CI helpers (`select-tests.ts`, `ci-budget.ts`,
-  `check-test-files.ts`, `check-commits.ts`, `e2e-shards.ts`: e2e shards
+- `scripts/`: Bun scripts: `check-bun.ts`, `verify.ts` (all checks, in
+  parallel, timed), `check-budgets.ts` (byte budgets of a cold entry), and
+  CI helpers (`select-tests.ts`, `check-test-files.ts`, `check-commits.ts`, `e2e-shards.ts`: e2e shards
   balanced by main's flow times) and `ci-audit.ts` (waiting, setup and
   running per CI job at p50 and p95).
 - `.github/`: CI workflow and the setup action.

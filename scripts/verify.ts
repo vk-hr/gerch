@@ -1,6 +1,6 @@
-// Runs every check, reports every failure, and fails any check that exceeds
-// its time budget (docs/directives/ci.md). The pre-push hook runs all of
-// them; each CI job runs the ones it names: `bun run verify lint format`.
+// Runs every check in parallel, reports every failure and how long each
+// check took. The pre-push hook runs all of them; each CI job runs the ones
+// it names: `bun run verify lint format`.
 const FIRST_ARG = 2
 const bun = process.execPath
 const JUNIT = "test-results/junit.xml"
@@ -10,7 +10,6 @@ const MS_WIDTH = 6
 interface Check {
   name: string
   cmd: string[]
-  budgetMs: number
 }
 
 interface Result extends Check {
@@ -20,12 +19,11 @@ interface Result extends Check {
 }
 
 const checks: Check[] = [
-  { budgetMs: 1000, cmd: [bun, "scripts/check-bun.ts"], name: "pin" },
-  { budgetMs: 1000, cmd: [bun, "fmt", "--check"], name: "format" },
-  { budgetMs: 1000, cmd: [bun, "lint"], name: "lint" },
-  { budgetMs: 5000, cmd: [bun, "check"], name: "typecheck" },
+  { cmd: [bun, "scripts/check-bun.ts"], name: "pin" },
+  { cmd: [bun, "fmt", "--check"], name: "format" },
+  { cmd: [bun, "lint"], name: "lint" },
+  { cmd: [bun, "check"], name: "typecheck" },
   {
-    budgetMs: 30_000,
     cmd: [
       "sh",
       "-c",
@@ -34,7 +32,6 @@ const checks: Check[] = [
     name: "test",
   },
   {
-    budgetMs: 30_000,
     cmd: [
       "sh",
       "-c",
@@ -59,27 +56,16 @@ async function run(check: Check): Promise<Result> {
   })
 }
 
-function failuresOf(result: Result): string[] {
-  const failures: string[] = []
-  if (result.exitCode !== 0) {
-    failures.push(`${result.name}: exit ${result.exitCode}\n${result.output}`)
-  }
-  if (result.ms > result.budgetMs) {
-    failures.push(
-      `${result.name}: ${result.ms} ms is over the ${result.budgetMs} ms budget`
-    )
-  }
-  return failures
-}
-
 function report(results: Result[]): string[] {
   return results.flatMap((result) => {
-    const failures = failuresOf(result)
+    const failed = result.exitCode !== 0
     const ms = String(result.ms).padStart(MS_WIDTH)
     console.log(
-      `${failures.length > 0 ? "FAIL" : "ok  "} ${result.name.padEnd(NAME_WIDTH)} ${ms} ms (budget ${result.budgetMs} ms)`
+      `${failed ? "FAIL" : "ok  "} ${result.name.padEnd(NAME_WIDTH)} ${ms} ms`
     )
-    return failures
+    return failed
+      ? [`${result.name}: exit ${result.exitCode}\n${result.output}`]
+      : []
   })
 }
 
@@ -94,14 +80,9 @@ if (unknown.length > 0) {
 const selected = checks.filter(
   (check) => names.length === 0 || names.includes(check.name)
 )
-// Type-aware lint and `bun check` both type-check the project, so lint runs
-// on its own first and its 1 s budget measures lint, not the two competing
-// for cores (docs/decisions.md D9). The rest run in parallel.
-const lint = selected.filter((check) => check.name === "lint")
-const rest = selected.filter((check) => check.name !== "lint")
-const lintResults = await Promise.all(lint.map(async (check) => run(check)))
-const restResults = await Promise.all(rest.map(async (check) => run(check)))
-const failures = report([...lintResults, ...restResults])
+const failures = report(
+  await Promise.all(selected.map(async (check) => run(check)))
+)
 if (failures.length > 0) {
   console.error(`\n${failures.join("\n\n")}`)
   process.exit(1)

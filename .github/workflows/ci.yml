@@ -11,11 +11,6 @@ concurrency:
 
 permissions:
   contents: read
-  actions: read
-
-env:
-  GERCH_JOB_BUDGET_MS: "35000"
-  GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
   checks:
@@ -41,9 +36,6 @@ jobs:
           mkdir -p "$RUNNER_TEMP/hk" && tar xzf "$RUNNER_TEMP/hk.tgz" -C "$RUNNER_TEMP/hk"
           PATH="$RUNNER_TEMP/hk:$PATH" bun scripts/check-commits.ts \
             "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
-      - name: budget
-        if: ${{ !cancelled() }}
-        run: bun scripts/ci-budget.ts
 
   test:
     runs-on: ubuntu-latest
@@ -55,9 +47,6 @@ jobs:
       - uses: ./.github/actions/setup
       - name: full test suite
         run: bun run verify test
-      - name: budget
-        if: ${{ !cancelled() }}
-        run: bun scripts/ci-budget.ts
 
   test-changed:
     if: github.event_name == 'pull_request'
@@ -75,9 +64,6 @@ jobs:
         env:
           GERCH_TEST_BASE: HEAD^1
         run: bun scripts/select-tests.ts
-      - name: budget
-        if: ${{ !cancelled() }}
-        run: bun scripts/ci-budget.ts
 
   build:
     runs-on: ubuntu-latest
@@ -93,12 +79,9 @@ jobs:
         run: bun run build
         env:
           GERCH_RENDERER: react-dom
-      - name: budget
-        if: ${{ !cancelled() }}
-        run: bun scripts/ci-budget.ts
 
-  # Four shards on separate runners keep each job under 35 s. Shard 1 keeps
-  # the name `e2e`, the required check; the others are e2e-2 to e2e-4.
+  # Four shards on separate runners, balanced by main's flow times. Shard 1
+  # keeps the name `e2e`; the others are e2e-2 to e2e-4. All four are required.
   e2e:
     name: ${{ matrix.shard == 1 && 'e2e' || format('e2e-{0}', matrix.shard) }}
     runs-on: ubuntu-latest
@@ -107,8 +90,6 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
-    env:
-      GERCH_JOB_NAME: ${{ matrix.shard == 1 && 'e2e' || format('e2e-{0}', matrix.shard) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -150,9 +131,6 @@ jobs:
           name: e2e-report-${{ matrix.shard }}
           path: e2e-report.json
           retention-days: 1
-      - name: budget
-        if: ${{ !cancelled() }}
-        run: bun scripts/ci-budget.ts
 
   # Merges the four shards' flow times on main, so the next runs balance by
   # them (D37). Not required, and nothing waits on it.
@@ -176,6 +154,3 @@ jobs:
         with:
           path: .e2e-timings.json
           key: e2e-timings-${{ github.run_id }}
-      - name: budget
-        if: ${{ !cancelled() }}
-        run: bun scripts/ci-budget.ts

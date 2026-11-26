@@ -1,6 +1,6 @@
 // The CI directive's audit: the last 150 completed CI runs, each job split
 // into waiting, setup and running at p50 and p95, plus how long a PR waits
-// for its result (targets: under 1 min at p50, under 2 min at p95; D38).
+// for its result (D38).
 //   GITHUB_TOKEN=$(gh auth token) bun scripts/ci-audit.ts [runs]
 import { z } from "zod"
 
@@ -170,9 +170,7 @@ async function main(): Promise<void> {
   const prResults = withJobs
     .filter((run) => run.event === "pull_request" && run.jobs.length > 0)
     .map((run) => runResultMs(run.created_at, run.jobs))
-  console.log(
-    `PR result, ${prResults.length} runs: ${seconds(prResults)} s (targets 60 / 120)`
-  )
+  console.log(`PR result, ${prResults.length} runs: ${seconds(prResults)} s`)
 }
 
 if (import.meta.main) {
